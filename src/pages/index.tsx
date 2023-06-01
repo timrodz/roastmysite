@@ -1,118 +1,280 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { Dots } from "@/components/LandingDots";
+import SEO from "@/components/SEO";
+import {
+  Avatar,
+  Box,
+  Button,
+  Center,
+  Container,
+  Grid,
+  Group,
+  List,
+  Paper,
+  Text,
+  ThemeIcon,
+  Title,
+  TypographyStylesProvider,
+  createStyles,
+  rem,
+} from "@mantine/core";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { IconCheck } from "@tabler/icons-react";
+import Link from "next/link";
 
-const inter = Inter({ subsets: ['latin'] })
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    position: "relative",
+    paddingTop: rem(100),
+    paddingBottom: rem(80),
+
+    [theme.fn.smallerThan("sm")]: {
+      paddingTop: rem(80),
+      paddingBottom: rem(60),
+    },
+  },
+
+  inner: {
+    position: "relative",
+    zIndex: 1,
+  },
+
+  dots: {
+    position: "absolute",
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[5]
+        : theme.colors.gray[1],
+
+    [theme.fn.smallerThan("sm")]: {
+      display: "none",
+    },
+  },
+
+  dotsLeft: {
+    left: 0,
+    top: 0,
+  },
+
+  title: {
+    textAlign: "center",
+    fontWeight: 800,
+    fontSize: rem(40),
+    letterSpacing: -1,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    marginBottom: theme.spacing.xs,
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(28),
+      textAlign: "left",
+    },
+  },
+
+  highlight: {
+    color: theme.colors.green[8],
+  },
+
+  description: {
+    textAlign: "center",
+
+    [theme.fn.smallerThan("xs")]: {
+      textAlign: "left",
+      fontSize: theme.fontSizes.md,
+    },
+  },
+
+  controls: {
+    marginTop: theme.spacing.lg,
+    display: "flex",
+    justifyContent: "center",
+
+    [theme.fn.smallerThan("xs")]: {
+      flexDirection: "column",
+    },
+  },
+
+  control: {
+    "&:not(:first-of-type)": {
+      marginLeft: theme.spacing.md,
+    },
+
+    [theme.fn.smallerThan("xs")]: {
+      height: rem(42),
+      fontSize: theme.fontSizes.md,
+
+      "&:not(:first-of-type)": {
+        marginTop: theme.spacing.md,
+        marginLeft: 0,
+      },
+    },
+  },
+
+  // Posting
+  comment: {
+    padding: `${theme.spacing.md} ${theme.spacing.md}`,
+  },
+
+  commentBody: {
+    paddingTop: theme.spacing.sm,
+    fontSize: theme.fontSizes.xs,
+  },
+
+  commentContent: {
+    "& > p:last-child": {
+      marginBottom: 0,
+    },
+
+    img: {
+      borderRadius: rem(5),
+      marginBottom: "0 !important",
+    },
+  },
+}));
+
+{
+  /* {!session ? (
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          theme="dark"
+          providers={["github"]}
+        />
+      ) : (
+        <p>Account page will go here.</p>
+      )} */
+}
 
 export default function Home() {
+  const { classes, theme } = useStyles();
+  const session = useSession();
+  const supabase = useSupabaseClient();
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <>
+      <SEO
+        title="Roast My Landing — Supercharge your business"
+        description="Perfect your applications and land that dream job. Your next job
+      is just a few clicks away! Join the waitlist →"
+        type="website"
+        url="https://www.resumebeaver.com"
+        bareDomain="www.resumebeaver.com"
+        image={{
+          url: "https://resumebeaver.com/thumbnail.png",
+          alt: "Resume Beaver",
+          width: "1200",
+          height: "630",
+        }}
+      />
+      <main>
+        <Container className={classes.wrapper} size="lg">
+          <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
+          <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
+          <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
+          <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
+
+          <div className={classes.inner}>
+            <Title className={classes.title}>
+              Convert visitors into{" "}
+              <Text component="span" color="green" inherit>
+                paying customers
+              </Text>
+            </Title>
+
+            <Container p={0} size={600}>
+              <Text
+                size="lg"
+                color="dimmed"
+                // color={theme.colors.gray[6]}
+                className={classes.description}
+              >
+                Improve your landing page with honest feedback from the indie
+                and{" "}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://twitter.com/search?q=%23buildinpublic"
+                >
+                  #buildinpublic
+                </a>{" "}
+                communities. Submit your roasts and get roasted.
+              </Text>
+            </Container>
+
+            <div className={classes.controls}>
+              <Button
+                className={classes.control}
+                size="lg"
+                variant="default"
+                color="gray"
+              >
+                Roast this site
+              </Button>
+              <Button className={classes.control} size="lg">
+                Start roasting for free
+              </Button>
+            </div>
+          </div>
+        </Container>
+        {/* Comments */}
+        <Container size="sm" mt={10} mb={100}>
+          <Grid grow gutter="md">
+            <Comment
+              image="landing/ted.webp"
+              name="Ted"
+              postedAt="08/05/2023"
+              body="This has to be one of the best landing pages I've ever seen! Attaboy, I'm proud of you.<br/><br/>Don't give up now, I know you're going to kick ass!<br/><br/><image src='landing/win.jpg' />"
             />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+            <Comment
+              image="landing/roy.webp"
+              name="Roy"
+              postedAt="23/05/2023"
+              body={
+                "There are no visuals, therefore no emotional connection. I also found styling issues you might want to check, as it comes off as unprofessional.<br/><br/>Another thing I will add: Some grammar usage is incorrect, and comes off as written by a robot.<br/><br/>Good usage of the design tool though."
+              }
+            />
+            <Comment
+              image="landing/nathan.webp"
+              name="Nate"
+              postedAt="01/06/2023"
+              body={
+                "To be honest, I think you can do better.<br/><br/>The copy isn't there yet, and I don't feel engaged enough. It's very hard to tell what your product does, and how I can benefit from using it.<br/><br/>The whole world is yours. Think greener pastures, like this football field!<br/><br/><img src='landing/football.jpg' />"
+              }
+            />
+          </Grid>
+        </Container>
+      </main>
+    </>
+  );
 }
+
+const Comment = (props: {
+  image: string;
+  name: string;
+  postedAt: string;
+  body: string;
+}) => {
+  const { classes } = useStyles();
+  return (
+    <Grid.Col span={3}>
+      <Paper withBorder radius="md" className={classes.comment}>
+        <Group>
+          <Avatar src={props.image} alt={props.name} radius="xl" />
+          <Text fz="sm">{props.name}</Text>
+          <Box>
+            <Text fz="xs" c="dimmed">
+              {props.postedAt}
+            </Text>
+          </Box>
+        </Group>
+        <Box maw={600}>
+          <TypographyStylesProvider className={classes.commentBody}>
+            <div
+              className={classes.commentContent}
+              dangerouslySetInnerHTML={{ __html: props.body }}
+            />
+          </TypographyStylesProvider>
+        </Box>
+      </Paper>
+    </Grid.Col>
+  );
+};
