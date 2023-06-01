@@ -1,6 +1,7 @@
 import { Dots } from "@/components/LandingDots";
 import SEO from "@/components/SEO";
 import {
+  ActionIcon,
   Avatar,
   Box,
   Button,
@@ -8,9 +9,11 @@ import {
   Container,
   Grid,
   Group,
+  Input,
   List,
   Paper,
   Text,
+  TextInput,
   ThemeIcon,
   Title,
   TypographyStylesProvider,
@@ -18,7 +21,13 @@ import {
   rem,
 } from "@mantine/core";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconCheck } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconCheck,
+  IconLink,
+  IconSearch,
+} from "@tabler/icons-react";
 import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
@@ -84,7 +93,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   controls: {
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.md,
     display: "flex",
     justifyContent: "center",
 
@@ -196,8 +205,23 @@ export default function Home() {
                 >
                   #buildinpublic
                 </a>{" "}
-                communities. Submit your roasts and get roasted.
+                communities. Submit your roasts and get roasted
               </Text>
+            </Container>
+
+            <Container mt="xl" size="xs">
+              <Title order={2} mb="xs" align="center" fz={rem(25)}>
+                Find the website you want to roast ↓
+              </Title>
+              <Container size={400}>
+                <TextInput
+                  type="url"
+                  icon={<IconLink size="1.1rem" stroke={1.5} />}
+                  radius="xl"
+                  size="md"
+                  placeholder="Website URL (example: https://twitter.com)"
+                />
+              </Container>
             </Container>
 
             <div className={classes.controls}>
@@ -207,10 +231,10 @@ export default function Home() {
                 variant="default"
                 color="gray"
               >
-                Roast this site
+                See roasts
               </Button>
               <Button className={classes.control} size="lg">
-                Start roasting for free
+                Start roasting
               </Button>
             </div>
           </div>
