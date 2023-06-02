@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Tools
+
+Update DB types from Supabase
+
+```shell
+supabase gen types typescript --project-id "sxbftuaubmlkweocuayu" --schema public > src/lib/database.types.ts
+```
+
 ## Getting Started
 
 First, run the development server:

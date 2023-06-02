@@ -11,7 +11,9 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { IconFlame } from "@tabler/icons-react";
 import Link from "next/link";
+import Logo from "./Logo";
 
 const HEADER_HEIGHT = rem(60);
 
@@ -88,7 +90,7 @@ export default function Navbar() {
   return (
     <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container size="md" className={classes.header}>
-        <Title fz={{ base: rem(18), sm: rem(25) }}>Roast My Site 🔥</Title>
+        <Logo />
         <Group>
           <Link href="/roast-page">
             <Button variant="filled">Start roasting</Button>

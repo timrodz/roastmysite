@@ -1,48 +1,23 @@
-import { Dots } from "@/components/LandingDots";
+import Dots from "@/components/LandingDots";
+import Roast from "@/components/Roast";
 import SEO from "@/components/SEO";
+import { supabase } from "@/lib/supabase";
 import {
-  ActionIcon,
-  Avatar,
-  Box,
   Button,
-  Center,
   Container,
-  Grid,
-  Group,
-  Input,
-  List,
-  Paper,
+  Flex,
+  SimpleGrid,
   Text,
   TextInput,
-  ThemeIcon,
   Title,
-  TypographyStylesProvider,
   createStyles,
   rem,
 } from "@mantine/core";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconCheck,
-  IconLink,
-  IconSearch,
-} from "@tabler/icons-react";
+import { IconFlame } from "@tabler/icons-react";
 import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
-  wrapper: {
-    position: "relative",
-    paddingTop: rem(100),
-    paddingBottom: rem(80),
-
-    [theme.fn.smallerThan("sm")]: {
-      paddingTop: rem(80),
-      paddingBottom: rem(60),
-    },
-  },
-
-  inner: {
+  hero: {
     position: "relative",
     zIndex: 1,
   },
@@ -59,11 +34,6 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
-  dotsLeft: {
-    left: 0,
-    top: 0,
-  },
-
   title: {
     textAlign: "center",
     fontWeight: 800,
@@ -74,13 +44,41 @@ const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
 
     [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(34),
+      textAlign: "left",
+    },
+  },
+
+  textAlignMd: {
+    fontSize: rem(32),
+    textAlign: "center",
+    [theme.fn.smallerThan("xs")]: {
       fontSize: rem(28),
       textAlign: "left",
     },
   },
 
+  textAlignSm: {
+    fontSize: rem(28),
+    textAlign: "center",
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(24),
+      textAlign: "left",
+    },
+  },
+
+  textAlign: {
+    textAlign: "center",
+    [theme.fn.smallerThan("xs")]: {
+      textAlign: "left",
+    },
+  },
+
   highlight: {
-    color: theme.colors.green[8],
+    position: "relative",
+    backgroundColor: theme.colors.green[1],
+    borderRadius: theme.radius.sm,
+    padding: `${rem(4)} ${rem(12)} ${rem(6)} ${rem(12)}`,
   },
 
   description: {
@@ -92,50 +90,37 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
-  controls: {
-    marginTop: theme.spacing.md,
+  typeYourSiteInput: {
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    borderRight: 0,
+  },
+
+  typeYourSiteInputWrapper: {
+    width: "100%",
+    flex: "1",
+  },
+
+  typeYourSiteButton: {
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+  },
+
+  roast: {
     display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
     justifyContent: "center",
+    textAlign: "center",
+    borderRadius: theme.radius.md,
+    height: rem(90),
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    transition: "box-shadow 150ms ease, transform 100ms ease",
 
-    [theme.fn.smallerThan("xs")]: {
-      flexDirection: "column",
-    },
-  },
-
-  control: {
-    "&:not(:first-of-type)": {
-      marginLeft: theme.spacing.md,
-    },
-
-    [theme.fn.smallerThan("xs")]: {
-      height: rem(42),
-      fontSize: theme.fontSizes.md,
-
-      "&:not(:first-of-type)": {
-        marginTop: theme.spacing.md,
-        marginLeft: 0,
-      },
-    },
-  },
-
-  // Posting
-  comment: {
-    padding: `${theme.spacing.md} ${theme.spacing.md}`,
-  },
-
-  commentBody: {
-    paddingTop: theme.spacing.sm,
-    fontSize: theme.fontSizes.xs,
-  },
-
-  commentContent: {
-    "& > p:last-child": {
-      marginBottom: 0,
-    },
-
-    img: {
-      borderRadius: rem(5),
-      marginBottom: "0 !important",
+    "&:hover": {
+      boxShadow: theme.shadows.md,
+      transform: "scale(1.05)",
     },
   },
 }));
@@ -153,10 +138,18 @@ const useStyles = createStyles((theme) => ({
       )} */
 }
 
-export default function Home() {
+interface Roast {
+  url: string;
+  roastCount: number;
+}
+
+interface Props {
+  topRoasts: Roast[];
+  isSignedIn: boolean;
+}
+
+export default function Home({ topRoasts, isSignedIn }: Props) {
   const { classes, theme } = useStyles();
-  const session = useSession();
-  const supabase = useSupabaseClient();
 
   return (
     <>
@@ -175,130 +168,141 @@ export default function Home() {
         }}
       />
       <main>
-        <Container className={classes.wrapper} size="lg">
-          <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
-          <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
-          <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
-          <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
+        <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
+        <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
+        <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
+        <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
+        <Container
+          pt={{ base: 50, sm: 90 }}
+          pb={60}
+          className={classes.hero}
+          size="lg"
+        >
+          <Title className={classes.title}>
+            Convert visitors into{" "}
+            <span className={classes.highlight}>paying customers</span>
+          </Title>
 
-          <div className={classes.inner}>
-            <Title className={classes.title}>
-              Convert visitors into{" "}
-              <Text component="span" color="green" inherit>
-                paying customers
-              </Text>
-            </Title>
-
-            <Container p={0} size={600}>
-              <Text
-                size="lg"
-                color="dimmed"
-                // color={theme.colors.gray[6]}
-                className={classes.description}
+          {/* Subtitle */}
+          <Container
+            size={600}
+            pt="xs"
+            mb={{ base: 30, sm: 30 }}
+            px={{ base: "0", sm: "md" }}
+          >
+            <Text size="xl" color="dimmed" className={classes.description}>
+              Improve your landing pages with honest feedback from makers who{" "}
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://twitter.com/search?q=%23buildinpublic"
               >
-                Improve your landing page with honest feedback from the indie
-                and{" "}
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://twitter.com/search?q=%23buildinpublic"
-                >
-                  #buildinpublic
-                </a>{" "}
-                communities. Submit your roasts and get roasted
-              </Text>
-            </Container>
+                #buildinpublic
+              </Link>
+              . Submit your roasts and get roasted
+            </Text>
+          </Container>
 
-            <Container mt="xl" size="xs">
-              <Title order={2} mb="xs" align="center" fz={rem(25)}>
-                Find the website you want to roast ↓
-              </Title>
-              <Container size={400}>
+          {/* Type your site version */}
+          <Container
+            size="sm"
+            pt="lg"
+            mb={{ base: 30, sm: 30 }}
+            px={{ base: "0", sm: "md" }}
+          >
+            <Title order={2} mb="md" className={classes.textAlignMd}>
+              Roast any site ↓
+            </Title>
+            <Container p={0} size="xs">
+              <Flex>
                 <TextInput
                   type="url"
-                  icon={<IconLink size="1.1rem" stroke={1.5} />}
+                  placeholder="https://twitter.com"
                   radius="xl"
                   size="md"
-                  placeholder="Website URL (example: https://twitter.com)"
+                  icon={<IconFlame size="1.1rem" stroke={1.5} />}
+                  classNames={{
+                    input: classes.typeYourSiteInput,
+                    root: classes.typeYourSiteInputWrapper,
+                  }}
                 />
-              </Container>
+                <Button
+                  size="md"
+                  radius="xl"
+                  className={classes.typeYourSiteButton}
+                >
+                  Start roasting
+                </Button>
+              </Flex>
             </Container>
-
-            <div className={classes.controls}>
-              <Button
-                className={classes.control}
-                size="lg"
-                variant="default"
-                color="gray"
-              >
-                See roasts
-              </Button>
-              <Button className={classes.control} size="lg">
-                Start roasting
-              </Button>
-            </div>
-          </div>
-        </Container>
-        {/* Comments */}
-        <Container size="sm" mt={10} mb={100}>
-          <Grid grow gutter="md">
-            <Comment
-              image="landing/ted.webp"
-              name="Ted"
-              postedAt="08/05/2023"
-              body="This has to be one of the best landing pages I've ever seen! Attaboy, I'm proud of you.<br/><br/>Don't give up now, I know you're going to kick ass!<br/><br/><image src='landing/win.jpg' />"
-            />
-            <Comment
-              image="landing/roy.webp"
-              name="Roy"
-              postedAt="23/05/2023"
-              body={
-                "There are no visuals, therefore no emotional connection. I also found styling issues you might want to check, as it comes off as unprofessional.<br/><br/>Another thing I will add: Some grammar usage is incorrect, and comes off as written by a robot.<br/><br/>Good usage of the design tool though."
-              }
-            />
-            <Comment
-              image="landing/nathan.webp"
-              name="Nate"
-              postedAt="01/06/2023"
-              body={
-                "To be honest, I think you can do better.<br/><br/>The copy isn't there yet, and I don't feel engaged enough. It's very hard to tell what your product does, and how I can benefit from using it.<br/><br/>The whole world is yours. Think greener pastures, like this football field!<br/><br/><img src='landing/football.jpg' />"
-              }
-            />
-          </Grid>
+          </Container>
+          <RenderRoasts roasts={topRoasts} />
         </Container>
       </main>
     </>
   );
 }
 
-const Comment = (props: {
-  image: string;
-  name: string;
-  postedAt: string;
-  body: string;
-}) => {
+function RenderRoasts({ roasts }: { roasts: Roast[] }) {
   const { classes } = useStyles();
+  if (!roasts.length) {
+    return null;
+  }
   return (
-    <Grid.Col span={3}>
-      <Paper withBorder radius="md" className={classes.comment}>
-        <Group>
-          <Avatar src={props.image} alt={props.name} radius="xl" />
-          <Text fz="sm">{props.name}</Text>
-          <Box>
-            <Text fz="xs" c="dimmed">
-              {props.postedAt}
-            </Text>
-          </Box>
-        </Group>
-        <Box maw={600}>
-          <TypographyStylesProvider className={classes.commentBody}>
-            <div
-              className={classes.commentContent}
-              dangerouslySetInnerHTML={{ __html: props.body }}
-            />
-          </TypographyStylesProvider>
-        </Box>
-      </Paper>
-    </Grid.Col>
+    <Container pt="lg" mb="xs" px={{ base: "0", sm: "md" }}>
+      <Title align="center" order={3} className={classes.textAlignSm} mb="lg">
+        See the sites with most roasts
+      </Title>
+      <Container maw={700} px={{ base: "0", sm: "md" }}>
+        <SimpleGrid
+          cols={3}
+          breakpoints={[{ maxWidth: "36rem", cols: 1, spacing: "sm" }]}
+        >
+          {roasts.map((tr) => (
+            <Button key={tr.url} variant="light" color="red">
+              <Text className={classes.textAlign}>
+                <Link href={`https://${tr.url}`}>{tr.url}</Link>
+              </Text>
+            </Button>
+          ))}
+        </SimpleGrid>
+      </Container>
+    </Container>
   );
-};
+}
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      topRoasts: [
+        {
+          url: "twitter.com",
+          roastCount: 10,
+        },
+        {
+          url: "resumebeaver.com",
+          roastCount: 6,
+        },
+        {
+          url: "timrodz.dev",
+          roastCount: 3,
+        },
+      ],
+    },
+  };
+  let { data } = await supabase
+    .from("site")
+    .select("url, roast(count)")
+    .limit(3);
+
+  const topRoasts = data?.filter(Boolean).map((d) => ({
+    url: d.url,
+    roastCount: d.roast.length,
+  }));
+
+  return {
+    props: {
+      topRoasts,
+    },
+  };
+}

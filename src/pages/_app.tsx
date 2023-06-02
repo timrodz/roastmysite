@@ -1,5 +1,6 @@
-import Navbar from "@/components/Navbar";
-import { MantineProvider } from "@mantine/core";
+import Footer from "@/layout/Footer";
+import Navbar from "@/layout/Navbar";
+import { Flex, MantineProvider } from "@mantine/core";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import type { AppProps } from "next/app";
@@ -38,8 +39,11 @@ export default function App({ Component, pageProps }: AppProps) {
           }),
         }}
       >
-        <Navbar />
-        <Component {...pageProps} />
+        <Flex mih={"100vh"} direction="column">
+          <Navbar />
+          <Component {...pageProps} />
+          <Footer />
+        </Flex>
       </MantineProvider>
     </SessionContextProvider>
   );
