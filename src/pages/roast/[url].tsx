@@ -1,7 +1,7 @@
 import Roast from "@/components/Roast";
 import SEO from "@/components/SEO";
 import { Database } from "@lib/database.types";
-import { supabase } from "@lib/supabase";
+import { supabaseClient } from "@lib/supabase";
 import {
   Box,
   Button,
@@ -108,7 +108,7 @@ export async function getServerSideProps(
   const siteUrl = context.params?.url!;
   console.log("server side props", { url: siteUrl });
 
-  let { data: siteData } = await supabase
+  let { data: siteData } = await supabaseClient
     .from("site")
     .select("id")
     .eq("url", siteUrl)
@@ -128,7 +128,7 @@ export async function getServerSideProps(
 
   console.log({ siteId });
 
-  let { data: roastData } = await supabase
+  let { data: roastData } = await supabaseClient
     .from("roast")
     // .select("id, user_id, content")
     .select("*")

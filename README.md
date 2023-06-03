@@ -2,7 +2,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Tools
 
-Update DB types from Supabase
+### Supabase
+
+Local Development: https://supabase.com/docs/guides/getting-started/local-development
+
+Update DB types (from remote config)
 
 ```shell
 supabase gen types typescript --project-id "sxbftuaubmlkweocuayu" --schema public > src/lib/database.types.ts

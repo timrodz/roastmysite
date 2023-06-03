@@ -1,7 +1,7 @@
 import Dots from "@/components/LandingDots";
 import Roast from "@/components/Roast";
 import SEO from "@/components/SEO";
-import { supabase } from "@/lib/supabase";
+import { supabaseClient } from "@/lib/supabase";
 import {
   Button,
   Container,
@@ -290,7 +290,7 @@ export async function getServerSideProps() {
       ],
     },
   };
-  let { data } = await supabase
+  let { data } = await supabaseClient
     .from("site")
     .select("url, roast(count)")
     .limit(3);

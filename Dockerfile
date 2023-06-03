@@ -1,37 +1,24 @@
-# https://geshan.com.np/blog/2023/01/nextjs-docker/
-FROM node:18-alpine AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
+# https://www.koyeb.com/tutorials/how-to-dockerize-and-deploy-a-next-js-application-on-koyeb
+FROM node:lts as dependencies
+WORKDIR /my-project
+COPY package.json package-lock* ./
+RUN npm clean install
 
-COPY package.json package-lock.json ./
-RUN  npm install --production
-
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+FROM node:lts as builder
+WORKDIR /my-project
 COPY . .
-
-ENV NEXT_TELEMETRY_DISABLED 1
-
+COPY --from=dependencies /my-project/node_modules ./node_modules
 RUN npm run build
 
-FROM node:18-alpine AS runner
-WORKDIR /app
-
+FROM node:lts as runner
+WORKDIR /my-project
 ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-USER nextjs
+# If you are using a custom next.config.js file, uncomment this line.
+# COPY --from=builder /my-project/next.config.js ./
+COPY --from=builder /my-project/public ./public
+COPY --from=builder /my-project/.next ./.next
+COPY --from=builder /my-project/node_modules ./node_modules
+COPY --from=builder /my-project/package.json ./package.json
 
 EXPOSE 3000
-
-ENV PORT 3000
-
 CMD ["npm", "start"]

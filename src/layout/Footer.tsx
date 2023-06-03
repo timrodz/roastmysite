@@ -56,9 +56,8 @@ interface Links {
 }
 
 const links: Links[] = [
-  // { link: "/pricing", label: "Pricing" },
-  // { link: "/faq", label: "FAQ" },
-  { link: "https://twitter.com/timrodz", label: "Built by @timrodz" },
+  { link: "/pricing", label: "Pricing" },
+  // { link: "https://twitter.com/timrodz", label: "Built by @timrodz" },
 ];
 
 export default function Footer() {
@@ -74,11 +73,11 @@ export default function Footer() {
     <footer className={classes.footer}>
       <Container size="lg" className={classes.inner}>
         <Logo size="sm" />
-        {/* <Link className={classes.builtBy} href="https://twitter.com/timrodz">
+        <Link className={classes.builtBy} href="https://twitter.com/timrodz">
           <Text fz="sm" c="dimmed">
             Built by @timrodz
           </Text>
-        </Link> */}
+        </Link>
         <Group className={classes.links}>{renderedLinks}</Group>
       </Container>
     </footer>
