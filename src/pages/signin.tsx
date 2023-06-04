@@ -1,4 +1,4 @@
-import { getURL } from "@/utils/helpers";
+import { getSiteURL } from "@/utils/helpers";
 import { Button, Container } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -28,7 +28,7 @@ export default function SignIn() {
             <Auth
               supabaseClient={supabase}
               providers={["github"]}
-              redirectTo={getURL()}
+              redirectTo={`${getSiteURL()}account`}
               magicLink={true}
               appearance={{
                 theme: ThemeSupa,

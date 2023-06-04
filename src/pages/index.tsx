@@ -2,6 +2,7 @@ import Dots from "@/components/LandingDots";
 import Roast from "@/components/Roast";
 import SEO from "@/components/SEO";
 import { supabaseClient } from "@/lib/supabase";
+import { sanitizeRoastUrl } from "@/utils/url-sanity";
 import {
   Button,
   Container,
@@ -15,6 +16,9 @@ import {
 } from "@mantine/core";
 import { IconFlame } from "@tabler/icons-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import path from "path";
+import { MouseEvent, useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   hero: {
@@ -45,6 +49,15 @@ const useStyles = createStyles((theme) => ({
 
     [theme.fn.smallerThan("xs")]: {
       fontSize: rem(34),
+      textAlign: "left",
+    },
+  },
+
+  subTitle: {
+    textAlign: "center",
+    marginBottom: theme.spacing.xs,
+
+    [theme.fn.smallerThan("xs")]: {
       textAlign: "left",
     },
   },
@@ -81,14 +94,14 @@ const useStyles = createStyles((theme) => ({
     padding: `${rem(4)} ${rem(12)} ${rem(6)} ${rem(12)}`,
   },
 
-  description: {
-    textAlign: "center",
+  // description: {
+  //   textAlign: "center",
 
-    [theme.fn.smallerThan("xs")]: {
-      textAlign: "left",
-      fontSize: theme.fontSizes.md,
-    },
-  },
+  //   [theme.fn.smallerThan("xs")]: {
+  //     textAlign: "left",
+  //     fontSize: theme.fontSizes.md,
+  //   },
+  // },
 
   typeYourSiteInput: {
     borderTopRightRadius: 0,
@@ -125,19 +138,6 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-{
-  /* {!session ? (
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          theme="dark"
-          providers={["github"]}
-        />
-      ) : (
-        <p>Account page will go here.</p>
-      )} */
-}
-
 interface Roast {
   url: string;
   roastCount: number;
@@ -149,14 +149,30 @@ interface Props {
 }
 
 export default function Home({ topRoasts, isSignedIn }: Props) {
-  const { classes, theme } = useStyles();
+  const router = useRouter();
+  const { classes } = useStyles();
+
+  const [siteToRoast, siteToRoastSet] = useState("");
+  const [formError, formErrorSet] = useState("");
+
+  const onRoastClick = (e: any) => {
+    e.preventDefault();
+
+    const { sanitizedUrl, error } = sanitizeRoastUrl(siteToRoast);
+
+    if (error) {
+      formErrorSet(error);
+      return;
+    }
+
+    router.push(`/roast/${sanitizedUrl}`);
+  };
 
   return (
     <>
       <SEO
-        title="Roast My Landing — Supercharge your business"
-        description="Perfect your applications and land that dream job. Your next job
-      is just a few clicks away! Join the waitlist →"
+        title="Roast My Site — Supercharge your landing pages with feedback"
+        description="Get insights for your business with feedback that helps you grow. Discover insider knowledge from a network of reputable business owners, makers and indies."
         type="website"
         url="https://www.resumebeaver.com"
         bareDomain="www.resumebeaver.com"
@@ -172,49 +188,33 @@ export default function Home({ topRoasts, isSignedIn }: Props) {
         <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
         <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
         <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
-        <Container
-          pt={{ base: 50, sm: 90 }}
-          pb={60}
-          className={classes.hero}
-          size="lg"
-        >
-          <Title className={classes.title}>
-            Convert visitors into{" "}
-            <span className={classes.highlight}>paying customers</span>
-          </Title>
-
-          {/* Subtitle */}
+        <section>
           <Container
-            size={600}
-            pt="xs"
-            mb={{ base: 30, sm: 30 }}
-            px={{ base: "0", sm: "md" }}
+            pt={{ base: 50, sm: 90 }}
+            pb={60}
+            className={classes.hero}
+            size="lg"
           >
-            <Text size="xl" color="dimmed" className={classes.description}>
-              Improve your landing pages with honest feedback from makers who{" "}
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://twitter.com/search?q=%23buildinpublic"
-              >
-                #buildinpublic
-              </Link>
-              . Submit your roasts and get roasted
-            </Text>
-          </Container>
-
-          {/* Type your site version */}
-          <Container
-            size="sm"
-            pt="lg"
-            mb={{ base: 30, sm: 30 }}
-            px={{ base: "0", sm: "md" }}
-          >
-            <Title order={2} mb="md" className={classes.textAlignMd}>
-              Roast any site ↓
+            {/* Title */}
+            <Title className={classes.title}>
+              Convert visitors into{" "}
+              <span className={classes.highlight}>paying customers</span>
             </Title>
-            <Container p={0} size="xs">
-              <Flex>
+
+            {/* Subtitle */}
+            <Container size={600} p={0} mb="xl">
+              <Text size="lg" color="dimmed" className={classes.subTitle}>
+                Grow your business with public, honest feedback. Discover
+                insider knowledge from a network of reputable makers
+              </Text>
+            </Container>
+
+            {/* CTA: site search */}
+            <Container size="sm" p={0} mb={{ base: "xl", sm: 60 }}>
+              <Title order={2} mb="xs" className={classes.textAlignMd}>
+                Roast any site ↓
+              </Title>
+              <Flex align="center" maw={400} mx="auto">
                 <TextInput
                   type="url"
                   placeholder="https://twitter.com"
@@ -225,49 +225,67 @@ export default function Home({ topRoasts, isSignedIn }: Props) {
                     input: classes.typeYourSiteInput,
                     root: classes.typeYourSiteInputWrapper,
                   }}
+                  error={formError}
+                  value={siteToRoast}
+                  onChange={(e) => {
+                    // Reset form error if there was one
+                    if (formError) {
+                      formErrorSet("");
+                    }
+                    siteToRoastSet(e.target.value);
+                  }}
                 />
                 <Button
                   size="md"
                   radius="xl"
                   className={classes.typeYourSiteButton}
+                  onClick={(e) => onRoastClick(e)}
                 >
                   Start roasting
                 </Button>
               </Flex>
             </Container>
+
+            {/* Roasts */}
+            <Container size="md" p={0} mb="xs">
+              <RenderRoasts roasts={topRoasts} />
+            </Container>
           </Container>
-          <RenderRoasts roasts={topRoasts} />
-        </Container>
+        </section>
       </main>
     </>
   );
 }
 
 function RenderRoasts({ roasts }: { roasts: Roast[] }) {
+  const router = useRouter();
   const { classes } = useStyles();
   if (!roasts.length) {
     return null;
   }
   return (
-    <Container pt="lg" mb="xs" px={{ base: "0", sm: "md" }}>
+    <>
       <Title align="center" order={3} className={classes.textAlignSm} mb="lg">
         See the sites with most roasts
       </Title>
-      <Container maw={700} px={{ base: "0", sm: "md" }}>
+      <Container p={0} maw={600}>
         <SimpleGrid
           cols={3}
           breakpoints={[{ maxWidth: "36rem", cols: 1, spacing: "sm" }]}
         >
-          {roasts.map((tr) => (
-            <Button key={tr.url} variant="light" color="red">
-              <Text className={classes.textAlign}>
-                <Link href={`https://${tr.url}`}>{tr.url}</Link>
-              </Text>
+          {roasts.map((roast) => (
+            <Button
+              key={roast.url}
+              variant="light"
+              color="red"
+              onClick={(e) => router.push(`/roast/${roast.url}`)}
+            >
+              {roast.url}
             </Button>
           ))}
         </SimpleGrid>
       </Container>
-    </Container>
+    </>
   );
 }
 
