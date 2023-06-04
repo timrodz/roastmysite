@@ -10,14 +10,14 @@ export function sanitizeRoastUrl(url: string): {
   if (!base) {
     return {
       sanitizedUrl: "",
-      error: "Please write a valid site (like https://twitter.com)",
+      error: "Please type a valid website (twitter.com ✅ twitter ❌)",
     };
   }
 
   if (!ext) {
     return {
       sanitizedUrl: "",
-      error: "Please write a valid site (like https://twitter.com)",
+      error: "Please type a valid website (twitter.com ✅ twitter ❌)",
     };
   }
 

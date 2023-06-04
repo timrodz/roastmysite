@@ -4,26 +4,40 @@ import SEO from "@/components/SEO";
 import { supabaseClient } from "@/lib/supabase";
 import { sanitizeRoastUrl } from "@/utils/url-sanity";
 import {
+  Box,
   Button,
+  Col,
   Container,
+  Divider,
   Flex,
+  Grid,
   SimpleGrid,
   Text,
   TextInput,
+  ThemeIcon,
   Title,
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconFlame } from "@tabler/icons-react";
-import Link from "next/link";
+import {
+  IconFlame,
+  IconNumber1,
+  IconNumber2,
+  IconNumber3,
+} from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import path from "path";
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
-  hero: {
+  wrapper: {
     position: "relative",
     zIndex: 1,
+    paddingBottom: rem(60),
+    paddingTop: rem(180),
+
+    [theme.fn.smallerThan("sm")]: {
+      paddingTop: rem(120),
+    },
   },
 
   dots: {
@@ -35,48 +49,6 @@ const useStyles = createStyles((theme) => ({
 
     [theme.fn.smallerThan("sm")]: {
       display: "none",
-    },
-  },
-
-  title: {
-    textAlign: "center",
-    fontWeight: 800,
-    fontSize: rem(40),
-    letterSpacing: -1,
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    marginBottom: theme.spacing.xs,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(34),
-      textAlign: "left",
-    },
-  },
-
-  subTitle: {
-    textAlign: "center",
-    marginBottom: theme.spacing.xs,
-
-    [theme.fn.smallerThan("xs")]: {
-      textAlign: "left",
-    },
-  },
-
-  textAlignMd: {
-    fontSize: rem(32),
-    textAlign: "center",
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(28),
-      textAlign: "left",
-    },
-  },
-
-  textAlignSm: {
-    fontSize: rem(28),
-    textAlign: "center",
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(24),
-      textAlign: "left",
     },
   },
 
@@ -93,15 +65,6 @@ const useStyles = createStyles((theme) => ({
     borderRadius: theme.radius.sm,
     padding: `${rem(4)} ${rem(12)} ${rem(6)} ${rem(12)}`,
   },
-
-  // description: {
-  //   textAlign: "center",
-
-  //   [theme.fn.smallerThan("xs")]: {
-  //     textAlign: "left",
-  //     fontSize: theme.fontSizes.md,
-  //   },
-  // },
 
   typeYourSiteInput: {
     borderTopRightRadius: 0,
@@ -148,6 +111,27 @@ interface Props {
   isSignedIn: boolean;
 }
 
+const features = [
+  {
+    title: "Visit the website you want to roast",
+    icon: IconNumber1,
+    description:
+      "This will help you prepare your roast. Try act as a field expert, but also a newbie. Everyone is a potential customer.",
+  },
+  {
+    title: "Room for improvement",
+    icon: IconNumber2,
+    description:
+      "Have you noticed what works well and what doesn't? Chances are, the founder needs to know this!",
+  },
+  {
+    title: "Roast the website!",
+    icon: IconNumber3,
+    description:
+      "Share the love by letting the founder publicly know how they can improve their website and land those customers.",
+  },
+];
+
 export default function Home({ topRoasts, isSignedIn }: Props) {
   const router = useRouter();
   const { classes } = useStyles();
@@ -155,7 +139,7 @@ export default function Home({ topRoasts, isSignedIn }: Props) {
   const [siteToRoast, siteToRoastSet] = useState("");
   const [formError, formErrorSet] = useState("");
 
-  const onRoastClick = (e: any) => {
+  const onClickCTA = (e: any) => {
     e.preventDefault();
 
     const { sanitizedUrl, error } = sanitizeRoastUrl(siteToRoast);
@@ -172,119 +156,138 @@ export default function Home({ topRoasts, isSignedIn }: Props) {
     <>
       <SEO
         title="Roast My Site — Supercharge your landing pages with feedback"
-        description="Get insights for your business with feedback that helps you grow. Discover insider knowledge from a network of reputable business owners, makers and indies."
-        type="website"
-        url="https://www.resumebeaver.com"
-        bareDomain="www.resumebeaver.com"
-        image={{
-          url: "https://resumebeaver.com/thumbnail.png",
-          alt: "Resume Beaver",
-          width: "1200",
-          height: "630",
-        }}
+        description="Get insights for your business with feedback that helps you grow. Discover insider knowledge from a network of reputable founders."
       />
       <main>
         <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
         <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
         <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
         <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
-        <section>
-          <Container
-            pt={{ base: 50, sm: 90 }}
-            pb={60}
-            className={classes.hero}
-            size="lg"
-          >
+        <Container className={classes.wrapper}>
+          {/* Hero */}
+          <section id="hero" className="mb-28 lg:mb-48">
             {/* Title */}
-            <Title className={classes.title}>
+            <Title
+              order={1}
+              fz={{ base: 32, sm: 40 }}
+              fw={800}
+              lts={-1}
+              mb="xl"
+              className={classes.textAlign}
+            >
               Convert visitors into{" "}
               <span className={classes.highlight}>paying customers</span>
             </Title>
 
             {/* Subtitle */}
-            <Container size={600} p={0} mb="xl">
-              <Text size="lg" color="dimmed" className={classes.subTitle}>
-                Grow your business with public, honest feedback. Discover
-                insider knowledge from a network of reputable makers
+            <Container size={600} p={0} mb={40}>
+              <Text
+                fz={{ base: 20, sm: 22 }}
+                color="dimmed"
+                className={classes.textAlign}
+              >
+                Grow your website with public, honest feedback. Discover insider
+                knowledge from a network of reputable founders
               </Text>
             </Container>
 
             {/* CTA: site search */}
-            <Container size="sm" p={0} mb={{ base: "xl", sm: 60 }}>
-              <Title order={2} mb="xs" className={classes.textAlignMd}>
-                Roast any site ↓
-              </Title>
-              <Flex align="center" maw={400} mx="auto">
-                <TextInput
-                  type="url"
-                  placeholder="https://twitter.com"
-                  radius="xl"
-                  size="md"
-                  icon={<IconFlame size="1.1rem" stroke={1.5} />}
-                  classNames={{
-                    input: classes.typeYourSiteInput,
-                    root: classes.typeYourSiteInputWrapper,
-                  }}
-                  error={formError}
-                  value={siteToRoast}
-                  onChange={(e) => {
-                    // Reset form error if there was one
-                    if (formError) {
-                      formErrorSet("");
-                    }
-                    siteToRoastSet(e.target.value);
-                  }}
-                />
-                <Button
-                  size="md"
-                  radius="xl"
-                  className={classes.typeYourSiteButton}
-                  onClick={(e) => onRoastClick(e)}
+            <Container size="sm" p={0}>
+              <Text
+                fw={600}
+                fz={{ base: 22, sm: 32 }}
+                className={classes.textAlign}
+              >
+                See how your website is doing ↓
+              </Text>
+              <Text mb="md" color="dimmed" className={classes.textAlign}>
+                ...or roast any website you want
+              </Text>
+              <Box mb={60} maw={500} mx="auto">
+                <Flex align="center">
+                  <TextInput
+                    type="url"
+                    placeholder="roastmysite.com"
+                    size="lg"
+                    icon={<IconFlame size="1.5rem" stroke={1.5} />}
+                    classNames={{
+                      input: classes.typeYourSiteInput,
+                      root: classes.typeYourSiteInputWrapper,
+                    }}
+                    error={formError.length > 0}
+                    value={siteToRoast}
+                    onChange={(e) => {
+                      // Reset form error if there was one
+                      if (formError) {
+                        formErrorSet("");
+                      }
+                      siteToRoastSet(e.target.value);
+                    }}
+                  />
+                  <Button
+                    size="lg"
+                    className={classes.typeYourSiteButton}
+                    onClick={onClickCTA}
+                  >
+                    Go
+                  </Button>
+                </Flex>
+                {formError && (
+                  <Text
+                    color="red"
+                    mt={10}
+                    size="sm"
+                    className={classes.textAlign}
+                  >
+                    {formError}
+                  </Text>
+                )}
+              </Box>
+              {/* Dictionary */}
+              <Box maw={600} mx="auto">
+                <Divider />
+                <Text
+                  italic
+                  mt={40}
+                  mb={30}
+                  size="sm"
+                  color="dimmed"
+                  className={classes.textAlign}
                 >
-                  Start roasting
-                </Button>
-              </Flex>
+                  We define a roast (rəʊst): as the act of giving & receiving
+                  feedback on our products. It helps us get an outsider view
+                  into our products.
+                </Text>
+              </Box>
             </Container>
-
-            {/* Roasts */}
-            <Container size="md" p={0} mb="xs">
-              <RenderRoasts roasts={topRoasts} />
-            </Container>
-          </Container>
-        </section>
-      </main>
-    </>
-  );
-}
-
-function RenderRoasts({ roasts }: { roasts: Roast[] }) {
-  const router = useRouter();
-  const { classes } = useStyles();
-  if (!roasts.length) {
-    return null;
-  }
-  return (
-    <>
-      <Title align="center" order={3} className={classes.textAlignSm} mb="lg">
-        See the sites with most roasts
-      </Title>
-      <Container p={0} maw={600}>
-        <SimpleGrid
-          cols={3}
-          breakpoints={[{ maxWidth: "36rem", cols: 1, spacing: "sm" }]}
-        >
-          {roasts.map((roast) => (
-            <Button
-              key={roast.url}
-              variant="light"
-              color="red"
-              onClick={(e) => router.push(`/roast/${roast.url}`)}
+          </section>
+          <section id="features" className="mb-28 lg:mb-48">
+            <Title
+              order={2}
+              fz={{ base: 36, sm: 40 }}
+              mb="md"
+              className={classes.textAlign}
             >
-              {roast.url}
-            </Button>
-          ))}
-        </SimpleGrid>
-      </Container>
+              Actionable results in no time
+            </Title>
+            <Text mb={70} color="dimmed" className={classes.textAlign}>
+              dasdasdas
+            </Text>
+            <Features />
+          </section>
+          <section id="top-roasts" className="mb-12">
+            <Title
+              order={3}
+              fz={{ base: 32, sm: 38 }}
+              mb="lg"
+              className={classes.textAlign}
+            >
+              Don't want to roast yet?
+            </Title>
+            <RenderRoasts roasts={topRoasts} />
+          </section>
+        </Container>
+      </main>
     </>
   );
 }
@@ -323,4 +326,70 @@ export async function getServerSideProps() {
       topRoasts,
     },
   };
+}
+
+function RenderRoasts({ roasts }: { roasts: Roast[] }) {
+  const router = useRouter();
+  if (!roasts.length) {
+    return null;
+  }
+  return (
+    <Container p={0} maw={600}>
+      <SimpleGrid
+        cols={3}
+        breakpoints={[{ maxWidth: "36rem", cols: 1, spacing: "sm" }]}
+      >
+        {roasts
+          .sort((a, b) => b.roastCount - a.roastCount)
+          .map((roast) => (
+            <Button
+              key={roast.url}
+              variant="light"
+              color="orange"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push(`/roast/${roast.url}`);
+              }}
+            >
+              {roast.url}
+            </Button>
+          ))}
+      </SimpleGrid>
+    </Container>
+  );
+}
+
+function Features() {
+  const router = useRouter();
+  const { classes, theme } = useStyles();
+
+  const items = features.map((feature) => (
+    <div key={feature.title}>
+      <ThemeIcon size={44} radius="md" variant="light" color="green">
+        <feature.icon size={rem(26)} stroke={1.5} />
+      </ThemeIcon>
+      <Text fz="lg" mt="sm" fw={500}>
+        {feature.title}
+      </Text>
+      <Text c="dimmed" fz="sm">
+        {feature.description}
+      </Text>
+    </div>
+  ));
+
+  return (
+    <Container p={0} size="md">
+      {/* <Grid gutter={80}> */}
+      {/* <Col> */}
+      <SimpleGrid
+        cols={3}
+        spacing={30}
+        breakpoints={[{ maxWidth: "md", cols: 1 }]}
+      >
+        {items}
+      </SimpleGrid>
+      {/* </Col> */}
+      {/* // </Grid> */}
+    </Container>
+  );
 }

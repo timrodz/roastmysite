@@ -1,19 +1,14 @@
 import {
   Button,
-  Center,
   Container,
-  Flex,
   Group,
   Header,
-  List,
-  Text,
-  Title,
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconFlame } from "@tabler/icons-react";
 import Link from "next/link";
 import Logo from "./Logo";
+import { useSession } from "@supabase/auth-helpers-react";
 
 const HEADER_HEIGHT = rem(60);
 
@@ -86,15 +81,27 @@ export const useHeaderStyles = createStyles((theme) => ({
 }));
 
 export default function Navbar() {
+  const session = useSession();
   const { classes } = useHeaderStyles();
   return (
     <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container size="md" className={classes.header}>
         <Logo />
         <Group>
-          <Link href="/roast-page">
-            <Button variant="filled">Start roasting</Button>
-          </Link>
+          <Link href="/account">Top roasts</Link>
+          {session ? (
+            <>
+              <Link href="/account">
+                <Button variant="light">Account</Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="light">Login</Button>
+              </Link>
+            </>
+          )}
         </Group>
       </Container>
     </Header>

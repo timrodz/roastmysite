@@ -1,4 +1,4 @@
-import { Group, Image, Title, TitleOrder, rem } from "@mantine/core";
+import { Group, Text, TitleOrder } from "@mantine/core";
 import { IconFlame } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -7,23 +7,14 @@ interface Props {
 }
 
 export default function Logo({ size = "lg" }: Props) {
-  let titleOrder: TitleOrder = 2;
-  switch (size) {
-    case "sm":
-      titleOrder = 5;
-      break;
-    default:
-      titleOrder = 3;
-      break;
-  }
   return (
-    <Title order={titleOrder}>
+    <Text fz={{ base: 18, sm: 22 }} fw={600}>
       <Link href="/">
         <Group noWrap spacing={2}>
-          <IconFlame size={size === "lg" ? "2rem" : "1rem"} />
+          <IconFlame size={size === "lg" ? "1.5rem" : "1.25rem"} />
           Roast My Site
         </Group>
       </Link>
-    </Title>
+    </Text>
   );
 }

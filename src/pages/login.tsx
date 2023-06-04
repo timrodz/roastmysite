@@ -1,4 +1,6 @@
+/** TODO: eventually create own login UI */
 import { getSiteURL } from "@/utils/helpers";
+import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Container } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -9,6 +11,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function SignIn() {
+  const { classes } = useGlobalStyles();
   const session = useSession();
   const router = useRouter();
   const supabase = useSupabaseClient();
@@ -23,7 +26,7 @@ export default function SignIn() {
     <>
       {/* <SEO /> */}
       <main>
-        <Container pt={{ base: 50, sm: 90 }} pb={60}>
+        <Container size="md" className={classes.pageWrapper}>
           <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
             <Auth
               supabaseClient={supabase}

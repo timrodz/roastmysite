@@ -1,5 +1,5 @@
-import SEO from "@/components/SEO";
 import { Database } from "@/lib/database.types";
+import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
   Button,
   Container,
@@ -9,18 +9,15 @@ import {
   TextInput,
 } from "@mantine/core";
 import { User, createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconAt } from "@tabler/icons-react";
-import {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
+import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
 export default function Account({ user }: { user: User }) {
+  const { classes } = useGlobalStyles();
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
   const [loading, setLoading] = useState(true);
@@ -96,7 +93,7 @@ export default function Account({ user }: { user: User }) {
     <>
       {/* <SEO /> */}
       <main>
-        <Container size="xs" pt={{ base: 50, sm: 90 }} pb={60}>
+        <Container size="xs" className={classes.pageWrapper}>
           <Stack spacing="md">
             <TextInput size="lg" label="E-mail" value={user.email} disabled />
             <TextInput
@@ -140,7 +137,7 @@ export default function Account({ user }: { user: User }) {
                   color="red"
                   onClick={async () => {
                     await supabase.auth.signOut();
-                    router.push("/signin");
+                    router.push("/login");
                   }}
                 >
                   Sign Out
@@ -165,7 +162,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   if (!session)
     return {
       redirect: {
-        destination: "/signin",
+        destination: "/login",
         permanent: false,
       },
     };

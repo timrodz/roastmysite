@@ -16,3 +16,14 @@
   background: linear-gradient(1turn,hsla(0,0%,85%,0) 27.6%,#fbfbfb);
   transform: rotate(-180deg);
 }
+
+.page-wrapper {
+  position: "relative";
+  z-index: 1;
+  padding-bottom: 60rem;
+  padding-top: 90rem;
+
+    /* [theme.fn.smallerThan("sm")]: {
+      paddingTop: rem(50),
+    }, */
+}
