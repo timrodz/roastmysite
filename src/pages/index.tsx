@@ -274,6 +274,55 @@ export default function Home({ topRoasts, isSignedIn }: Props) {
               dasdasdas
             </Text>
             <Features />
+            <Text
+              mt={100}
+              mb={5}
+              fw={600}
+              fz={{ base: 22, sm: 32 }}
+              className={classes.textAlign}
+            >
+              Start roasting ↓
+            </Text>
+            <Box mb={60} maw={500} mx="auto">
+              <Flex align="center">
+                <TextInput
+                  type="url"
+                  placeholder="roastmysite.com"
+                  size="lg"
+                  icon={<IconFlame size="1.5rem" stroke={1.5} />}
+                  classNames={{
+                    input: classes.typeYourSiteInput,
+                    root: classes.typeYourSiteInputWrapper,
+                  }}
+                  error={formError.length > 0}
+                  value={siteToRoast}
+                  onChange={(e) => {
+                    // Reset form error if there was one
+                    if (formError) {
+                      formErrorSet("");
+                    }
+                    siteToRoastSet(e.target.value);
+                  }}
+                />
+                <Button
+                  size="lg"
+                  className={classes.typeYourSiteButton}
+                  onClick={onClickCTA}
+                >
+                  Go
+                </Button>
+              </Flex>
+              {formError && (
+                <Text
+                  color="red"
+                  mt={10}
+                  size="sm"
+                  className={classes.textAlign}
+                >
+                  {formError}
+                </Text>
+              )}
+            </Box>
           </section>
           <section id="top-roasts" className="mb-12">
             <Title
