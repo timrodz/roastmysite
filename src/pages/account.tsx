@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { Database } from "@/lib/database.types";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
@@ -25,6 +26,8 @@ export default function Account({ user }: { user: User }) {
   const [twitterProfile, twitterProfileSet] =
     useState<Profiles["twitter_profile"]>(null);
   const [avatarUrl, avatarUrlSet] = useState<Profiles["avatar_url"]>(null);
+
+  const [usernameError, usernameErrorSet] = useState("");
 
   useEffect(() => {
     getProfile();
@@ -69,6 +72,7 @@ export default function Account({ user }: { user: User }) {
     try {
       setLoading(true);
       if (!user) throw new Error("No user");
+      if (!username) throw new Error("No username provided");
 
       const updates = {
         id: user.id,
@@ -81,9 +85,16 @@ export default function Account({ user }: { user: User }) {
       let { error } = await supabase.from("profiles").upsert(updates);
       if (error) throw error;
       alert("Profile updated!");
-    } catch (error) {
-      alert("Error updating the data!");
-      console.log(error);
+    } catch (error: any) {
+      if (error.code && error.code === "23505") {
+        usernameErrorSet("That username has already been taken.");
+      }
+      if (error.message === "No username provided") {
+        usernameErrorSet("Please write an username.");
+      } else {
+        alert("Error updating your profile!");
+        console.log(error);
+      }
     } finally {
       setLoading(false);
     }
@@ -91,7 +102,7 @@ export default function Account({ user }: { user: User }) {
 
   return (
     <>
-      {/* <SEO /> */}
+      <SEO title="Profile page" description="See and edit your profile" />
       <main>
         <Container size="xs" className={classes.pageWrapper}>
           <Stack spacing="md">
@@ -100,7 +111,11 @@ export default function Account({ user }: { user: User }) {
               size="lg"
               label="Username"
               value={username || ""}
-              onChange={(e) => usernameSet(e.target.value)}
+              onChange={(e) => {
+                usernameErrorSet("");
+                usernameSet(e.target.value);
+              }}
+              error={usernameError}
             />
             <TextInput
               size="lg"
@@ -152,6 +167,7 @@ export default function Account({ user }: { user: User }) {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  // TODO: cookies
   // Create authenticated Supabase Client
   const supabase = createPagesServerClient(ctx);
   // Check if we have a session

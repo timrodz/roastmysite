@@ -1,4 +1,4 @@
-import { Group, Text, TitleOrder } from "@mantine/core";
+import { Group, Text } from "@mantine/core";
 import { IconFlame } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -11,7 +11,10 @@ export default function Logo({ size = "lg" }: Props) {
     <Text fz={{ base: 18, sm: 22 }} fw={600}>
       <Link href="/">
         <Group noWrap spacing={2}>
-          <IconFlame size={size === "lg" ? "1.5rem" : "1.25rem"} />
+          <IconFlame
+            size={size === "lg" ? "1.5rem" : "1.25rem"}
+            color="#364fc7"
+          />
           Roast My Site
         </Group>
       </Link>

@@ -176,7 +176,7 @@ export default function Home({ topRoasts, isSignedIn }: Props) {
               className={classes.textAlign}
             >
               Convert visitors into{" "}
-              <span className={classes.highlight}>paying customers</span>
+              <span className={classes.highlight}>customers</span>
             </Title>
 
             {/* Subtitle */}

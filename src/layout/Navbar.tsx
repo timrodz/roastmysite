@@ -88,7 +88,7 @@ export default function Navbar() {
       <Container size="md" className={classes.header}>
         <Logo />
         <Group>
-          <Link href="/account">Top roasts</Link>
+          {/* <Link href="/">Top roasts</Link> */}
           {session ? (
             <>
               <Link href="/account">
@@ -98,7 +98,7 @@ export default function Navbar() {
           ) : (
             <>
               <Link href="/login">
-                <Button variant="light">Login</Button>
+                <Button variant="light">Get started</Button>
               </Link>
             </>
           )}

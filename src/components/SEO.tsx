@@ -10,6 +10,7 @@ interface Image {
 interface Props {
   title: string;
   description: string;
+  isLandingPage?: boolean;
 }
 
 export default function SEO(props: Props) {
@@ -23,9 +24,13 @@ export default function SEO(props: Props) {
     height: "630",
   };
 
+  const title = props.isLandingPage
+    ? props.title
+    : `${props.title} | Roast My Site`;
+
   return (
     <Head>
-      <title>{props.title}</title>
+      <title>{title}</title>
       <meta name="description" content={props.description} />
 
       {/* Open graph */}
