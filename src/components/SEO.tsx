@@ -26,7 +26,7 @@ export default function SEO(props: Props) {
 
   const title = props.isLandingPage
     ? props.title
-    : `${props.title} | Roast My Site`;
+    : `${props.title} — Roast My Site`;
 
   return (
     <Head>

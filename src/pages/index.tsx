@@ -6,11 +6,9 @@ import { sanitizeRoastUrl } from "@/utils/url-sanity";
 import {
   Box,
   Button,
-  Col,
   Container,
   Divider,
   Flex,
-  Grid,
   SimpleGrid,
   Text,
   TextInput,
@@ -108,7 +106,6 @@ interface Roast {
 
 interface Props {
   topRoasts: Roast[];
-  isSignedIn: boolean;
 }
 
 const features = [
@@ -132,7 +129,7 @@ const features = [
   },
 ];
 
-export default function Home({ topRoasts, isSignedIn }: Props) {
+export default function Home({ topRoasts }: Props) {
   const router = useRouter();
   const { classes } = useStyles();
 
@@ -409,9 +406,6 @@ function RenderRoasts({ roasts }: { roasts: Roast[] }) {
 }
 
 function Features() {
-  const router = useRouter();
-  const { classes, theme } = useStyles();
-
   const items = features.map((feature) => (
     <div key={feature.title}>
       <ThemeIcon size={44} radius="md" variant="light" color="green">
@@ -428,8 +422,6 @@ function Features() {
 
   return (
     <Container p={0} size="md">
-      {/* <Grid gutter={80}> */}
-      {/* <Col> */}
       <SimpleGrid
         cols={3}
         spacing={30}
@@ -437,8 +429,6 @@ function Features() {
       >
         {items}
       </SimpleGrid>
-      {/* </Col> */}
-      {/* // </Grid> */}
     </Container>
   );
 }

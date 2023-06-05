@@ -31,7 +31,7 @@ export default function SignIn() {
             <Auth
               supabaseClient={supabase}
               providers={["github"]}
-              redirectTo={`${getSiteURL()}account`}
+              redirectTo={getSiteURL()}
               magicLink={true}
               appearance={{
                 theme: ThemeSupa,

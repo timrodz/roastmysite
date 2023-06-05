@@ -24,6 +24,14 @@ const useStyles = createStyles((theme) => ({
       marginBottom: 0,
     },
 
+    h1: {
+      marginTop: 0,
+    },
+
+    p: {
+      marginBottom: theme.spacing.xs,
+    },
+
     img: {
       borderRadius: rem(5),
       marginBottom: "0 !important",

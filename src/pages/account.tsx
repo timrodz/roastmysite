@@ -38,7 +38,7 @@ export default function Account({ user }: { user: User }) {
       setLoading(true);
       if (!user) throw new Error("No user");
 
-      let { data, error, status } = await supabase
+      const { data, error, status } = await supabase
         .from("profiles")
         .select(`username, twitter_profile, avatar_url`)
         .eq("id", user.id)
@@ -82,7 +82,7 @@ export default function Account({ user }: { user: User }) {
         updated_at: new Date().toISOString(),
       };
 
-      let { error } = await supabase.from("profiles").upsert(updates);
+      const { error } = await supabase.from("profiles").upsert(updates);
       if (error) throw error;
       alert("Profile updated!");
     } catch (error: any) {

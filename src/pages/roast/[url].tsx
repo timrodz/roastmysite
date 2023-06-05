@@ -1,5 +1,7 @@
 /** TODO: CSS for visited link to remain unchanged */
+import AddRoastForm from "@/components/AddRoastForm";
 import Roast from "@/components/Roast";
+import SEO from "@/components/SEO";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Database } from "@lib/database.types";
 import { supabaseClient } from "@lib/supabase";
@@ -7,29 +9,37 @@ import {
   Box,
   Button,
   Container,
+  Space,
   Stack,
   Text,
-  Textarea,
   Title,
 } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Editor } from "@tiptap/react";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
-type Site = Database["public"]["Tables"]["site"]["Row"];
 type Roast = Database["public"]["Tables"]["roast"]["Row"];
+type Site = { id: number; url: string };
+type UserProfile = Database["public"]["Tables"]["profiles"]["Row"];
+
+interface AugmentedRoast extends Roast {
+  profile?: UserProfile;
+}
 
 interface Props {
-  site: { id: number; url: string };
-  roasts?: Roast[];
+  userId: string | null;
+  site: Site;
+  roasts?: AugmentedRoast[];
 }
 
 const minimumCharactersForRoast = 30;
 
-export default function RoastUrl({ site, roasts }: Props) {
+export default function RoastUrl({ userId, site, roasts }: Props) {
   const { classes } = useGlobalStyles();
-
   const [roastContent, roastContentSet] = useState("");
 
   const hasRoasts = roasts ? roasts.length > 0 : false;
@@ -38,12 +48,13 @@ export default function RoastUrl({ site, roasts }: Props) {
     return (
       <Roast
         key={r.id}
-        username={r.site_id.toString()}
-        postedAt={new Date(r.created_at!)}
+        username={r.profile?.username || "Unknown"}
+        postedAt={new Date(r.created_at)}
         content={r.content}
       />
     );
   });
+
   /**
    * 1. Find site entry in DB
    * 2. Find roasts assigned to site
@@ -51,84 +62,169 @@ export default function RoastUrl({ site, roasts }: Props) {
    */
   return (
     <>
-      {/* <SEO /> */}
+      <SEO
+        title={`Roast ${site.url}`}
+        description={`Roast for website ${site.url}`}
+      />
       <main>
         <Container className={classes.pageWrapper}>
           <section id="title" className="mb-8">
-            {hasRoasts ? (
-              <>
-                <Title fz={{ base: 32, sm: 40 }} className={classes.textAlign}>
-                  Roasts for{" "}
-                  <Link
-                    target="_blank"
-                    className={classes.linkPrimary}
-                    href={`https://${site}`}
+            <Container p={0} size="sm">
+              {hasRoasts ? (
+                <>
+                  <Title
+                    fz={{ base: 32, sm: 40 }}
+                    mb="xs"
+                    className={classes.textAlign}
                   >
-                    {site.url}
-                  </Link>
-                </Title>
-                <Stack mt={30}>{renderRoasts}</Stack>
-              </>
-            ) : (
-              <>
-                <Title
-                  mb="xs"
-                  fz={{ base: 32, sm: 40 }}
-                  className={classes.textAlign}
-                >
-                  There are no roasts for{" "}
-                  <Link
-                    target="_blank"
-                    className={classes.linkPrimary}
-                    href={`https://${site.url}`}
+                    The roast of{" "}
+                    <Link
+                      target="_blank"
+                      className={classes.linkSecondary}
+                      href={`https://${site}`}
+                    >
+                      {site.url}
+                    </Link>
+                  </Title>
+                </>
+              ) : (
+                <>
+                  <Title
+                    mb="xs"
+                    fz={{ base: 32, sm: 40 }}
+                    className={classes.textAlign}
                   >
-                    {site.url}
-                  </Link>{" "}
-                  yet
-                </Title>
-                <Text size="lg" mb="sm" className={classes.textAlign}>
-                  But you can be the first to roast them!
-                </Text>
-              </>
-            )}
-          </section>
-          <section id="add-roast">
-            <Container p={0} size="xs">
-              <Textarea
-                label="Add your own roast"
-                minRows={3}
-                autosize
-                value={roastContent}
-                onChange={(e) => roastContentSet(e.target.value)}
-              />
-              <Text mb="xs" size="xs" color="dimmed">
-                {roastContent.length < minimumCharactersForRoast
-                  ? `Roasts require a minimum of ${minimumCharactersForRoast} characters. ${roastContent.length}/${minimumCharactersForRoast}`
-                  : "Good to go!"}
-              </Text>
-              {/* TODO: Replace TextArea for mantine rich text editor (tiptap) */}
-              <AddRoast siteId={site.id} content={roastContent} />
+                    There are no roasts for{" "}
+                    <Link
+                      target="_blank"
+                      className={classes.linkSecondary}
+                      href={`https://${site.url}`}
+                    >
+                      {site.url}
+                    </Link>{" "}
+                    yet
+                  </Title>
+                  <Text
+                    size="lg"
+                    mb="sm"
+                    color="dimmed"
+                    className={classes.textAlign}
+                  >
+                    But you can be the first to roast them!
+                  </Text>
+                </>
+              )}
             </Container>
           </section>
+          <section id="add-roast" className="mb-12">
+            <Container p={0} size="xs">
+              {userId ? (
+                <>
+                  <Title fz={{ base: 20, sm: 26 }} order={2} mb="xs">
+                    Add your own roast roast
+                  </Title>
+                  <AddRoastForm
+                    onUpdate={(editor: Editor) => {
+                      const htmlContent = editor.getHTML();
+                      roastContentSet(htmlContent);
+                    }}
+                  />
+                  <Space h="md" />
+                  <AddRoast
+                    site={site}
+                    content={roastContent}
+                    userId={userId}
+                    // username={userData.username || ""}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text size="xl" className={classes.textAlign}>
+                    Please{" "}
+                    <Link className={classes.linkPrimary} href="/login">
+                      Login
+                    </Link>{" "}
+                    to submit your roast
+                  </Text>
+                </>
+              )}
+            </Container>
+          </section>
+          {hasRoasts && (
+            <section id="view-roasts" className="mb-12">
+              <Container p={0} size="xs" mt={30}>
+                <Title fz={{ base: 24, sm: 30 }} order={3} mb="xs">
+                  See all roasts
+                </Title>
+                <Stack spacing={10}>{renderRoasts}</Stack>
+              </Container>
+            </section>
+          )}
         </Container>
       </main>
     </>
   );
 }
 
-function AddRoast({ content, siteId }: { siteId: number; content: string }) {
-  const onClick = async (e) => {
+function AddRoast({
+  content,
+  site,
+  userId,
+}: {
+  site: Site;
+  content: string;
+  userId: string;
+}) {
+  const router = useRouter();
+  const supabase = useSupabaseClient<Database>();
+
+  const onClick = async (e: any) => {
     e.preventDefault();
 
+    if (!userId) {
+      console.warn("Not logged in");
+      return;
+    }
+
     // Sanity check for text RIP
-    // Text over 30 characters long?
-    if (!content || content.length < 30) {
+    if (
+      !content.length
+      //  || content.length < minimumCharactersForRoast
+    ) {
       console.warn("No content, can't submit roast");
       return;
     }
 
-    // TODO: DB operation
-    await supabaseClient.from("roast").insert({ content, site_id: siteId });
+    let siteId = site.id;
+
+    // Website doesn't exist yet
+    if (siteId === -1) {
+      const { data: createdWebsiteData, error: websiteCreateError } =
+        await supabase
+          .from("site")
+          .insert({ url: site.url })
+          .select("id")
+          .single();
+
+      if (!createdWebsiteData || websiteCreateError) {
+        console.error(websiteCreateError);
+        alert("An error occurred while uploading your roast. Sorry!");
+        return;
+      }
+      siteId = createdWebsiteData.id;
+    }
+
+    const { error } = await supabase
+      .from("roast")
+      .insert({ content, site_id: siteId, user_id: userId });
+
+    if (error) {
+      console.error(error);
+      alert("An error occurred while uploading your roast. Sorry!");
+      return;
+    }
+
+    router.reload();
   };
 
   return (
@@ -140,54 +236,110 @@ function AddRoast({ content, siteId }: { siteId: number; content: string }) {
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ url: string }>
-) {
-  const supabase = createPagesServerClient(context);
+): Promise<{
+  props: Props;
+}> {
   const siteUrl = context.params?.url!;
-  console.log("server side props", { url: siteUrl });
 
-  let { data: siteData } = await supabase
-    .from("site")
-    .select("id")
-    .eq("url", siteUrl)
-    .limit(1);
+  const supabase = createPagesServerClient(context);
 
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  console.log({ session });
+  const userId = session?.user.id ?? null;
 
-  if (!siteData?.length) {
+  const { data: website } = await supabase
+    .from("site")
+    .select("id")
+    .eq("url", siteUrl)
+    .single();
+
+  // No website created yet, don't bother with roasts
+  if (!website) {
     console.warn("No entries for site, therefore no roasts");
     return {
       props: {
-        site: siteUrl,
-        roasts: [],
+        userId,
+        site: {
+          id: -1,
+          url: siteUrl,
+        },
       },
     };
   }
 
-  const [site] = siteData;
-
-  console.log({ siteId: site.id });
-
-  let { data: roastData } = await supabaseClient
+  const { data: roasts } = await supabaseClient
     .from("roast")
-    // .select("id, user_id, content")
     .select("*")
-    .eq("site_id", site.id);
+    .eq("site_id", website.id)
+    .order("created_at", { ascending: false });
 
-  const roasts = roastData?.filter(Boolean) as Roast[];
+  const roastUserIds = roasts?.map((r) => r.user_id || "").filter(Boolean);
 
-  console.log({ roasts });
+  const typedRoasts = roasts?.filter(Boolean) as Roast[];
+
+  // Basic roasts with no user Ids... would only happen if the user deleted the account
+  if (!roastUserIds) {
+    return {
+      props: {
+        userId,
+        site: {
+          id: website.id,
+          url: siteUrl,
+        },
+        roasts: typedRoasts,
+      },
+    };
+  }
+
+  // Get user profiles
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select(`id, username, twitter_profile, avatar_url`)
+    .in("id", roastUserIds);
+
+  // Again shouldn't really happen, but just in case
+  if (!profiles) {
+    return {
+      props: {
+        userId,
+        site: {
+          id: website.id,
+          url: siteUrl,
+        },
+        roasts: typedRoasts,
+      },
+    };
+  }
+
+  const typedProfile = profiles as UserProfile[];
+
+  const profilesByUserId: Map<string, UserProfile> = new Map(
+    typedProfile?.filter(Boolean).map((p) => [p.id, p])
+  );
+
+  const augmentedRoasts: AugmentedRoast[] = typedRoasts
+    ?.filter(Boolean)
+    .map((roast) => {
+      const profile = profilesByUserId.get(roast.user_id || "");
+      console.log({ profile, uid: roast.user_id });
+      return {
+        ...roast,
+        profile,
+      };
+    });
+
+  console.debug({ augmentedRoasts });
 
   return {
     props: {
+      userId,
       site: {
-        id: site.id,
+        id: website.id,
         url: siteUrl,
       },
-      roasts: roasts,
+      roasts: augmentedRoasts,
     },
   };
 }

@@ -38,21 +38,21 @@ export interface Database {
       roast: {
         Row: {
           content: string
-          created_at: string | null
+          created_at: string
           id: number
           site_id: number
           user_id: string | null
         }
         Insert: {
           content: string
-          created_at?: string | null
+          created_at?: string
           id?: number
           site_id: number
           user_id?: string | null
         }
         Update: {
           content?: string
-          created_at?: string | null
+          created_at?: string
           id?: number
           site_id?: number
           user_id?: string | null
@@ -60,17 +60,17 @@ export interface Database {
       }
       site: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: number
           url: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           url: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           url?: string
         }

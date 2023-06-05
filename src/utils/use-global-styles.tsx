@@ -20,6 +20,10 @@ export const useGlobalStyles = createStyles((theme) => ({
   },
 
   linkPrimary: {
-    color: theme.primaryColor,
+    color: theme.colors.indigo,
+  },
+
+  linkSecondary: {
+    color: theme.colors.orange,
   },
 }));
