@@ -11,6 +11,8 @@ import { cache } from "../../emotion-cache";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [supabase] = useState(() => createPagesBrowserClient());
+  // https://stackoverflow.com/questions/71809903/next-js-component-cannot-be-used-as-a-jsx-component
+  const ChildrenComponent = Component as any;
 
   return (
     <SessionContextProvider
@@ -41,7 +43,8 @@ export default function App({ Component, pageProps }: AppProps) {
       >
         <Flex mih={"100vh"} direction="column">
           <Navbar />
-          <Component {...pageProps} />
+          <ChildrenComponent {...pageProps} />
+          {/* <Component {...pageProps} /> */}
           <Footer />
         </Flex>
       </MantineProvider>
