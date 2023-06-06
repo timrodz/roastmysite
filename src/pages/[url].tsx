@@ -1,9 +1,8 @@
-import AddRoastForm from "@/components/AddRoastForm";
+import CreateRoastForm from "@/components/CreateRoastForm";
 import Roast from "@/components/Roast";
-import SEO from "@/components/SEO";
+import SEO from "@/components/misc/SEO";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Database } from "@lib/database.types";
-import { supabaseClient } from "@lib/supabase";
 import {
   Box,
   Button,
@@ -21,12 +20,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-type Roast = Database["public"]["Tables"]["roast"]["Row"];
+type Roast = Database["public"]["Tables"]["roasts"]["Row"];
 type Site = { id: number; url: string };
-type UserProfile = Database["public"]["Tables"]["profiles"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface AugmentedRoast extends Roast {
-  profile?: UserProfile;
+  profile?: Profile;
 }
 
 interface Props {
@@ -35,8 +34,6 @@ interface Props {
   roasts?: AugmentedRoast[];
 }
 
-const minimumCharactersForRoast = 30;
-
 export default function RoastUrl({ userId, site, roasts }: Props) {
   const { classes } = useGlobalStyles();
   const [roastContent, roastContentSet] = useState("");
@@ -44,10 +41,16 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
   const hasRoasts = roasts ? roasts.length > 0 : false;
 
   const renderRoasts = roasts?.map((r) => {
+    const profile = r.profile;
+    const user = {
+      username: profile?.username || "Unknown",
+      avatar: profile?.avatar_url || undefined,
+      twitter: profile?.twitter_profile || undefined,
+    };
     return (
       <Roast
         key={r.id}
-        username={r.profile?.username || "Unknown"}
+        user={user}
         postedAt={new Date(r.created_at)}
         content={r.content}
       />
@@ -120,9 +123,9 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
               {userId ? (
                 <>
                   <Title fz={{ base: 20, sm: 26 }} order={2} mb="xs">
-                    Add your own roast roast
+                    Add your own roast
                   </Title>
-                  <AddRoastForm
+                  <CreateRoastForm
                     onUpdate={(editor: Editor) => {
                       const htmlContent = editor.getHTML();
                       roastContentSet(htmlContent);
@@ -250,13 +253,12 @@ export async function getServerSideProps(
 
   const { data: website } = await supabase
     .from("websites")
-    .select("id")
+    .select("id, roasts(*)")
     .eq("url", siteUrl)
     .single();
 
   // No website created yet, don't bother with roasts
-  if (!website) {
-    console.warn("No entries for site, therefore no roasts");
+  if (!website || !website.roasts) {
     return {
       props: {
         userId,
@@ -268,15 +270,8 @@ export async function getServerSideProps(
     };
   }
 
-  const { data: roasts } = await supabaseClient
-    .from("roasts")
-    .select("*")
-    .eq("site_id", website.id)
-    .order("created_at", { ascending: false });
-
-  const roastUserIds = roasts?.map((r) => r.user_id || "").filter(Boolean);
-
-  const typedRoasts = roasts?.filter(Boolean) as Roast[];
+  const typedRoasts = website.roasts.filter(Boolean) as Roast[];
+  const roastUserIds = typedRoasts.map((r) => r.user_id || "");
 
   // Basic roasts with no user Ids... would only happen if the user deleted the account
   if (!roastUserIds) {
@@ -295,7 +290,8 @@ export async function getServerSideProps(
   // Get user profiles
   const { data: profiles } = await supabase
     .from("profiles")
-    .select(`id, username, twitter_profile, avatar_url`)
+    // .select(`id, username, twitter_profile, avatar_url`)
+    .select(`id, username, twitter_profile`)
     .in("id", roastUserIds);
 
   // Again shouldn't really happen, but just in case
@@ -312,9 +308,9 @@ export async function getServerSideProps(
     };
   }
 
-  const typedProfile = profiles as UserProfile[];
+  const typedProfile = profiles as Profile[];
 
-  const profilesByUserId: Map<string, UserProfile> = new Map(
+  const profilesByUserId: Map<string, Profile> = new Map(
     typedProfile?.filter(Boolean).map((p) => [p.id, p])
   );
 
@@ -322,14 +318,11 @@ export async function getServerSideProps(
     ?.filter(Boolean)
     .map((roast) => {
       const profile = profilesByUserId.get(roast.user_id || "");
-      console.log({ profile, uid: roast.user_id });
       return {
         ...roast,
         profile,
       };
     });
-
-  console.debug({ augmentedRoasts });
 
   return {
     props: {

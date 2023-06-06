@@ -1,5 +1,5 @@
-import SEO from "@/components/SEO";
-import StartRoastingCTA from "@/components/StartRoastingCTA";
+import SEO from "@/components/misc/SEO";
+import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
 import TopRoasts from "@/components/TopRoasts";
 import { supabaseClient } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
@@ -22,16 +22,20 @@ export default function RoastPage({ topRoasts }: Props) {
       <SEO title="Roasts" description="All roasts for Roast My Site" />
       <main>
         <Container size="md" className={classes.pageWrapper}>
-          <Text
-            mb={5}
-            fw={600}
-            fz={{ base: 26, sm: 38 }}
-            className={classes.textAlign}
-          >
-            Search for a website to roast ↓
-          </Text>
-          <StartRoastingCTA />
-          <TopRoasts title="Top roasts" roasts={topRoasts} />
+          <section id="search">
+            <Text
+              mb={5}
+              fw={600}
+              fz={{ base: 26, sm: 38 }}
+              className={classes.textAlign}
+            >
+              Search for a website to roast ↓
+            </Text>
+            <StartRoastingCTA />
+          </section>
+          <section id="roasts">
+            <TopRoasts title="Top roasts" roasts={topRoasts} />
+          </section>
         </Container>
       </main>
     </>

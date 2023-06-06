@@ -8,7 +8,7 @@ interface Props {
   onUpdate: any;
 }
 
-export default function AddRoastForm({ onUpdate }: Props) {
+export default function CreateRoastForm({ onUpdate }: Props) {
   const editor = useEditor({
     extensions: [StarterKit, Link, Underline],
     content: "",

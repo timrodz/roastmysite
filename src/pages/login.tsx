@@ -1,5 +1,5 @@
 /** TODO: eventually create own login UI */
-import SEO from "@/components/SEO";
+import SEO from "@/components/misc/SEO";
 import { getSiteURL } from "@/utils/helpers";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Container } from "@mantine/core";

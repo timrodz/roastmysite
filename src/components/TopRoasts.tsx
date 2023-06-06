@@ -1,5 +1,5 @@
 import { useGlobalStyles } from "@/utils/use-global-styles";
-import { Button, Container, SimpleGrid, Title } from "@mantine/core";
+import { Button, Container, SimpleGrid, Text, Title } from "@mantine/core";
 import { useRouter } from "next/router";
 
 interface Roast {
@@ -20,6 +20,7 @@ export default function TopRoasts({ title, roasts }: Props) {
     .sort((a, b) => b.count - a.count)
     .map((roast) => (
       <Button
+        mih={"8vw"}
         key={roast.url}
         variant="light"
         color="orange"
@@ -33,15 +34,24 @@ export default function TopRoasts({ title, roasts }: Props) {
     ));
 
   return (
-    <section id="top-roasts" className="mb-12">
+    <>
       <Title
         order={3}
-        fz={{ base: 26, sm: 32 }}
-        mb="xl"
+        fw={800}
+        fz={{ base: 26, sm: 36 }}
+        mb="sm"
         className={classes.textAlign}
       >
         {title}
       </Title>
+      <Text
+        mb="xl"
+        fz={{ base: 18, sm: 22 }}
+        color="dimmed"
+        className={classes.textAlign}
+      >
+        These websites are getting the most roasts out there! See for yourself
+      </Text>
       <Container p={0}>
         <SimpleGrid
           cols={3}
@@ -50,6 +60,6 @@ export default function TopRoasts({ title, roasts }: Props) {
           {sortedRoasts}
         </SimpleGrid>
       </Container>
-    </section>
+    </>
   );
 }

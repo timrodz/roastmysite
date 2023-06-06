@@ -1,5 +1,6 @@
 import { sanitizeRoastUrl } from "@/utils/url-sanity";
 import { useGlobalStyles } from "@/utils/use-global-styles";
+// import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
   Box,
   Button,
@@ -32,8 +33,8 @@ const useStyles = createStyles((theme) => ({
 
 export default function StartRoastingCTA() {
   const router = useRouter();
-  const { classes } = useGlobalStyles();
-  const { classes: class2 } = useStyles();
+  const { classes } = useStyles();
+  const { classes: globalClasses } = useGlobalStyles();
   const [siteToRoast, siteToRoastSet] = useState("");
   const [formError, formErrorSet] = useState("");
 
@@ -65,8 +66,8 @@ export default function StartRoastingCTA() {
             size="lg"
             icon={<IconFlame size="1.5rem" stroke={1.5} />}
             classNames={{
-              input: class2.typeYourSiteInput,
-              root: class2.typeYourSiteInputWrapper,
+              input: classes.typeYourSiteInput,
+              root: classes.typeYourSiteInputWrapper,
             }}
             error={formError.length > 0}
             value={siteToRoast}
@@ -80,14 +81,19 @@ export default function StartRoastingCTA() {
           />
           <Button
             size="lg"
-            className={class2.typeYourSiteButton}
+            className={classes.typeYourSiteButton}
             onClick={onClickCTA}
           >
             Go
           </Button>
         </Flex>
         {formError && (
-          <Text color="red" mt={10} size="sm" className={classes.textAlign}>
+          <Text
+            color="red"
+            mt={10}
+            size="sm"
+            className={globalClasses.textAlign}
+          >
             {formError}
           </Text>
         )}

@@ -1,4 +1,5 @@
-import SEO from "@/components/SEO";
+import Avatar from "@/components/account/Avatar";
+import SEO from "@/components/misc/SEO";
 import { Database } from "@/lib/database.types";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
@@ -137,8 +138,8 @@ export default function Account({ user }: { user: User }) {
                   onClick={() =>
                     updateProfile({
                       username,
-                      twitterProfile: twitterProfile,
-                      avatarUrl: avatarUrl,
+                      twitterProfile,
+                      avatarUrl,
                     })
                   }
                   disabled={loading}
@@ -160,6 +161,16 @@ export default function Account({ user }: { user: User }) {
               </>
             )}
           </Group>
+
+          {/* <Avatar
+            uid={user.id}
+            url={avatarUrl}
+            size={150}
+            onUpload={(url) => {
+              avatarUrlSet(url);
+              updateProfile({ username, twitterProfile, avatarUrl: url });
+            }}
+          /> */}
         </Container>
       </main>
     </>

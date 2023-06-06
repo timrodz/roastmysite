@@ -1,5 +1,9 @@
+/**
+ * NOT LOADING AVATARS YET
+ */
 import {
-  Avatar,
+  // Avatar,
+  Badge,
   Box,
   Group,
   Paper,
@@ -8,6 +12,7 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   comment: {
@@ -39,25 +44,32 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface Props {
+interface User {
   username: string;
-  imageUrl?: string;
+  avatar?: string;
+  twitter?: string;
+}
+
+interface Props {
+  user: User;
   postedAt: Date;
   content: string;
 }
 
-export default function Roast({
-  username,
-  imageUrl: userImageUrl,
-  postedAt,
-  content,
-}: Props) {
+export default function Roast({ user, postedAt, content }: Props) {
   const { classes } = useStyles();
   return (
     <Paper withBorder radius="md" className={classes.comment}>
-      <Group>
-        <Avatar src={userImageUrl} alt={username} radius="xl" />
-        <Text fz="sm">By {username}</Text>
+      <Group spacing={10}>
+        {/* {user.avatar && (
+          <Avatar src={user.avatar} alt={user.username} radius="xl" />
+        )} */}
+        <Text fz="sm">By {user.username}</Text>
+        {user.twitter && (
+          <Badge size="sm" color="blue">
+            <Link href="/">@{user.twitter}</Link>
+          </Badge>
+        )}
         <Box>
           <Text fz="xs" c="dimmed">
             {postedAt.toDateString()}

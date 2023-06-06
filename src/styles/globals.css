@@ -22,8 +22,4 @@
   z-index: 1;
   padding-bottom: 60rem;
   padding-top: 90rem;
-
-    /* [theme.fn.smallerThan("sm")]: {
-      paddingTop: rem(50),
-    }, */
 }

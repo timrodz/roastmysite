@@ -1,7 +1,7 @@
-import Dots from "@/components/LandingDots";
+import Dots from "@/components/misc/LandingDots";
 import Roast from "@/components/Roast";
-import SEO from "@/components/SEO";
-import StartRoastingCTA from "@/components/StartRoastingCTA";
+import SEO from "@/components/misc/SEO";
+import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
 import TopRoasts from "@/components/TopRoasts";
 import { supabaseClient } from "@/lib/supabase";
 import {
@@ -16,6 +16,7 @@ import {
   rem,
 } from "@mantine/core";
 import { IconNumber1, IconNumber2, IconNumber3 } from "@tabler/icons-react";
+import Pricing from "@/components/Pricing";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -50,7 +51,7 @@ const useStyles = createStyles((theme) => ({
 
   highlight: {
     position: "relative",
-    backgroundColor: theme.colors.green[1],
+    backgroundColor: theme.colors.orange[1],
     borderRadius: theme.radius.sm,
     padding: `${rem(4)} ${rem(12)} ${rem(6)} ${rem(12)}`,
   },
@@ -101,19 +102,18 @@ export default function Home({ topRoasts }: Props) {
         <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
         <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
         <Container className={classes.wrapper}>
-          {/* Hero */}
           <section id="hero" className="mb-28 lg:mb-48">
             {/* Title */}
             <Title
               order={1}
-              fz={{ base: 32, sm: 40 }}
+              fz={{ base: 32, sm: 50 }}
               fw={800}
               lts={-1}
               mb="xl"
               className={classes.textAlign}
             >
-              Convert visitors into{" "}
-              <span className={classes.highlight}>customers</span>
+              Your website's <span className={classes.highlight}>roasts</span>{" "}
+              are now public
             </Title>
 
             {/* Subtitle */}
@@ -137,13 +137,19 @@ export default function Home({ topRoasts }: Props) {
               >
                 See how your website is doing ↓
               </Text>
-              <Text mb="md" color="dimmed" className={classes.textAlign}>
+              <Text
+                mb="md"
+                fz={{ base: 17, sm: 18 }}
+                color="dimmed"
+                className={classes.textAlign}
+              >
                 ...or roast any website you want
               </Text>
               <StartRoastingCTA />
               {/* Dictionary */}
+              {/* <Box mx="auto"> */}
+              <Divider />
               <Box maw={600} mx="auto">
-                <Divider />
                 <Text
                   italic
                   mt={40}
@@ -157,24 +163,31 @@ export default function Home({ topRoasts }: Props) {
                   into our products.
                 </Text>
               </Box>
+              {/* </Box> */}
             </Container>
           </section>
-          <section id="features" className="mb-28 lg:mb-48">
+          <section id="features" className="mb-28 lg:mb-60">
             <Title
               order={2}
-              fz={{ base: 36, sm: 40 }}
+              fw={800}
+              fz={{ base: 24, sm: 36 }}
               mb="md"
               className={classes.textAlign}
             >
               Actionable results in no time
             </Title>
-            <Text mb={70} color="dimmed" className={classes.textAlign}>
-              dasdasdas
+            <Text
+              mb={50}
+              color="dimmed"
+              fz={{ base: 18, sm: 20 }}
+              className={classes.textAlign}
+            >
+              Receive feedback that helps you grow, in a matter of minutes.
             </Text>
             <Features />
             <Text
-              mt={100}
-              mb={5}
+              mt={70}
+              mb="md"
               fw={600}
               fz={{ base: 22, sm: 32 }}
               className={classes.textAlign}
@@ -183,7 +196,12 @@ export default function Home({ topRoasts }: Props) {
             </Text>
             <StartRoastingCTA />
           </section>
-          <TopRoasts title="See the top roasts" roasts={topRoasts} />
+          <section id="roasts" className="mb-60">
+            <TopRoasts title="See the top roasts" roasts={topRoasts} />
+          </section>
+          <section id="pricing" className="mb-32">
+            <Pricing />
+          </section>
         </Container>
       </main>
     </>
@@ -228,7 +246,7 @@ function Features() {
   ));
 
   return (
-    <Container p={0} size="md">
+    <Container p={0}>
       <SimpleGrid
         cols={3}
         spacing={30}
