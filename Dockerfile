@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock* ./
-RUN npm install
+RUN npm ci
 
 # 2. Rebuild the source code only when needed
 FROM node:lts as builder
@@ -39,4 +39,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
