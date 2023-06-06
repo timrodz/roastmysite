@@ -3,16 +3,19 @@ import SEO from "@/components/misc/SEO";
 import { Database } from "@/lib/database.types";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
+  Badge,
   Button,
+  Card,
   Container,
   Group,
+  List,
   Stack,
   Text,
   TextInput,
 } from "@mantine/core";
 import { User, createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconAt } from "@tabler/icons-react";
+import { IconAt, IconKey } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -31,35 +34,39 @@ export default function Account({ user }: { user: User }) {
   const [usernameError, usernameErrorSet] = useState("");
 
   useEffect(() => {
-    getProfile();
-  }, []);
-
-  async function getProfile() {
-    try {
-      setLoading(true);
-      if (!user) throw new Error("No user");
-
-      const { data, error, status } = await supabase
-        .from("profiles")
-        .select(`username, twitter_profile, avatar_url`)
-        .eq("id", user.id)
-        .single();
-
-      if (error && status !== 406) {
-        throw error;
-      }
-
-      if (data) {
-        usernameSet(data.username);
-        twitterProfileSet(data.twitter_profile);
-        avatarUrlSet(data.avatar_url);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+    if (!supabase && !user) {
+      return;
     }
-  }
+
+    async function getProfile() {
+      try {
+        setLoading(true);
+        if (!user) throw new Error("No user");
+
+        const { data, error, status } = await supabase
+          .from("profiles")
+          .select(`username, twitter_profile, avatar_url, lifetime_deal`)
+          .eq("id", user.id)
+          .single();
+
+        if (error && status !== 406) {
+          throw error;
+        }
+
+        if (data) {
+          usernameSet(data.username);
+          twitterProfileSet(data.twitter_profile);
+          avatarUrlSet(data.avatar_url);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getProfile().then().finally();
+  }, [user, supabase]);
 
   async function updateProfile({
     username,
@@ -109,6 +116,7 @@ export default function Account({ user }: { user: User }) {
           <Stack spacing="md">
             <TextInput size="lg" label="E-mail" value={user.email} disabled />
             <TextInput
+              required
               size="lg"
               label="Username"
               value={username || ""}
@@ -125,9 +133,19 @@ export default function Account({ user }: { user: User }) {
               value={twitterProfile || ""}
               onChange={(e) => twitterProfileSet(e.target.value)}
             />
+            <TextInput
+              size="lg"
+              label="License key (if you purchased a membership)"
+              icon={<IconKey size="1.1rem" stroke={1.5} color="black" />}
+              // value={twitterProfile || ""}
+              // onChange={(e) => twitterProfileSet(e.target.value)}
+            />
+            <Text size="sm" color="dimmed">
+              By the way, avatars coming soon!
+            </Text>
           </Stack>
 
-          <Group mt="xl">
+          <Group mt="xl" mb="xl">
             {loading ? (
               <Text>Loading...</Text>
             ) : (
@@ -135,6 +153,7 @@ export default function Account({ user }: { user: User }) {
                 <Button
                   size="lg"
                   className="button primary block"
+                  variant="outline"
                   onClick={() =>
                     updateProfile({
                       username,
@@ -171,6 +190,47 @@ export default function Account({ user }: { user: User }) {
               updateProfile({ username, twitterProfile, avatarUrl: url });
             }}
           /> */}
+          <Text fw={800} fz={25} mt={60} mb="lg">
+            <Group spacing={8}>
+              Upgrade for <span className="line-through">$39</span> $17 USD{" "}
+              <Badge color="orange" variant="filled">
+                Lifetime deal
+              </Badge>
+            </Group>
+          </Text>
+          <List mt="xs" mb="xl" spacing={10}>
+            <List.Item>
+              <Text component="span" c="yellow">
+                ✦
+              </Text>{" "}
+              Roast any website, and see all of their roasts
+            </List.Item>
+            <List.Item>
+              <Text component="span" c="yellow">
+                ✦
+              </Text>{" "}
+              Claim website ownership and post updates on your roast page{" "}
+              <Badge color="yellow">coming soon</Badge>
+            </List.Item>
+            <List.Item>
+              <Text component="span" c="yellow">
+                ✦
+              </Text>{" "}
+              Google Chrome Extension <Badge color="yellow">coming soon</Badge>
+            </List.Item>
+          </List>
+          <Button
+            component="a"
+            href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+            target="_blank"
+            size="lg"
+            mb="xs"
+          >
+            Upgrade
+          </Button>
+          <Text size="sm" color="dimmed">
+            One-time payment — Powered by Lemonsqueezy
+          </Text>
         </Container>
       </main>
     </>

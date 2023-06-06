@@ -112,8 +112,8 @@ export default function Home({ topRoasts }: Props) {
               mb="xl"
               className={classes.textAlign}
             >
-              Your website's <span className={classes.highlight}>roasts</span>{" "}
-              are now public
+              Your website&apos;s{" "}
+              <span className={classes.highlight}>roasts</span> are now public
             </Title>
 
             {/* Subtitle */}

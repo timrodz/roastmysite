@@ -18,10 +18,14 @@ export default function SignIn() {
   const supabase = useSupabaseClient();
 
   useEffect(() => {
+    if (!router) {
+      return;
+    }
+    // Redirect to account because user is already logged in
     if (session) {
       router.push("/account");
     }
-  }, [session]);
+  }, [router, session]);
 
   return (
     <>

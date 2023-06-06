@@ -2,7 +2,7 @@
 FROM node:lts as dependencies
 WORKDIR /my-project
 COPY package.json package-lock* ./
-RUN npm clean install
+RUN npm ci
 
 FROM node:lts as builder
 WORKDIR /my-project
