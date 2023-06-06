@@ -1,30 +1,21 @@
 import Dots from "@/components/LandingDots";
 import Roast from "@/components/Roast";
 import SEO from "@/components/SEO";
+import StartRoastingCTA from "@/components/StartRoastingCTA";
+import TopRoasts from "@/components/TopRoasts";
 import { supabaseClient } from "@/lib/supabase";
-import { sanitizeRoastUrl } from "@/utils/url-sanity";
 import {
   Box,
-  Button,
   Container,
   Divider,
-  Flex,
   SimpleGrid,
   Text,
-  TextInput,
   ThemeIcon,
   Title,
   createStyles,
   rem,
 } from "@mantine/core";
-import {
-  IconFlame,
-  IconNumber1,
-  IconNumber2,
-  IconNumber3,
-} from "@tabler/icons-react";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { IconNumber1, IconNumber2, IconNumber3 } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -63,52 +54,18 @@ const useStyles = createStyles((theme) => ({
     borderRadius: theme.radius.sm,
     padding: `${rem(4)} ${rem(12)} ${rem(6)} ${rem(12)}`,
   },
-
-  typeYourSiteInput: {
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    borderRight: 0,
-  },
-
-  typeYourSiteInputWrapper: {
-    width: "100%",
-    flex: "1",
-  },
-
-  typeYourSiteButton: {
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-  },
-
-  roast: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    borderRadius: theme.radius.md,
-    height: rem(90),
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-    transition: "box-shadow 150ms ease, transform 100ms ease",
-
-    "&:hover": {
-      boxShadow: theme.shadows.md,
-      transform: "scale(1.05)",
-    },
-  },
 }));
 
 interface Roast {
   url: string;
-  roastCount: number;
+  count: number;
 }
 
 interface Props {
   topRoasts: Roast[];
 }
 
-const features = [
+const featureArray = [
   {
     title: "Visit the website you want to roast",
     icon: IconNumber1,
@@ -130,24 +87,7 @@ const features = [
 ];
 
 export default function Home({ topRoasts }: Props) {
-  const router = useRouter();
   const { classes } = useStyles();
-
-  const [siteToRoast, siteToRoastSet] = useState("");
-  const [formError, formErrorSet] = useState("");
-
-  const onClickCTA = (e: any) => {
-    e.preventDefault();
-
-    const { sanitizedUrl, error } = sanitizeRoastUrl(siteToRoast);
-
-    if (error) {
-      formErrorSet(error);
-      return;
-    }
-
-    router.push(`/roast/${sanitizedUrl}`);
-  };
 
   return (
     <>
@@ -200,46 +140,7 @@ export default function Home({ topRoasts }: Props) {
               <Text mb="md" color="dimmed" className={classes.textAlign}>
                 ...or roast any website you want
               </Text>
-              <Box mb={60} maw={500} mx="auto">
-                <Flex align="center">
-                  <TextInput
-                    type="url"
-                    placeholder="roastmysite.com"
-                    size="lg"
-                    icon={<IconFlame size="1.5rem" stroke={1.5} />}
-                    classNames={{
-                      input: classes.typeYourSiteInput,
-                      root: classes.typeYourSiteInputWrapper,
-                    }}
-                    error={formError.length > 0}
-                    value={siteToRoast}
-                    onChange={(e) => {
-                      // Reset form error if there was one
-                      if (formError) {
-                        formErrorSet("");
-                      }
-                      siteToRoastSet(e.target.value);
-                    }}
-                  />
-                  <Button
-                    size="lg"
-                    className={classes.typeYourSiteButton}
-                    onClick={onClickCTA}
-                  >
-                    Go
-                  </Button>
-                </Flex>
-                {formError && (
-                  <Text
-                    color="red"
-                    mt={10}
-                    size="sm"
-                    className={classes.textAlign}
-                  >
-                    {formError}
-                  </Text>
-                )}
-              </Box>
+              <StartRoastingCTA />
               {/* Dictionary */}
               <Box maw={600} mx="auto">
                 <Divider />
@@ -280,92 +181,29 @@ export default function Home({ topRoasts }: Props) {
             >
               Start roasting ↓
             </Text>
-            <Box mb={60} maw={500} mx="auto">
-              <Flex align="center">
-                <TextInput
-                  type="url"
-                  placeholder="roastmysite.com"
-                  size="lg"
-                  icon={<IconFlame size="1.5rem" stroke={1.5} />}
-                  classNames={{
-                    input: classes.typeYourSiteInput,
-                    root: classes.typeYourSiteInputWrapper,
-                  }}
-                  error={formError.length > 0}
-                  value={siteToRoast}
-                  onChange={(e) => {
-                    // Reset form error if there was one
-                    if (formError) {
-                      formErrorSet("");
-                    }
-                    siteToRoastSet(e.target.value);
-                  }}
-                />
-                <Button
-                  size="lg"
-                  className={classes.typeYourSiteButton}
-                  onClick={onClickCTA}
-                >
-                  Go
-                </Button>
-              </Flex>
-              {formError && (
-                <Text
-                  color="red"
-                  mt={10}
-                  size="sm"
-                  className={classes.textAlign}
-                >
-                  {formError}
-                </Text>
-              )}
-            </Box>
+            <StartRoastingCTA />
           </section>
-          <section id="top-roasts" className="mb-12">
-            <Title
-              order={3}
-              fz={{ base: 32, sm: 38 }}
-              mb="lg"
-              className={classes.textAlign}
-            >
-              Don't want to roast yet?
-            </Title>
-            <RenderRoasts roasts={topRoasts} />
-          </section>
+          <TopRoasts title="See the top roasts" roasts={topRoasts} />
         </Container>
       </main>
     </>
   );
 }
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      topRoasts: [
-        {
-          url: "twitter.com",
-          roastCount: 10,
-        },
-        {
-          url: "resumebeaver.com",
-          roastCount: 6,
-        },
-        {
-          url: "timrodz.dev",
-          roastCount: 3,
-        },
-      ],
-    },
-  };
+export async function getServerSideProps(): Promise<{
+  props: { topRoasts: Roast[] };
+}> {
   let { data } = await supabaseClient
-    .from("site")
-    .select("url, roast(count)")
+    .from("websites")
+    .select("url, roast_count")
+    .order("roast_count", { ascending: false })
     .limit(3);
 
-  const topRoasts = data?.filter(Boolean).map((d) => ({
-    url: d.url,
-    roastCount: d.roast.length,
-  }));
+  const topRoasts: Roast[] =
+    data?.filter(Boolean).map((site) => ({
+      url: site.url,
+      count: site.roast_count as number,
+    })) || [];
 
   return {
     props: {
@@ -374,39 +212,8 @@ export async function getServerSideProps() {
   };
 }
 
-function RenderRoasts({ roasts }: { roasts: Roast[] }) {
-  const router = useRouter();
-  if (!roasts.length) {
-    return null;
-  }
-  return (
-    <Container p={0} maw={600}>
-      <SimpleGrid
-        cols={3}
-        breakpoints={[{ maxWidth: "36rem", cols: 1, spacing: "sm" }]}
-      >
-        {roasts
-          .sort((a, b) => b.roastCount - a.roastCount)
-          .map((roast) => (
-            <Button
-              key={roast.url}
-              variant="light"
-              color="orange"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push(`/roast/${roast.url}`);
-              }}
-            >
-              {roast.url}
-            </Button>
-          ))}
-      </SimpleGrid>
-    </Container>
-  );
-}
-
 function Features() {
-  const items = features.map((feature) => (
+  const items = featureArray.map((feature) => (
     <div key={feature.title}>
       <ThemeIcon size={44} radius="md" variant="light" color="green">
         <feature.icon size={rem(26)} stroke={1.5} />

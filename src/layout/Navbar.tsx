@@ -6,13 +6,14 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import { useSession } from "@supabase/auth-helpers-react";
 import Link from "next/link";
 import Logo from "./Logo";
-import { useSession } from "@supabase/auth-helpers-react";
 
 const HEADER_HEIGHT = rem(60);
 
-export const useHeaderStyles = createStyles((theme) => ({
+export const useStyles = createStyles((theme) => ({
   root: {
     position: "relative",
     zIndex: 1,
@@ -25,12 +26,6 @@ export const useHeaderStyles = createStyles((theme) => ({
     height: "100%",
   },
 
-  links: {
-    [theme.fn.smallerThan("xs")]: {
-      display: "none",
-    },
-  },
-
   burger: {
     [theme.fn.largerThan("xs")]: {
       display: "none",
@@ -38,69 +33,46 @@ export const useHeaderStyles = createStyles((theme) => ({
   },
 
   link: {
-    display: "block",
-    lineHeight: 1,
-    padding: `${rem(8)} ${rem(12)}`,
-    borderRadius: theme.radius.sm,
-    textDecoration: "none",
-    color: theme.colors.gray[7],
-    fontSize: theme.fontSizes.sm,
-    fontWeight: 500,
+    fontSize: rem(17),
 
-    "&:hover": {
-      backgroundColor: theme.colors.gray[0],
-    },
-  },
-
-  linkActive: {
-    "&, &:hover": {
-      backgroundColor: theme.fn.variant({
-        variant: "light",
-        color: theme.primaryColor,
-      }).background,
-      color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
-        .color,
-    },
-  },
-
-  dropdown: {
-    position: "absolute",
-    top: HEADER_HEIGHT,
-    left: 0,
-    right: 0,
-    zIndex: 0,
-    borderTopRightRadius: 0,
-    borderTopLeftRadius: 0,
-    borderTopWidth: 0,
-    overflow: "hidden",
-
-    [theme.fn.largerThan("sm")]: {
-      display: "none",
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(15),
     },
   },
 }));
 
 export default function Navbar() {
   const session = useSession();
-  const { classes } = useHeaderStyles();
+  const { classes, theme } = useStyles();
+  const matches = useMediaQuery("(max-width: 36em)");
+
   return (
     <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container size="md" className={classes.header}>
         <Logo />
         <Group>
-          {/* <Link href="/">Top roasts</Link> */}
+          <Link className={classes.link} href="/search">
+            Top roasts
+          </Link>
           {session ? (
-            <>
-              <Link href="/account">
-                <Button variant="light">Account</Button>
-              </Link>
-            </>
+            <Button
+              compact={matches}
+              className={classes.link}
+              component="a"
+              href="/account"
+              variant="light"
+            >
+              Account
+            </Button>
           ) : (
-            <>
-              <Link href="/login">
-                <Button variant="light">Get started</Button>
-              </Link>
-            </>
+            <Button
+              className={classes.link}
+              component="a"
+              href="/login"
+              variant="light"
+            >
+              Get started
+            </Button>
           )}
         </Group>
       </Container>

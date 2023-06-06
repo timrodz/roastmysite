@@ -1,4 +1,3 @@
-/** TODO: CSS for visited link to remain unchanged */
 import AddRoastForm from "@/components/AddRoastForm";
 import Roast from "@/components/Roast";
 import SEO from "@/components/SEO";
@@ -201,7 +200,7 @@ function AddRoast({
     if (siteId === -1) {
       const { data: createdWebsiteData, error: websiteCreateError } =
         await supabase
-          .from("site")
+          .from("websites")
           .insert({ url: site.url })
           .select("id")
           .single();
@@ -215,7 +214,7 @@ function AddRoast({
     }
 
     const { error } = await supabase
-      .from("roast")
+      .from("roasts")
       .insert({ content, site_id: siteId, user_id: userId });
 
     if (error) {
@@ -250,7 +249,7 @@ export async function getServerSideProps(
   const userId = session?.user.id ?? null;
 
   const { data: website } = await supabase
-    .from("site")
+    .from("websites")
     .select("id")
     .eq("url", siteUrl)
     .single();
@@ -270,7 +269,7 @@ export async function getServerSideProps(
   }
 
   const { data: roasts } = await supabaseClient
-    .from("roast")
+    .from("roasts")
     .select("*")
     .eq("site_id", website.id)
     .order("created_at", { ascending: false });

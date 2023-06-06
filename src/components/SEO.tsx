@@ -15,10 +15,10 @@ interface Props {
 
 export default function SEO(props: Props) {
   const type = "website";
-  const url = "https://www.TODO:.com";
-  const bareDomain = "www.TODO:.com";
+  const url = "https://www.roastmysite.io";
+  const bareDomain = "www.roastmysite.io";
   const image = {
-    url: "https://TODO:.com/thumbnail.jpg",
+    url: "https://roastmysite.io/thumbnail.jpg",
     alt: "Roast My Site",
     width: "1200",
     height: "630",

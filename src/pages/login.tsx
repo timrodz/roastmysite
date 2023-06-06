@@ -1,7 +1,8 @@
 /** TODO: eventually create own login UI */
+import SEO from "@/components/SEO";
 import { getSiteURL } from "@/utils/helpers";
 import { useGlobalStyles } from "@/utils/use-global-styles";
-import { Button, Container } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Auth } from "@supabase/auth-ui-react";
@@ -24,7 +25,7 @@ export default function SignIn() {
 
   return (
     <>
-      {/* <SEO /> */}
+      <SEO title="Login" description="Login page for Roast My Site" />
       <main>
         <Container size="md" className={classes.pageWrapper}>
           <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">

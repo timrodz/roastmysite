@@ -35,7 +35,7 @@ export interface Database {
           username?: string | null
         }
       }
-      roast: {
+      roasts: {
         Row: {
           content: string
           created_at: string
@@ -58,11 +58,12 @@ export interface Database {
           user_id?: string | null
         }
       }
-      site: {
+      websites: {
         Row: {
           created_at: string
           id: number
           url: string
+          roast_count: unknown | null
         }
         Insert: {
           created_at?: string
@@ -80,7 +81,17 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      roast_count:
+        | {
+            Args: Record<PropertyKey, never>
+            Returns: number
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: number
+          }
     }
     Enums: {
       [_ in never]: never
