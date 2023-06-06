@@ -1,24 +1,42 @@
 # https://www.koyeb.com/tutorials/how-to-dockerize-and-deploy-a-next-js-application-on-koyeb
-FROM node:lts as dependencies
-WORKDIR /my-project
-COPY package.json package-lock* ./
-RUN npm ci
 
+# 1. Install dependencies only when needed
+FROM node:lts as dependencies
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock* ./
+RUN npm install
+
+# 2. Rebuild the source code only when needed
 FROM node:lts as builder
-WORKDIR /my-project
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
-COPY --from=dependencies /my-project/node_modules ./node_modules
 RUN npm run build
 
+# 3. Production image, copy all the files and run next
 FROM node:lts as runner
-WORKDIR /my-project
+WORKDIR /app
+
 ENV NODE_ENV production
-# If you are using a custom next.config.js file, uncomment this line.
-# COPY --from=builder /my-project/next.config.js ./
-COPY --from=builder /my-project/public ./public
-COPY --from=builder /my-project/.next ./.next
-COPY --from=builder /my-project/node_modules ./node_modules
-COPY --from=builder /my-project/package.json ./package.json
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# COPY --from=builder /app/.next ./.next
+# COPY --from=builder /app/node_modules ./node_modules
+# COPY --from=builder /app/package.json ./package.json
+
+USER nextjs
 
 EXPOSE 3000
-CMD ["npm", "start"]
+
+ENV PORT 3000
+
+CMD ["node", "server.js"]
