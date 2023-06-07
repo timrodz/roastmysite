@@ -23,3 +23,22 @@
   padding-bottom: 60rem;
   padding-top: 90rem;
 }
+
+/* Text editor styles must be overridden globally */
+.ql-toolbar  {
+  padding: 1rem !important;
+  border: 0.0625rem solid #dee2e6 !important;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  margin-bottom: -1px;
+}
+
+.ql-container {
+  border: 0.0625rem solid #dee2e6 !important;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.ql-editor {
+  padding: 1rem !important;
+}

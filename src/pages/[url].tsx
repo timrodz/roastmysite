@@ -14,7 +14,6 @@ import {
 } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Editor } from "@tiptap/react";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -126,9 +125,8 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
                     Add your own roast
                   </Title>
                   <CreateRoastForm
-                    onUpdate={(editor: Editor) => {
-                      const htmlContent = editor.getHTML();
-                      roastContentSet(htmlContent);
+                    onUpdate={(roast: string) => {
+                      roastContentSet(roast);
                     }}
                   />
                   <Space h="md" />
