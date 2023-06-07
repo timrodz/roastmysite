@@ -19,7 +19,7 @@ export default function RoastPage({ topRoasts }: Props) {
 
   return (
     <>
-      <SEO title="Roasts" description="All roasts for Roast My Site" />
+      <SEO title="Roast search" description="All roasts for Roast My Site" />
       <main>
         <Container size="md" className={classes.pageWrapper}>
           <section id="search">

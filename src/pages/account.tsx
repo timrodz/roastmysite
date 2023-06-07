@@ -115,7 +115,7 @@ export default function Account({ user }: { user: User }) {
 
   return (
     <>
-      <SEO title="Profile page" description="See and edit your profile" />
+      <SEO title="Account page" description="See and edit your account" />
       <main>
         <Container size="xs" className={classes.pageWrapper}>
           <Stack spacing="md">

@@ -6,7 +6,10 @@ export default function ThankYou() {
   const { classes } = useGlobalStyles();
   return (
     <>
-      <SEO title="Profile page" description="See and edit your profile" />
+      <SEO
+        title="Thank You"
+        description="Thank You for purchasing a lifetime license for Roast My Site"
+      />
       <main>
         <Container size="sm" className={classes.pageWrapper}>
           <Title

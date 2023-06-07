@@ -64,7 +64,7 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
   return (
     <>
       <SEO
-        title={`Roast ${site.url}`}
+        title={`Roasts for ${site.url}`}
         description={`Roast for website ${site.url}`}
       />
       <main>

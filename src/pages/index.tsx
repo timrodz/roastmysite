@@ -127,7 +127,8 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Roast My Site — Supercharge your landing pages with feedback"
+        isLandingPage
+        title="Roast My Site — Grow your website with public, honest feedback"
         description="Get insights for your business with feedback that helps you grow. Discover insider knowledge from a network of reputable founders."
       />
       <main>
