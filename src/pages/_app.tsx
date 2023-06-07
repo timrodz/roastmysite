@@ -45,6 +45,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Script
           src="https://beamanalytics.b-cdn.net/beam.min.js"
           data-token="308008b2-6185-4337-9bb4-6697be781e80"
+          async
         />
         <Flex mih={"100vh"} direction="column">
           <Navbar />
