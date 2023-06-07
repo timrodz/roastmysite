@@ -7,6 +7,7 @@ import { Database } from "@lib/database.types";
 import {
   Box,
   Button,
+  Code,
   Container,
   LoadingOverlay,
   Space,
@@ -33,9 +34,15 @@ interface Props {
   userId: string | null;
   site: Site;
   roasts: Roast[] | null;
+  userPremium: boolean;
 }
 
-export default function UrlPage({ userId: authUserId, site, roasts }: Props) {
+export default function UrlPage({
+  userId: authUserId,
+  site,
+  roasts,
+  userPremium,
+}: Props) {
   const { classes, theme } = useGlobalStyles();
   const [roastContent, roastContentSet] = useState("");
 
@@ -151,9 +158,6 @@ export default function UrlPage({ userId: authUserId, site, roasts }: Props) {
                   </Link>
                 </Text>
               )}
-              <Button color="green" disabled>
-                Claim ownerhsip (coming soon)
-              </Button>
             </Container>
           </section>
           <section id="add-roast" className="mb-12">
@@ -161,7 +165,7 @@ export default function UrlPage({ userId: authUserId, site, roasts }: Props) {
               {/* User logged in */}
               {authUserId ? (
                 <>
-                  <Title fz={{ base: 20, sm: 26 }} order={2} mb="xs">
+                  <Title fz={{ base: 24, sm: 30 }} order={2} mb="xs">
                     Add your own roast
                   </Title>
                   <CreateRoastForm
@@ -169,7 +173,16 @@ export default function UrlPage({ userId: authUserId, site, roasts }: Props) {
                       roastContentSet(roast);
                     }}
                   />
-                  <Space h="md" />
+                  <Space h="sm" />
+                  <Text mb="md" size="sm" color="dimmed">
+                    Note: images are an experimental feature. You can link them
+                    with markdown formatting:{" "}
+                    <Code fz="xs">
+                      ![description](https://link-to-image.jpg)
+                    </Code>
+                    . They can&apos;t be uploaded to this site so it must
+                    already exist elsewhere :)
+                  </Text>
                   <SubmitRoast
                     site={site}
                     content={roastContent}
@@ -198,11 +211,33 @@ export default function UrlPage({ userId: authUserId, site, roasts }: Props) {
                 </Title>
                 <Box pos="relative">
                   <LoadingOverlay visible={loading} />
-                  <Stack spacing={15}>{renderRoasts()}</Stack>
+                  <Stack spacing={15}>
+                    {renderRoasts()}
+                    {!userPremium && (
+                      <>
+                        <Text
+                          component="a"
+                          href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+                          color="indigo"
+                          variant="light"
+                        >
+                          You&apos;re seeing a limited number of roasts.
+                          Purchase a license to unlock them all!
+                        </Text>
+                      </>
+                    )}
+                  </Stack>
                 </Box>
               </Container>
             </section>
           )}
+          <section id="asd">
+            <Container p={0} size="xs">
+              <Button color="green" disabled>
+                Claim website ownerhsip (coming soon)
+              </Button>
+            </Container>
+          </section>
         </Container>
       </main>
     </>
@@ -287,41 +322,55 @@ export async function getServerSideProps(
     data: { session },
   } = await supabase.auth.getSession();
 
-  const userId = session?.user.id ?? null;
-
   const { data: website } = await supabase
     .from("websites")
     .select("id, roasts(*)")
     .eq("url", siteUrl)
     .maybeSingle();
 
-  let finalRoasts = website?.roasts
-    ? (website.roasts.filter(Boolean) as Roast[])
-    : null;
+  let finalRoasts: Roast[] = website?.roasts
+    .filter(Boolean)
+    .sort((a, b) => b.id - a.id) as Roast[];
 
-  finalRoasts?.sort((a, b) => b.id - a.id);
+  // Only show the top 3 roasts for those who aren't logged in and aren't premium members
+  if (!session) {
+    console.log(`Visitor - limiting to 3 roasts`);
+    finalRoasts = finalRoasts.slice(0, 3);
+    return {
+      props: {
+        userId: null,
+        site: {
+          id: website ? website.id : -1,
+          url: siteUrl,
+        },
+        roasts: finalRoasts,
+        userPremium: false,
+      },
+    };
+  }
 
-  if (userId) {
-    const { data: user } = await supabase
-      .from("profiles")
-      .select("lifetime_deal")
-      .eq("id", userId)
-      .single();
+  const { data: user } = await supabase
+    .from("profiles")
+    .select("id, username, lifetime_deal")
+    .match({ id: session.user.id })
+    .maybeSingle();
 
-    // User is not lifetime
-    if (!user?.lifetime_deal && finalRoasts?.length && finalRoasts.length > 3) {
-      finalRoasts = finalRoasts.slice(0, 3);
-    }
+  const userPremium = user?.lifetime_deal;
+
+  if (!userPremium) {
+    console.log(`User ${user?.username || "unknown"} is not premium`);
+    finalRoasts = finalRoasts.slice(0, 3);
   }
 
   return {
     props: {
-      userId,
+      userId: session.user.id,
       site: {
         id: website ? website.id : -1,
         url: siteUrl,
       },
       roasts: finalRoasts,
+      userPremium,
     },
   };
 }

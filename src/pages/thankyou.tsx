@@ -1,6 +1,7 @@
 import SEO from "@/components/misc/SEO";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Container, Flex, Text, Title } from "@mantine/core";
+import Link from "next/link";
 
 export default function ThankYou() {
   const { classes } = useGlobalStyles();
@@ -49,14 +50,25 @@ export default function ThankYou() {
             <Button size="xl" component="a" href="/login" variant="outline">
               Create an account if you haven&apos;t yet
             </Button>
-            <Button size="xl" component="a" href="/login">
+            <Button size="xl" component="a" href="/search">
               Check out the top roasts and start roasting
             </Button>
           </Flex>
-          <Text fz={{ base: 16, sm: 20 }} mb="xl" className={classes.textAlign}>
+          <Text fz={{ base: 16, sm: 18 }} mb="xl" className={classes.textAlign}>
             P.S: I haven&apos;t automated the license activation yet, so
             I&apos;ll have to do it manually. Please make sure your account
             email was the same account used for purchasing the license.
+          </Text>
+          <Text color="dimmed" size="sm" className={classes.textAlign}>
+            If your account doesn&apos;t get upgraded after a while, please send
+            me a DM over Twitter{" "}
+            <Link
+              href="https://twitter.com/timrodz"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @timrodz
+            </Link>
           </Text>
         </Container>
       </main>

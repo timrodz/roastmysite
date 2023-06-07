@@ -57,17 +57,15 @@ export default function CreateRoastForm({ onUpdate }: Props) {
   const [value, valueSet] = useState("");
 
   return (
-    <div data-color-mode="dark">
-      <Editor
-        modules={modules}
-        formats={formats}
-        value={value}
-        onChange={(text: string) => {
-          const parsedText = parseAllMarkdownImages(text);
-          valueSet(parsedText);
-          onUpdate(parsedText);
-        }}
-      />
-    </div>
+    <Editor
+      modules={modules}
+      formats={formats}
+      value={value}
+      onChange={(text: string) => {
+        const parsedText = parseAllMarkdownImages(text);
+        valueSet(parsedText);
+        onUpdate(parsedText);
+      }}
+    />
   );
 }

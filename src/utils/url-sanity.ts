@@ -10,22 +10,6 @@ export const parseAllMarkdownImages = (text: string) => {
   return replacedText;
 };
 
-export function extractMarkdownImage(
-  markdownImage: string
-): { alt: string; url: string } | undefined {
-  const pattern = /!\[([^\]]*)\]\(([^)]*)\)/;
-
-  console.log({ markdownImage });
-  const match = markdownImage.match(pattern);
-  if (!match) {
-    return undefined;
-  }
-
-  const [_, alt, url] = match;
-  console.log({ alt, url });
-  return { alt, url };
-}
-
 export function sanitizeRoastUrl(url: string): {
   sanitizedUrl: string;
   error?: string;
@@ -40,7 +24,8 @@ export function sanitizeRoastUrl(url: string): {
     };
   }
 
-  if (!ext) {
+  // .ca => length 3
+  if (!ext || ext.length < 3) {
     return {
       sanitizedUrl: "",
       error: "Please type a valid website (twitter.com ✅ twitter ❌)",
