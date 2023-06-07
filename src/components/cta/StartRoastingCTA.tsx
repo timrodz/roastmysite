@@ -62,7 +62,7 @@ export default function StartRoastingCTA() {
               }
             }}
             type="url"
-            placeholder="roastmysite.com"
+            placeholder="roastmysite.io"
             size="lg"
             icon={<IconFlame size="1.5rem" stroke={1.5} />}
             classNames={{
