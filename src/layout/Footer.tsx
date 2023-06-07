@@ -55,10 +55,7 @@ interface Links {
   label: string;
 }
 
-const links: Links[] = [
-  { link: "/pricing", label: "Pricing" },
-  // { link: "https://twitter.com/timrodz", label: "Built by @timrodz" },
-];
+const links: Links[] = [{ link: "/search", label: "Top Roasts" }];
 
 export default function Footer() {
   const { classes } = useStyles();
@@ -73,7 +70,12 @@ export default function Footer() {
     <footer className={classes.footer}>
       <Container size="lg" className={classes.inner}>
         <Logo size="sm" />
-        <Link className={classes.builtBy} href="https://twitter.com/timrodz">
+        <Link
+          className={classes.builtBy}
+          href="https://twitter.com/timrodz"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Text fz="sm" c="dimmed">
             Built by @timrodz
           </Text>

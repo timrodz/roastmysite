@@ -4,11 +4,13 @@ import { Database } from "@/lib/database.types";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
   Badge,
+  Box,
   Button,
   Card,
   Container,
   Group,
   List,
+  LoadingOverlay,
   Stack,
   Text,
   TextInput,
@@ -113,98 +115,103 @@ export default function Account({ user }: { user: User }) {
     }
   }
 
+  function membershipStatus() {
+    if (loading) {
+      return null;
+    }
+
+    return lifetimeDeal ? (
+      <Badge
+        size="xl"
+        mih="5vh"
+        radius="sm"
+        color="orange"
+        leftSection={<IconFlame />}
+        variant="filled"
+      >
+        Lifetime membership
+      </Badge>
+    ) : (
+      <LifetimeDeal />
+    );
+  }
+
   return (
     <>
       <SEO title="Account page" description="See and edit your account" />
       <main>
         <Container size="xs" className={classes.pageWrapper}>
-          <Stack spacing="md">
-            <TextInput size="lg" label="E-mail" value={user.email} disabled />
-            <TextInput
-              required
-              size="lg"
-              label="Username"
-              value={username || ""}
-              onChange={(e) => {
-                usernameErrorSet("");
-                usernameSet(e.target.value);
-              }}
-              error={usernameError}
-            />
-            <TextInput
-              size="lg"
-              label="Twitter Profile"
-              icon={<IconAt size="1.1rem" stroke={1.5} color="black" />}
-              value={twitterProfile || ""}
-              onChange={(e) => twitterProfileSet(e.target.value)}
-            />
-            {/* <TextInput
+          <Box pos="relative">
+            <LoadingOverlay visible={loading} />
+            <Stack spacing="md">
+              <TextInput size="lg" label="E-mail" value={user.email} disabled />
+              <TextInput
+                required
+                size="lg"
+                label="Username"
+                value={username || ""}
+                onChange={(e) => {
+                  usernameErrorSet("");
+                  usernameSet(e.target.value);
+                }}
+                error={usernameError}
+              />
+              <TextInput
+                size="lg"
+                label="Twitter Profile"
+                icon={<IconAt size="1.1rem" stroke={1.5} color="black" />}
+                value={twitterProfile || ""}
+                onChange={(e) => twitterProfileSet(e.target.value)}
+              />
+              {/* <TextInput
               size="lg"
               label="License key (if you purchased a membership)"
               icon={<IconKey size="1.1rem" stroke={1.5} color="black" />}
               // value={twitterProfile || ""}
               // onChange={(e) => twitterProfileSet(e.target.value)}
             /> */}
-            <Text size="sm" color="dimmed">
-              By the way, avatars coming soon!
-            </Text>
-          </Stack>
+              <Text size="sm" color="dimmed">
+                By the way, avatars coming soon!
+              </Text>
+            </Stack>
 
-          <Group mt="xl" mb="xl">
-            {loading ? (
-              <Text>Loading...</Text>
-            ) : (
-              <>
-                <Button
-                  size="lg"
-                  className="button primary block"
-                  variant="outline"
-                  onClick={() =>
-                    updateProfile({
-                      username,
-                      twitterProfile,
-                      avatarUrl,
-                    })
-                  }
-                  disabled={loading}
-                >
-                  Update profile
-                </Button>
+            <Group mt="xl" mb="xl">
+              {loading ? (
+                <Text>Loading...</Text>
+              ) : (
+                <>
+                  <Button
+                    size="lg"
+                    className="button primary block"
+                    variant="outline"
+                    onClick={() =>
+                      updateProfile({
+                        username,
+                        twitterProfile,
+                        avatarUrl,
+                      })
+                    }
+                    disabled={loading}
+                  >
+                    Update profile
+                  </Button>
 
-                <Button
-                  size="lg"
-                  variant="outline"
-                  color="red"
-                  onClick={async () => {
-                    await supabase.auth.signOut();
-                    router.push("/login");
-                  }}
-                >
-                  Sign Out
-                </Button>
-              </>
-            )}
-          </Group>
-
-          {lifetimeDeal && (
-            <Badge size="xl" mih="5vh" radius="sm" color="orange">
-              <Group spacing={2}>
-                <IconFlame />
-                Lifetime membership
-              </Group>
-            </Badge>
-          )}
-
-          {/* <Avatar
-            uid={user.id}
-            url={avatarUrl}
-            size={150}
-            onUpload={(url) => {
-              avatarUrlSet(url);
-              updateProfile({ username, twitterProfile, avatarUrl: url });
-            }}
-          /> */}
-          {!lifetimeDeal && <LifetimeDeal />}
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    color="red"
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      router.push("/login");
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              )}
+            </Group>
+            {membershipStatus()}
+          </Box>
         </Container>
       </main>
     </>

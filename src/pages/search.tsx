@@ -24,18 +24,27 @@ export default function RoastPage({ topRoasts }: Props) {
         <Container size="md" className={classes.pageWrapper}>
           <section id="search">
             <Text
-              mb={5}
               fw={600}
               fz={{ base: 26, sm: 38 }}
               className={classes.textAlign}
             >
               Search for a website to roast ↓
             </Text>
+            <Text
+              mb="md"
+              fz={{ base: 17, sm: 18 }}
+              color="dimmed"
+              className={classes.textAlign}
+            >
+              ...or roast any website you want
+            </Text>
             <StartRoastingCTA />
           </section>
-          <section id="roasts">
-            <TopRoasts title="Top roasts" roasts={topRoasts} />
-          </section>
+          {topRoasts.length > 0 && (
+            <section id="roasts">
+              <TopRoasts title="Top roasts" roasts={topRoasts} />
+            </section>
+          )}
         </Container>
       </main>
     </>
@@ -45,7 +54,7 @@ export default function RoastPage({ topRoasts }: Props) {
 export async function getServerSideProps(): Promise<{
   props: { topRoasts: Roast[] };
 }> {
-  let { data } = await supabaseClient
+  const { data } = await supabaseClient
     .from("websites")
     .select("url, roast_count")
     .order("roast_count", { ascending: false })

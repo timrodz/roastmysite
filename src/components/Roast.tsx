@@ -2,7 +2,6 @@
  * NOT LOADING AVATARS YET
  */
 import {
-  // Avatar,
   Badge,
   Box,
   Group,
@@ -12,6 +11,8 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { IconBrandTwitter } from "@tabler/icons-react";
+import dayjs from "dayjs";
 import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
@@ -25,6 +26,12 @@ const useStyles = createStyles((theme) => ({
   },
 
   commentContent: {
+    fontSize: rem(16),
+
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(14),
+    },
+
     "& > p:last-child": {
       marginBottom: 0,
     },
@@ -48,6 +55,7 @@ interface User {
   username: string;
   avatar?: string;
   twitter?: string;
+  lifetime: boolean;
 }
 
 interface Props {
@@ -58,23 +66,34 @@ interface Props {
 
 export default function Roast({ user, postedAt, content }: Props) {
   const { classes } = useStyles();
+
+  const date = dayjs(postedAt);
+  const formatted = date.format("YYYY-MM-DD");
+
+  console.log("content", content);
+  console.log({ date, formatted });
   return (
     <Paper withBorder radius="md" className={classes.comment}>
       <Group spacing={10}>
         {/* {user.avatar && (
           <Avatar src={user.avatar} alt={user.username} radius="xl" />
         )} */}
-        <Text fz="sm">By {user.username}</Text>
+        <Text fz="lg">By {user.username}</Text>
         {user.twitter && (
-          <Badge size="sm" color="blue">
-            <Link href="/">@{user.twitter}</Link>
+          <Badge leftSection={<IconBrandTwitter size="0.8rem" />} color="blue">
+            <Link
+              href={`https://twitter.com/${user.twitter}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {user.twitter}
+            </Link>
           </Badge>
         )}
-        <Box>
-          <Text fz="xs" c="dimmed">
-            {postedAt.toDateString()}
-          </Text>
-        </Box>
+        {user.lifetime && <Badge color="orange">Member</Badge>}
+        <Text fz="xs" c="dimmed">
+          Posted on {formatted}
+        </Text>
       </Group>
       <Box maw={600}>
         <TypographyStylesProvider className={classes.commentBody}>
