@@ -65,7 +65,7 @@ export default function Account({ user }: { user: User }) {
       }
     }
 
-    getProfile().then().finally();
+    getProfile().catch(console.error);
   }, [user, supabase]);
 
   async function updateProfile({

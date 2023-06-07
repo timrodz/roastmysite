@@ -1,9 +1,9 @@
-import Dots from "@/components/misc/LandingDots";
+import Pricing from "@/components/Pricing";
 import Roast from "@/components/Roast";
-import SEO from "@/components/misc/SEO";
-import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
 import TopRoasts from "@/components/TopRoasts";
-import { supabaseClient } from "@/lib/supabase";
+import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
+import Dots from "@/components/misc/LandingDots";
+import SEO from "@/components/misc/SEO";
 import {
   Box,
   Container,
@@ -15,8 +15,9 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconNumber1, IconNumber2, IconNumber3 } from "@tabler/icons-react";
-import Pricing from "@/components/Pricing";
+import { useEffect, useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -62,10 +63,6 @@ interface Roast {
   count: number;
 }
 
-interface Props {
-  topRoasts: Roast[];
-}
-
 const featureArray = [
   {
     title: "Visit the website you want to roast",
@@ -87,8 +84,45 @@ const featureArray = [
   },
 ];
 
-export default function Home({ topRoasts }: Props) {
+export default function Home() {
   const { classes } = useStyles();
+  const supabase = useSupabaseClient();
+
+  const [roasts, roastsSet] = useState<Roast[]>([]);
+  // const [loading, loadingSet] = useState(false);
+
+  useEffect(() => {
+    if (!supabase) {
+      return;
+    }
+
+    async function getTopRoasts() {
+      try {
+        // loadingSet(true);
+        const { data } = await supabase
+          .from("websites")
+          .select("url, roast_count")
+          .order("roast_count", { ascending: false })
+          .limit(3)
+          .then();
+
+        const topRoasts: Roast[] =
+          data?.filter(Boolean).map((site) => ({
+            url: site.url,
+            count: site.roast_count as number,
+          })) || [];
+
+        roastsSet(topRoasts);
+      } catch (error) {
+        console.log(error);
+      }
+      //  finally {
+      //   loadingSet(false);
+      // }
+    }
+
+    getTopRoasts().catch(console.error);
+  }, [supabase]);
 
   return (
     <>
@@ -196,9 +230,11 @@ export default function Home({ topRoasts }: Props) {
             </Text>
             <StartRoastingCTA />
           </section>
-          <section id="roasts" className="mb-60">
-            <TopRoasts title="See the top roasts" roasts={topRoasts} />
-          </section>
+          {roasts && (
+            <section id="roasts" className="mb-60">
+              <TopRoasts title="See the top roasts" roasts={roasts} />
+            </section>
+          )}
           <section id="pricing" className="mb-32">
             <Pricing />
           </section>
@@ -206,28 +242,6 @@ export default function Home({ topRoasts }: Props) {
       </main>
     </>
   );
-}
-
-export async function getServerSideProps(): Promise<{
-  props: { topRoasts: Roast[] };
-}> {
-  let { data } = await supabaseClient
-    .from("websites")
-    .select("url, roast_count")
-    .order("roast_count", { ascending: false })
-    .limit(3);
-
-  const topRoasts: Roast[] =
-    data?.filter(Boolean).map((site) => ({
-      url: site.url,
-      count: site.roast_count as number,
-    })) || [];
-
-  return {
-    props: {
-      topRoasts,
-    },
-  };
 }
 
 function Features() {

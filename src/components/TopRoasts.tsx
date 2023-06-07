@@ -1,6 +1,5 @@
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Container, SimpleGrid, Text, Title } from "@mantine/core";
-import { useRouter } from "next/router";
 
 interface Roast {
   url: string;
@@ -13,21 +12,18 @@ interface Props {
 }
 
 export default function TopRoasts({ title, roasts }: Props) {
-  const router = useRouter();
   const { classes } = useGlobalStyles();
 
   const sortedRoasts = roasts
     .sort((a, b) => b.count - a.count)
     .map((roast) => (
       <Button
+        component="a"
+        href={`/${roast.url}`}
         mih={"8vw"}
         key={roast.url}
         variant="light"
         color="orange"
-        onClick={(e) => {
-          e.preventDefault();
-          router.push(`/${roast.url}`);
-        }}
       >
         {roast.url}
       </Button>
