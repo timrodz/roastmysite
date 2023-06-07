@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import { User, createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconAt, IconKey } from "@tabler/icons-react";
+import { IconAt, IconFlame, IconKey } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -26,10 +26,13 @@ export default function Account({ user }: { user: User }) {
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
   const [loading, setLoading] = useState(true);
+
   const [username, usernameSet] = useState<Profiles["username"]>(null);
   const [twitterProfile, twitterProfileSet] =
     useState<Profiles["twitter_profile"]>(null);
   const [avatarUrl, avatarUrlSet] = useState<Profiles["avatar_url"]>(null);
+  const [lifetimeDeal, lifetimeDealSet] =
+    useState<Profiles["lifetime_deal"]>(false);
 
   const [usernameError, usernameErrorSet] = useState("");
 
@@ -57,8 +60,10 @@ export default function Account({ user }: { user: User }) {
           usernameSet(data.username);
           twitterProfileSet(data.twitter_profile);
           avatarUrlSet(data.avatar_url);
+          lifetimeDealSet(data.lifetime_deal);
         }
       } catch (error) {
+        alert("Error loading your profile!");
         console.log(error);
       } finally {
         setLoading(false);
@@ -133,13 +138,13 @@ export default function Account({ user }: { user: User }) {
               value={twitterProfile || ""}
               onChange={(e) => twitterProfileSet(e.target.value)}
             />
-            <TextInput
+            {/* <TextInput
               size="lg"
               label="License key (if you purchased a membership)"
               icon={<IconKey size="1.1rem" stroke={1.5} color="black" />}
               // value={twitterProfile || ""}
               // onChange={(e) => twitterProfileSet(e.target.value)}
-            />
+            /> */}
             <Text size="sm" color="dimmed">
               By the way, avatars coming soon!
             </Text>
@@ -181,6 +186,15 @@ export default function Account({ user }: { user: User }) {
             )}
           </Group>
 
+          {lifetimeDeal && (
+            <Badge size="xl" mih="5vh" radius="sm" color="orange">
+              <Group spacing={2}>
+                <IconFlame />
+                Lifetime membership
+              </Group>
+            </Badge>
+          )}
+
           {/* <Avatar
             uid={user.id}
             url={avatarUrl}
@@ -190,49 +204,57 @@ export default function Account({ user }: { user: User }) {
               updateProfile({ username, twitterProfile, avatarUrl: url });
             }}
           /> */}
-          <Text fw={800} fz={25} mt={60} mb="lg">
-            <Group spacing={8}>
-              Upgrade for <span className="line-through">$39</span> $17 USD{" "}
-              <Badge color="orange" variant="filled">
-                Lifetime deal
-              </Badge>
-            </Group>
-          </Text>
-          <List mt="xs" mb="xl" spacing={10}>
-            <List.Item>
-              <Text component="span" c="yellow">
-                ✦
-              </Text>{" "}
-              Roast any website, and see all of their roasts
-            </List.Item>
-            <List.Item>
-              <Text component="span" c="yellow">
-                ✦
-              </Text>{" "}
-              Claim website ownership and post updates on your roast page{" "}
-              <Badge color="yellow">coming soon</Badge>
-            </List.Item>
-            <List.Item>
-              <Text component="span" c="yellow">
-                ✦
-              </Text>{" "}
-              Google Chrome Extension <Badge color="yellow">coming soon</Badge>
-            </List.Item>
-          </List>
-          <Button
-            component="a"
-            href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
-            target="_blank"
-            size="lg"
-            mb="xs"
-          >
-            Upgrade
-          </Button>
-          <Text size="sm" color="dimmed">
-            One-time payment — Powered by Lemonsqueezy
-          </Text>
+          {!lifetimeDeal && <LifetimeDeal />}
         </Container>
       </main>
+    </>
+  );
+}
+
+function LifetimeDeal() {
+  return (
+    <>
+      <Text fw={800} fz={25} mt={60} mb="lg">
+        <Group spacing={8}>
+          Upgrade for <span className="line-through">$39</span> $17 USD{" "}
+          <Badge color="orange" variant="filled">
+            Lifetime deal
+          </Badge>
+        </Group>
+      </Text>
+      <List mt="xs" mb="xl" spacing={10}>
+        <List.Item>
+          <Text component="span" c="yellow">
+            ✦
+          </Text>{" "}
+          Roast any website, and see all of their roasts
+        </List.Item>
+        <List.Item>
+          <Text component="span" c="yellow">
+            ✦
+          </Text>{" "}
+          Claim website ownership and post updates on your roast page{" "}
+          <Badge color="yellow">coming soon</Badge>
+        </List.Item>
+        <List.Item>
+          <Text component="span" c="yellow">
+            ✦
+          </Text>{" "}
+          Google Chrome Extension <Badge color="yellow">coming soon</Badge>
+        </List.Item>
+      </List>
+      <Button
+        component="a"
+        href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+        target="_blank"
+        size="lg"
+        mb="xs"
+      >
+        Upgrade
+      </Button>
+      <Text size="sm" color="dimmed">
+        One-time payment — Powered by Lemonsqueezy
+      </Text>
     </>
   );
 }

@@ -7,7 +7,6 @@ export const getSiteURL = () => {
   url = url.includes("http") ? url : `https://${url}`;
   // Make sure to including trailing `/`.
   url = url.charAt(url.length - 1) === "/" ? url : `${url}/`;
-  console.log("REDIRECT TO URL", url);
   return url;
 };
 

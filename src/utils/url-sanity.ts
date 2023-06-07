@@ -22,7 +22,6 @@ export function sanitizeRoastUrl(url: string): {
   }
 
   const sanitizedUrl = base.replace("www.", "");
-  console.log({ cleanedUpSite: sanitizedUrl });
 
   return {
     sanitizedUrl,
