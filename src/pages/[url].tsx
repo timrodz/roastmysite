@@ -83,7 +83,7 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
                     <Link
                       target="_blank"
                       className={classes.linkSecondary}
-                      href={`https://${site}`}
+                      href={`https://${site.url}`}
                     >
                       {site.url}
                     </Link>
