@@ -11,7 +11,7 @@ interface Roast {
 }
 
 interface Props {
-  topRoasts: Roast[];
+  topRoasts: Roast[] | null;
 }
 
 export default function RoastPage({ topRoasts }: Props) {
@@ -40,7 +40,7 @@ export default function RoastPage({ topRoasts }: Props) {
             </Text>
             <StartRoastingCTA />
           </section>
-          {topRoasts.length > 0 && (
+          {topRoasts && topRoasts.length > 0 && (
             <section id="roasts">
               <TopRoasts title="Top roasts" roasts={topRoasts} />
             </section>
@@ -52,7 +52,7 @@ export default function RoastPage({ topRoasts }: Props) {
 }
 
 export async function getServerSideProps(): Promise<{
-  props: { topRoasts: Roast[] };
+  props: { topRoasts: Roast[] | nullreplace(/[^a-z0-9.]/ };
 }> {
   const { data } = await supabaseClient
     .from("websites")
@@ -60,11 +60,11 @@ export async function getServerSideProps(): Promise<{
     .order("roast_count", { ascending: false })
     .limit(3);
 
-  const topRoasts: Roast[] =
+  const topRoasts: Roast[] | null =
     data?.filter(Boolean).map((site) => ({
       url: site.url,
       count: site.roast_count as number,
-    })) || [];
+    })) || null;
 
   return {
     props: {

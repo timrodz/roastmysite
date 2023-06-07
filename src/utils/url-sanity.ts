@@ -21,7 +21,10 @@ export function sanitizeRoastUrl(url: string): {
     };
   }
 
-  const sanitizedUrl = base.replace("www.", "");
+  const sanitizedUrl = base
+    .replace("www.", "")
+    .replaceAll(" ", "")
+    .replace(/[^a-z0-9.]/, "");
 
   return {
     sanitizedUrl,

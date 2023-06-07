@@ -32,7 +32,7 @@ interface AugmentedRoast extends Roast {
 interface Props {
   userId: string | null;
   site: Site;
-  roasts?: Roast[];
+  roasts: Roast[] | null;
 }
 
 export default function RoastUrl({ userId, site, roasts }: Props) {
@@ -116,11 +116,7 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
                 </>
               ) : (
                 <>
-                  <Title
-                    mb="xs"
-                    fz={{ base: 32, sm: 40 }}
-                    className={classes.textAlign}
-                  >
+                  <Title mb="xs" fz={{ base: 32, sm: 40 }}>
                     There are no roasts for{" "}
                     <Link
                       target="_blank"
@@ -131,12 +127,7 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
                     </Link>{" "}
                     yet
                   </Title>
-                  <Text
-                    size="lg"
-                    mb="sm"
-                    color="dimmed"
-                    className={classes.textAlign}
-                  >
+                  <Text size="lg" mb="sm" color="dimmed">
                     But you can be the first to roast them!
                   </Text>
                 </>
@@ -290,7 +281,7 @@ export async function getServerSideProps(
         id: website ? website.id : -1,
         url: siteUrl,
       },
-      roasts: website ? (website.roasts.filter(Boolean) as Roast[]) : undefined,
+      roasts: website ? (website.roasts.filter(Boolean) as Roast[]) : null,
     },
   };
 }
