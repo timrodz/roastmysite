@@ -34,7 +34,7 @@ export default function SEO(props: Props) {
       <meta name="description" content={props.description} />
 
       {/* Open graph */}
-      <meta property="og:site_name" content="Resume Beaver" />
+      <meta property="og:site_name" content="Roast My Site" />
       <meta property="og:title" content={props.title} />
       <meta property="og:description" content={props.description} />
       <meta property="og:type" content={type} />
