@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import "@/styles/globals.css";
 import { cache } from "../../emotion-cache";
+import Script from "next/script";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [supabase] = useState(() => createPagesBrowserClient());
@@ -41,6 +42,10 @@ export default function App({ Component, pageProps }: AppProps) {
           }),
         }}
       >
+        <Script
+          src="https://beamanalytics.b-cdn.net/beam.min.js"
+          data-token="308008b2-6185-4337-9bb4-6697be781e80"
+        />
         <Flex mih={"100vh"} direction="column">
           <Navbar />
           <ChildrenComponent {...pageProps} />
