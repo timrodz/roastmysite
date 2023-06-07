@@ -52,7 +52,7 @@ export default function RoastPage({ topRoasts }: Props) {
 }
 
 export async function getServerSideProps(): Promise<{
-  props: { topRoasts: Roast[] | nullreplace(/[^a-z0-9.]/ };
+  props: { topRoasts: Roast[] | null };
 }> {
   const { data } = await supabaseClient
     .from("websites")
