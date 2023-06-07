@@ -43,7 +43,7 @@ export const useStyles = createStyles((theme) => ({
 
 export default function Navbar() {
   const session = useSession();
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
   const matches = useMediaQuery("(max-width: 36em)");
 
   return (

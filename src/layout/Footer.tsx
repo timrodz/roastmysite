@@ -23,17 +23,10 @@ const useStyles = createStyles((theme) => ({
   },
 
   link: {
-    display: "block",
-    lineHeight: 1,
-    padding: `${rem(8)} ${rem(12)}`,
-    borderRadius: theme.radius.sm,
-    textDecoration: "none",
-    color: theme.colors.gray[7],
-    fontSize: theme.fontSizes.sm,
-    fontWeight: 500,
+    fontSize: rem(17),
 
-    "&:hover": {
-      backgroundColor: theme.colors.gray[0],
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(15),
     },
   },
 

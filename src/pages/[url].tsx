@@ -35,13 +35,13 @@ interface Props {
   roasts: Roast[] | null;
 }
 
-export default function RoastUrl({ userId, site, roasts }: Props) {
-  const { classes } = useGlobalStyles();
+export default function UrlPage({ userId: authUserId, site, roasts }: Props) {
+  const { classes, theme } = useGlobalStyles();
   const [roastContent, roastContentSet] = useState("");
 
   const [loading, loadingSet] = useState(false);
   const [finalRoasts, finalRoastsSet] = useState<AugmentedRoast[]>();
-  const supabase = useSupabaseClient();
+  const supabase = useSupabaseClient<Database>();
 
   useEffect(() => {
     async function getRoasts() {
@@ -62,18 +62,21 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
   }, [supabase, roasts]);
 
   function renderRoasts() {
-    return finalRoasts?.map((r) => {
+    return finalRoasts?.map((r, i) => {
       const profile = r.profile;
-      const user = {
+      const author = {
+        id: profile?.id,
         username: profile?.username || "Unknown",
-        avatar: profile?.avatar_url || undefined,
+        // avatar: profile?.avatar_url || undefined,
         twitter: profile?.twitter_profile || undefined,
         lifetime: profile?.lifetime_deal || false,
       };
       return (
         <Roast
-          key={r.id}
-          user={user}
+          key={i}
+          id={r.id}
+          browsingUserId={authUserId}
+          author={author}
           postedAt={new Date(r.created_at)}
           content={r.content}
         />
@@ -132,6 +135,22 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
                   </Text>
                 </>
               )}
+              {site.url === "roastmysite.io" && (
+                <Text
+                  fz={{ base: 16, sm: 20 }}
+                  mb="xs"
+                  // color={theme.colors.green[6]}
+                >
+                  Owner:{" "}
+                  <Link
+                    href="https://twitter.com/timrodz"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className={classes.highlightGreen}>@timrodz</span>
+                  </Link>
+                </Text>
+              )}
               <Button color="green" disabled>
                 Claim ownerhsip (coming soon)
               </Button>
@@ -139,7 +158,8 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
           </section>
           <section id="add-roast" className="mb-12">
             <Container p={0} size="xs">
-              {userId ? (
+              {/* User logged in */}
+              {authUserId ? (
                 <>
                   <Title fz={{ base: 20, sm: 26 }} order={2} mb="xs">
                     Add your own roast
@@ -153,11 +173,12 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
                   <SubmitRoast
                     site={site}
                     content={roastContent}
-                    userId={userId}
+                    userId={authUserId}
                   />
                 </>
               ) : (
                 <>
+                  {/* User not logged in */}
                   <Text size="xl" className={classes.textAlign}>
                     Please{" "}
                     <Link className={classes.linkPrimary} href="/login">
@@ -177,7 +198,7 @@ export default function RoastUrl({ userId, site, roasts }: Props) {
                 </Title>
                 <Box pos="relative">
                   <LoadingOverlay visible={loading} />
-                  <Stack spacing={10}>{renderRoasts()}</Stack>
+                  <Stack spacing={15}>{renderRoasts()}</Stack>
                 </Box>
               </Container>
             </section>
@@ -272,11 +293,13 @@ export async function getServerSideProps(
     .from("websites")
     .select("id, roasts(*)")
     .eq("url", siteUrl)
-    .single();
+    .maybeSingle();
 
   let finalRoasts = website?.roasts
     ? (website.roasts.filter(Boolean) as Roast[])
     : null;
+
+  finalRoasts?.sort((a, b) => b.id - a.id);
 
   if (userId) {
     const { data: user } = await supabase

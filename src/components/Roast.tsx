@@ -1,19 +1,28 @@
 /**
  * NOT LOADING AVATARS YET
  */
+import { Database } from "@/lib/database.types";
 import {
   Badge,
   Box,
+  Button,
   Group,
+  LoadingOverlay,
+  Modal,
   Paper,
   Text,
+  ThemeIcon,
   TypographyStylesProvider,
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconBrandTwitter } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { IconBrandTwitter, IconTrash } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   comment: {
@@ -42,6 +51,11 @@ const useStyles = createStyles((theme) => ({
 
     p: {
       marginBottom: theme.spacing.xs,
+
+      img: {
+        borderRadius: rem(5),
+        marginBottom: "0 !important",
+      },
     },
 
     img: {
@@ -51,58 +65,156 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface User {
+interface Author {
+  id?: string;
+  // Defaults to "Unknown" if undefined
   username: string;
-  avatar?: string;
   twitter?: string;
   lifetime: boolean;
+  // avatar?: string;
 }
 
 interface Props {
-  user: User;
+  id: number;
+  browsingUserId: string | null;
+  author: Author;
   postedAt: Date;
   content: string;
 }
 
-export default function Roast({ user, postedAt, content }: Props) {
-  const { classes } = useStyles();
+export default function Roast({
+  id: roastId,
+  browsingUserId,
+  author,
+  postedAt,
+  content,
+}: Props) {
+  const { classes, theme } = useStyles();
+  const router = useRouter();
+  const [opened, { open, close }] = useDisclosure(false);
+  const [performingAction, performingActionSet] = useState(false);
 
-  const date = dayjs(postedAt);
-  const formatted = date.format("YYYY-MM-DD");
+  const supabase = useSupabaseClient<Database>();
 
-  console.log("content", content);
-  console.log({ date, formatted });
-  return (
-    <Paper withBorder radius="md" className={classes.comment}>
-      <Group spacing={10}>
-        {/* {user.avatar && (
-          <Avatar src={user.avatar} alt={user.username} radius="xl" />
-        )} */}
-        <Text fz="lg">By {user.username}</Text>
-        {user.twitter && (
-          <Badge leftSection={<IconBrandTwitter size="0.8rem" />} color="blue">
-            <Link
-              href={`https://twitter.com/${user.twitter}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {user.twitter}
-            </Link>
-          </Badge>
-        )}
-        {user.lifetime && <Badge color="orange">Member</Badge>}
-        <Text fz="xs" c="dimmed">
-          Posted on {formatted}
-        </Text>
-      </Group>
-      <Box maw={600}>
+  const isUserAuthor = browsingUserId === author.id;
+
+  const formattedDate = dayjs(postedAt).format("YYYY-MM-DD");
+
+  function renderPost(modal?: boolean) {
+    return (
+      <Box p={modal ? 20 : 0} maw={600}>
         <TypographyStylesProvider className={classes.commentBody}>
           <div
             className={classes.commentContent}
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{
+              __html: modal ? `${content.slice(0, 220)}...` : content,
+            }}
           />
         </TypographyStylesProvider>
       </Box>
-    </Paper>
+    );
+  }
+
+  async function onDeleteClick(e: any) {
+    console.log("on delete");
+    e.preventDefault();
+
+    if (!isUserAuthor) {
+      return;
+    }
+
+    performingActionSet(true);
+
+    const { error } = await supabase
+      .from("roasts")
+      .delete()
+      .match({ id: roastId, user_id: browsingUserId });
+
+    if (error) {
+      console.error(error);
+      performingActionSet(false);
+      return;
+    }
+
+    console.log("success");
+    router.reload();
+  }
+
+  return (
+    <>
+      <Modal
+        opened={opened}
+        onClose={() => {
+          console.log("close?");
+          if (performingAction) {
+            console.log("no");
+            return;
+          }
+          close();
+        }}
+        title="Do you want to delete this roast?"
+        overlayProps={{
+          color: theme.colors.gray[3],
+          opacity: 0.55,
+          blur: 3,
+        }}
+      >
+        <Box pos="relative">
+          <LoadingOverlay visible={performingAction} />
+          <Text mb="xs">
+            This action is <strong>irreversible</strong>. Here&apos;s a preview
+            of the post you&apos;re deleting:
+          </Text>
+          {renderPost(true)}
+          <Button
+            mt="xl"
+            color="red"
+            variant="outline"
+            leftIcon={<IconTrash />}
+            onClick={onDeleteClick}
+          >
+            Yes, I want to delete this roast
+          </Button>
+        </Box>
+      </Modal>
+      <Paper withBorder radius="md" className={classes.comment}>
+        <Group spacing={10}>
+          {/* {author.avatar && (
+          <Avatar src={author.avatar} alt={author.username} radius="xl" />
+        )} */}
+          <Text fz="lg">By {author.username}</Text>
+          {author.twitter && (
+            <Badge
+              leftSection={<IconBrandTwitter size="0.8rem" />}
+              color="blue"
+            >
+              <Link
+                href={`https://twitter.com/${author.twitter}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {author.twitter}
+              </Link>
+            </Badge>
+          )}
+          {author.lifetime && <Badge color="orange">Member</Badge>}
+          <Text fz="xs" c="dimmed">
+            Posted on {formattedDate}
+          </Text>
+          {isUserAuthor && (
+            <ThemeIcon
+              size="lg"
+              color="gray"
+              variant="light"
+              onClick={open}
+              className="hover:cursor-pointer"
+            >
+              <IconTrash />
+            </ThemeIcon>
+          )}
+        </Group>
+        {renderPost()}
+      </Paper>
+    </>
   );
 }

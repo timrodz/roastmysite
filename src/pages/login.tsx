@@ -1,5 +1,6 @@
 /** TODO: eventually create own login UI */
 import SEO from "@/components/misc/SEO";
+import { Database } from "@/lib/database.types";
 import { getSiteURL } from "@/utils/helpers";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Container } from "@mantine/core";
@@ -15,7 +16,7 @@ export default function SignIn() {
   const { classes } = useGlobalStyles();
   const session = useSession();
   const router = useRouter();
-  const supabase = useSupabaseClient();
+  const supabase = useSupabaseClient<Database>();
 
   useEffect(() => {
     if (!router) {

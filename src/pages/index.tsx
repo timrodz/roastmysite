@@ -4,6 +4,7 @@ import TopRoasts from "@/components/TopRoasts";
 import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
 import Dots from "@/components/misc/LandingDots";
 import SEO from "@/components/misc/SEO";
+import { Database } from "@/lib/database.types";
 import {
   Box,
   Container,
@@ -86,7 +87,7 @@ const featureArray = [
 
 export default function Home() {
   const { classes } = useStyles();
-  const supabase = useSupabaseClient();
+  const supabase = useSupabaseClient<Database>();
 
   const [roasts, roastsSet] = useState<Roast[]>([]);
   // const [loading, loadingSet] = useState(false);

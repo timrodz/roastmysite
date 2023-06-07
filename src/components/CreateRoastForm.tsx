@@ -1,8 +1,9 @@
+import { parseAllMarkdownImages } from "@/utils/url-sanity";
 import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css";
 import { useState } from "react";
+import "react-quill/dist/quill.snow.css";
 
-const MDEditor: any = dynamic(import("react-quill"), {
+const Editor: any = dynamic(import("react-quill"), {
   ssr: false,
   loading: () => <p>Loading text editor...</p>,
 });
@@ -20,7 +21,8 @@ const modules = {
     [
       "link",
       // TODO: Removed until I figure out storage options
-      // , "image"
+      // "image",
+      ,
     ],
     ["clean"],
   ],
@@ -44,7 +46,7 @@ const formats = [
   "bullet",
   "indent",
   "link",
-  // "image",
+  "image",
 ];
 
 interface Props {
@@ -56,13 +58,14 @@ export default function CreateRoastForm({ onUpdate }: Props) {
 
   return (
     <div data-color-mode="dark">
-      <MDEditor
+      <Editor
         modules={modules}
         formats={formats}
         value={value}
         onChange={(text: string) => {
-          valueSet(text);
-          onUpdate(text);
+          const parsedText = parseAllMarkdownImages(text);
+          valueSet(parsedText);
+          onUpdate(parsedText);
         }}
       />
     </div>

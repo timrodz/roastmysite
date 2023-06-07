@@ -42,3 +42,7 @@
 .ql-editor {
   padding: 1rem !important;
 }
+
+img {
+  border-radius: 0.3125rem;
+}
