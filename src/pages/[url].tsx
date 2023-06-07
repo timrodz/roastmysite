@@ -274,6 +274,23 @@ export async function getServerSideProps(
     .eq("url", siteUrl)
     .single();
 
+  let finalRoasts = website?.roasts
+    ? (website.roasts.filter(Boolean) as Roast[])
+    : null;
+
+  if (userId) {
+    const { data: user } = await supabase
+      .from("profiles")
+      .select("lifetime_deal")
+      .eq("id", userId)
+      .single();
+
+    // User is not lifetime
+    if (!user?.lifetime_deal && finalRoasts?.length && finalRoasts.length > 3) {
+      finalRoasts = finalRoasts.slice(0, 3);
+    }
+  }
+
   return {
     props: {
       userId,
@@ -281,7 +298,7 @@ export async function getServerSideProps(
         id: website ? website.id : -1,
         url: siteUrl,
       },
-      roasts: website ? (website.roasts.filter(Boolean) as Roast[]) : null,
+      roasts: finalRoasts,
     },
   };
 }

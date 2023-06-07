@@ -103,8 +103,7 @@ export default function Home() {
           .from("websites")
           .select("url, roast_count")
           .order("roast_count", { ascending: false })
-          .limit(3)
-          .then();
+          .limit(3);
 
         const topRoasts: Roast[] =
           data?.filter(Boolean).map((site) => ({
