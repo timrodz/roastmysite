@@ -37,6 +37,14 @@ export interface Database {
           updated_at?: string | null
           username?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       roasts: {
         Row: {
@@ -60,24 +68,49 @@ export interface Database {
           site_id?: number
           user_id?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "roasts_site_id_fkey"
+            columns: ["site_id"]
+            referencedRelation: "websites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roasts_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       websites: {
         Row: {
           created_at: string
           id: number
+          owned_by_user_id: string | null
           url: string
           roast_count: unknown | null
         }
         Insert: {
           created_at?: string
           id?: number
+          owned_by_user_id?: string | null
           url: string
         }
         Update: {
           created_at?: string
           id?: number
+          owned_by_user_id?: string | null
           url?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "websites_owned_by_user_id_fkey"
+            columns: ["owned_by_user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

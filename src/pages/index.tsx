@@ -25,7 +25,7 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
     zIndex: 1,
     paddingBottom: rem(60),
-    paddingTop: rem(180),
+    paddingTop: rem(150),
 
     [theme.fn.smallerThan("sm")]: {
       paddingTop: rem(120),
@@ -55,7 +55,7 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
     backgroundColor: theme.colors.orange[1],
     borderRadius: theme.radius.sm,
-    padding: `${rem(4)} ${rem(12)} ${rem(6)} ${rem(12)}`,
+    padding: `${rem(1)} ${rem(12)} ${rem(6)} ${rem(12)}`,
   },
 }));
 

@@ -127,7 +127,7 @@ export default function Pricing() {
             <Text fw={800} fz={30} mb="lg">
               <Group spacing={8}>
                 <span className="line-through">$39</span> $17 USD{" "}
-                <Badge color="orange" variant="filled">
+                <Badge color="orange" variant="filled" size="lg" my="auto">
                   Lifetime deal
                 </Badge>
               </Group>
@@ -163,8 +163,8 @@ export default function Pricing() {
             </List>
             <Button
               component="a"
-              href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
               target="_blank"
+              href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
               size="lg"
               mb="xs"
             >

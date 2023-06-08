@@ -1,6 +1,8 @@
 import CreateRoastForm from "@/components/CreateRoastForm";
 import Roast from "@/components/Roast";
+import WebsiteActionPanel from "@/components/WebsiteActionPanel";
 import SEO from "@/components/misc/SEO";
+import { isUserPremiumSSR } from "@/lib/supabase";
 import { augmentRoasts } from "@/utils/augment-roasts";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Database } from "@lib/database.types";
@@ -38,7 +40,7 @@ interface Props {
 }
 
 export default function UrlPage({
-  userId: authUserId,
+  userId: browsingUserId,
   site,
   roasts,
   userPremium,
@@ -82,7 +84,7 @@ export default function UrlPage({
         <Roast
           key={i}
           id={r.id}
-          browsingUserId={authUserId}
+          browsingUserId={browsingUserId}
           author={author}
           postedAt={new Date(r.created_at)}
           content={r.content}
@@ -100,7 +102,7 @@ export default function UrlPage({
     <>
       <SEO
         title={`Roasts for ${site.url}`}
-        description={`Roast for website ${site.url}`}
+        description={`Roast ${site.url} by giving it honest feedback.`}
       />
       <main>
         <Container className={classes.pageWrapper}>
@@ -142,31 +144,18 @@ export default function UrlPage({
                   </Text>
                 </>
               )}
-              {site.url === "roastmysite.io" && (
-                <Text
-                  fz={{ base: 16, sm: 20 }}
-                  mb="xs"
-                  // color={theme.colors.green[6]}
-                >
-                  Owner:{" "}
-                  <Link
-                    href="https://twitter.com/timrodz"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className={classes.highlightGreen}>@timrodz</span>
-                  </Link>
-                </Text>
-              )}
             </Container>
+          </section>
+          <section id="actions" className="mb-6">
+            <WebsiteActionPanel site={site} browsingUserId={browsingUserId} />
           </section>
           <section id="add-roast" className="mb-12">
             <Container p={0} size="xs">
               {/* User logged in */}
-              {authUserId ? (
+              {browsingUserId ? (
                 <>
                   <Title fz={{ base: 24, sm: 30 }} order={2} mb="xs">
-                    Add your own roast
+                    Roast this site
                   </Title>
                   <CreateRoastForm
                     onUpdate={(roast: string) => {
@@ -186,7 +175,7 @@ export default function UrlPage({
                   <SubmitRoast
                     site={site}
                     content={roastContent}
-                    userId={authUserId}
+                    userId={browsingUserId}
                   />
                 </>
               ) : (
@@ -207,7 +196,7 @@ export default function UrlPage({
             <section id="view-roasts" className="mb-12">
               <Container p={0} size="xs" mt={30}>
                 <Title fz={{ base: 24, sm: 30 }} order={3} mb="xs">
-                  See all roasts
+                  Roasts
                 </Title>
                 <Box pos="relative">
                   <LoadingOverlay visible={loading} />
@@ -217,6 +206,7 @@ export default function UrlPage({
                       <>
                         <Text
                           component="a"
+                          target="_blank"
                           href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
                           color="indigo"
                           variant="light"
@@ -231,13 +221,6 @@ export default function UrlPage({
               </Container>
             </section>
           )}
-          <section id="asd">
-            <Container p={0} size="xs">
-              <Button color="green" disabled>
-                Claim website ownerhsip (coming soon)
-              </Button>
-            </Container>
-          </section>
         </Container>
       </main>
     </>
@@ -349,16 +332,10 @@ export async function getServerSideProps(
     };
   }
 
-  const { data: user } = await supabase
-    .from("profiles")
-    .select("id, username, lifetime_deal")
-    .match({ id: session.user.id })
-    .maybeSingle();
-
-  const userPremium = user?.lifetime_deal;
+  const userPremium = await isUserPremiumSSR(supabase, session.user.id);
 
   if (!userPremium) {
-    console.log(`User ${user?.username || "unknown"} is not premium`);
+    console.log(`User ${session.user.id} is not premium`);
     finalRoasts = finalRoasts.slice(0, 3);
   }
 
@@ -370,7 +347,7 @@ export async function getServerSideProps(
         url: siteUrl,
       },
       roasts: finalRoasts,
-      userPremium,
+      userPremium: !!userPremium,
     },
   };
 }

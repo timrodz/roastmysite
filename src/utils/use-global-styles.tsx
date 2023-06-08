@@ -38,6 +38,6 @@ export const useGlobalStyles = createStyles((theme) => ({
     position: "relative",
     backgroundColor: theme.colors.green[0],
     borderRadius: theme.radius.sm,
-    padding: `${rem(4)} ${rem(12)} ${rem(6)} ${rem(12)}`,
+    padding: `${rem(4)} ${rem(8)} ${rem(6)} ${rem(8)}`,
   },
 }));

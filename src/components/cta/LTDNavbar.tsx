@@ -16,7 +16,11 @@ export default function LTDNavbar() {
   return (
     <>
       <Box hidden={hidden}>
-        <Link href="/" className="hover:no-underline">
+        <Link
+          target="_blank"
+          href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+          className="hover:no-underline"
+        >
           <Box
             className={`${classes.root} z-10 flex relative isolate items-center gap-x-6 bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1`}
           >

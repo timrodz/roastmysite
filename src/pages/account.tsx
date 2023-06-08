@@ -255,8 +255,8 @@ function LifetimeDeal() {
       </List>
       <Button
         component="a"
-        href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
         target="_blank"
+        href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
         size="lg"
         mb="xs"
       >
