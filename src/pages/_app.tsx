@@ -1,16 +1,18 @@
 import Footer from "@/layout/Footer";
 import Navbar from "@/layout/Navbar";
+import "@/styles/globals.css";
 import { Flex, MantineProvider } from "@mantine/core";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import type { AppProps } from "next/app";
-import { useState } from "react";
-
-import "@/styles/globals.css";
-import { cache } from "../../emotion-cache";
 import Script from "next/script";
+import { useState } from "react";
+import { cache } from "../../emotion-cache";
+import { useRouter } from "next/router";
+import LTDNavbar from "@/components/cta/LTDNavbar";
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const [supabase] = useState(() => createPagesBrowserClient());
   // https://stackoverflow.com/questions/71809903/next-js-component-cannot-be-used-as-a-jsx-component
   const ChildrenComponent = Component as any;
@@ -48,6 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
           async
         />
         <Flex mih={"100vh"} direction="column">
+          {router.route === "/" && <LTDNavbar />}
           <Navbar />
           <ChildrenComponent {...pageProps} />
           {/* <Component {...pageProps} /> */}

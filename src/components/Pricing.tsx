@@ -49,7 +49,7 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]
     }`,
 
-    width: rem(400),
+    width: rem(450),
 
     [theme.fn.smallerThan("sm")]: {
       width: "100%",
@@ -92,7 +92,7 @@ export default function Pricing() {
             padding="xl"
           >
             <Text fw={600} fz={20} mb="md">
-              BBQ enthusiast
+              Beginner Roaster
             </Text>
             <Text fw={800} fz={40}>
               $0
@@ -122,7 +122,7 @@ export default function Pricing() {
             padding="xl"
           >
             <Text fw={600} fz={24} mb="md">
-              Roasting veteran
+              Veteran Roaster
             </Text>
             <Text fw={800} fz={30} mb="lg">
               <Group spacing={8}>
@@ -144,7 +144,13 @@ export default function Pricing() {
                 <Text component="span" c="yellow">
                   ✦
                 </Text>{" "}
-                Claim website ownership and post updates on your roast page{" "}
+                SEO improvements powered by AI
+              </List.Item>
+              <List.Item>
+                <Text component="span" c="yellow">
+                  ✦
+                </Text>{" "}
+                Claim website ownership{" "}
                 <Badge color="yellow">coming soon</Badge>
               </List.Item>
               <List.Item>
