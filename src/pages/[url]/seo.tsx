@@ -1,7 +1,7 @@
 import SEO from "@/components/misc/SEO";
 import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
 import TopRoasts from "@/components/TopRoasts";
-import { isUserPremiumSSR, supabaseClient } from "@/lib/supabase";
+import { isUserPremium, supabaseClient } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Center, Container, Text, Title } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
@@ -144,7 +144,7 @@ export async function getServerSideProps(
     };
   }
 
-  const userPremium = await isUserPremiumSSR(supabase, userId);
+  const userPremium = await isUserPremium(supabase, userId);
 
   return {
     props: {

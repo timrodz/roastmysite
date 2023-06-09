@@ -1,8 +1,5 @@
-import { Database } from "@/lib/database.types";
+import { Profile, Roast } from "@/lib/supabase";
 import { SupabaseClient } from "@supabase/supabase-js";
-
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type Roast = Database["public"]["Tables"]["roasts"]["Row"];
 
 interface AugmentedRoast extends Roast {
   profile?: Profile;
@@ -23,8 +20,7 @@ export async function augmentRoasts(
   // Get user profiles
   const { data: profiles } = await supabase
     .from("profiles")
-    // .select(`id, username, twitter_profile, avatar_url`)
-    .select(`id, username, twitter_profile, lifetime_deal`)
+    .select(`id, username, twitter_profile, membership_status`)
     .in("id", roastUserIds);
 
   // Again shouldn't really happen, but just in case

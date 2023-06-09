@@ -1,6 +1,7 @@
 import Avatar from "@/components/account/Avatar";
 import SEO from "@/components/misc/SEO";
 import { Database } from "@/lib/database.types";
+import { MembershipStatus, Profile } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
   Badge,
@@ -21,87 +22,53 @@ import { IconAt, IconFlame, IconKey } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
-export default function Account({ user }: { user: User }) {
+export default function Account({ user, email }: Props) {
   const { classes } = useGlobalStyles();
   const router = useRouter();
+
   const supabase = useSupabaseClient<Database>();
-  const [loading, setLoading] = useState(true);
+  const [username, usernameSet] = useState<Profile["username"]>(user.username);
+  const [twitter, twitterSet] = useState<Profile["twitter_profile"]>(
+    user.twitter_profile
+  );
 
-  const [username, usernameSet] = useState<Profiles["username"]>(null);
-  const [twitterProfile, twitterProfileSet] =
-    useState<Profiles["twitter_profile"]>(null);
-  const [avatarUrl, avatarUrlSet] = useState<Profiles["avatar_url"]>(null);
-  const [lifetimeDeal, lifetimeDealSet] =
-    useState<Profiles["lifetime_deal"]>(false);
-
+  const [loading, loadingSet] = useState(false);
   const [usernameError, usernameErrorSet] = useState("");
 
-  useEffect(() => {
-    if (!supabase && !user) {
-      return;
-    }
-
-    async function getProfile() {
-      try {
-        setLoading(true);
-        if (!user) throw new Error("No user");
-
-        const { data, error, status } = await supabase
-          .from("profiles")
-          .select(`username, twitter_profile, avatar_url, lifetime_deal`)
-          .eq("id", user.id)
-          .single();
-
-        if (error && status !== 406) {
-          throw error;
-        }
-
-        if (data) {
-          usernameSet(data.username);
-          twitterProfileSet(data.twitter_profile);
-          avatarUrlSet(data.avatar_url);
-          lifetimeDealSet(data.lifetime_deal);
-        }
-      } catch (error) {
-        alert("Error loading your profile!");
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    getProfile().catch(console.error);
-  }, [user, supabase]);
-
   async function updateProfile({
+    // avatarUrl,
     username,
     twitterProfile,
-    avatarUrl,
   }: {
-    username: Profiles["username"];
-    twitterProfile: Profiles["twitter_profile"];
-    avatarUrl: Profiles["avatar_url"];
+    // avatarUrl: Profile["avatar_url"];
+    username: Profile["username"];
+    twitterProfile: Profile["twitter_profile"];
   }) {
+    if (!user.id) {
+      return;
+    }
+    console.log("update", { user });
     try {
-      setLoading(true);
+      loadingSet(true);
       if (!user) throw new Error("No user");
       if (!username) throw new Error("No username provided");
 
-      const updates = {
-        id: user.id,
-        username,
-        twitter_profile: twitterProfile,
-        avatar_url: avatarUrl,
-        updated_at: new Date().toISOString(),
-      };
-
       const { error } = await supabase
         .from("profiles")
-        .upsert(updates)
+        .upsert({
+          id: user.id,
+          username,
+          twitter_profile: twitterProfile,
+          // avatar_url: avatarUrl,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", user.id);
-      if (error) throw error;
+
+      if (error) {
+        throw error;
+      }
+
       alert("Profile updated!");
     } catch (error: any) {
       if (error.code && error.code === "23505") {
@@ -114,29 +81,41 @@ export default function Account({ user }: { user: User }) {
         console.log(error);
       }
     } finally {
-      setLoading(false);
+      loadingSet(false);
     }
   }
 
-  function membershipStatus() {
-    if (loading) {
-      return null;
+  function renderMembershipStatus() {
+    switch (user.membership_status) {
+      case "lifetime":
+        return (
+          <Badge
+            size="xl"
+            mih="5vh"
+            radius="sm"
+            color="orange"
+            leftSection={<IconFlame />}
+            variant="filled"
+          >
+            Lifetime membership
+          </Badge>
+        );
+      case "subscribed":
+        return (
+          <Badge
+            size="xl"
+            mih="5vh"
+            radius="sm"
+            color="green"
+            leftSection={<IconFlame />}
+            variant="filled"
+          >
+            Subscribed
+          </Badge>
+        );
+      default:
+        return <LifetimeDeal />;
     }
-
-    return lifetimeDeal ? (
-      <Badge
-        size="xl"
-        mih="5vh"
-        radius="sm"
-        color="orange"
-        leftSection={<IconFlame />}
-        variant="filled"
-      >
-        Lifetime membership
-      </Badge>
-    ) : (
-      <LifetimeDeal />
-    );
   }
 
   return (
@@ -147,7 +126,7 @@ export default function Account({ user }: { user: User }) {
           <Box pos="relative">
             <LoadingOverlay visible={loading} />
             <Stack spacing="md">
-              <TextInput size="lg" label="E-mail" value={user.email} disabled />
+              <TextInput size="lg" label="E-mail" value={email} disabled />
               <TextInput
                 required
                 size="lg"
@@ -163,57 +142,44 @@ export default function Account({ user }: { user: User }) {
                 size="lg"
                 label="Twitter Profile"
                 icon={<IconAt size="1.1rem" stroke={1.5} color="black" />}
-                value={twitterProfile || ""}
-                onChange={(e) => twitterProfileSet(e.target.value)}
+                value={twitter || ""}
+                onChange={(e) => twitterSet(e.target.value)}
               />
-              {/* <TextInput
-              size="lg"
-              label="License key (if you purchased a membership)"
-              icon={<IconKey size="1.1rem" stroke={1.5} color="black" />}
-              // value={twitterProfile || ""}
-              // onChange={(e) => twitterProfileSet(e.target.value)}
-            /> */}
               <Text size="sm" color="dimmed">
                 By the way, avatars coming soon!
               </Text>
             </Stack>
 
             <Group mt="xl" mb="xl">
-              {loading ? (
-                <Text>Loading...</Text>
-              ) : (
-                <>
-                  <Button
-                    size="lg"
-                    className="button primary block"
-                    variant="outline"
-                    onClick={() =>
-                      updateProfile({
-                        username,
-                        twitterProfile,
-                        avatarUrl,
-                      })
-                    }
-                    disabled={loading}
-                  >
-                    Update profile
-                  </Button>
+              <Button
+                size="lg"
+                className="button primary block"
+                variant="outline"
+                onClick={() =>
+                  updateProfile({
+                    username,
+                    twitterProfile: twitter,
+                    // avatarUrl: null,
+                  })
+                }
+                disabled={!user}
+              >
+                Update profile
+              </Button>
 
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    color="red"
-                    onClick={async () => {
-                      await supabase.auth.signOut();
-                      router.push("/login");
-                    }}
-                  >
-                    Sign Out
-                  </Button>
-                </>
-              )}
+              <Button
+                size="lg"
+                variant="outline"
+                color="red"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  router.push("/login");
+                }}
+              >
+                Sign Out
+              </Button>
             </Group>
-            {membershipStatus()}
+            {renderMembershipStatus()}
           </Box>
         </Container>
       </main>
@@ -269,7 +235,14 @@ function LifetimeDeal() {
   );
 }
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+interface Props {
+  user: Profile;
+  email: string;
+}
+
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext
+): Promise<{ props: Props } | { redirect: any }> {
   // TODO: cookies
   // Create authenticated Supabase Client
   const supabase = createPagesServerClient(ctx);
@@ -286,10 +259,26 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
     };
 
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, username, twitter_profile, membership_status")
+    .eq("id", session.user.id)
+    .single();
+
+  if (error || !data) {
+    console.error(error);
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
-      initialSession: session,
-      user: session.user,
+      user: data as Profile,
+      email: session.user.email || "unknown",
     },
   };
-};
+}

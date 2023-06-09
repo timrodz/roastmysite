@@ -12,27 +12,30 @@ export interface Database {
       profiles: {
         Row: {
           avatar_url: string | null
-          full_name: string | null
           id: string
-          lifetime_deal: boolean
+          membership_status:
+            | Database["public"]["Enums"]["membership_status"]
+            | null
           twitter_profile: string | null
           updated_at: string | null
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
-          full_name?: string | null
           id: string
-          lifetime_deal?: boolean
+          membership_status?:
+            | Database["public"]["Enums"]["membership_status"]
+            | null
           twitter_profile?: string | null
           updated_at?: string | null
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
-          full_name?: string | null
           id?: string
-          lifetime_deal?: boolean
+          membership_status?:
+            | Database["public"]["Enums"]["membership_status"]
+            | null
           twitter_profile?: string | null
           updated_at?: string | null
           username?: string | null
@@ -87,26 +90,26 @@ export interface Database {
         Row: {
           created_at: string
           id: number
-          owned_by_user_id: string | null
+          owner_id: string | null
           url: string
           roast_count: unknown | null
         }
         Insert: {
           created_at?: string
           id?: number
-          owned_by_user_id?: string | null
+          owner_id?: string | null
           url: string
         }
         Update: {
           created_at?: string
           id?: number
-          owned_by_user_id?: string | null
+          owner_id?: string | null
           url?: string
         }
         Relationships: [
           {
-            foreignKeyName: "websites_owned_by_user_id_fkey"
-            columns: ["owned_by_user_id"]
+            foreignKeyName: "websites_owner_id_fkey"
+            columns: ["owner_id"]
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -130,7 +133,7 @@ export interface Database {
           }
     }
     Enums: {
-      [_ in never]: never
+      membership_status: "subscribed" | "lifetime"
     }
     CompositeTypes: {
       [_ in never]: never

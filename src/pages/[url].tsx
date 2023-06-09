@@ -2,7 +2,7 @@ import CreateRoastForm from "@/components/CreateRoastForm";
 import Roast from "@/components/Roast";
 import WebsiteActionPanel from "@/components/WebsiteActionPanel";
 import SEO from "@/components/misc/SEO";
-import { isUserPremiumSSR } from "@/lib/supabase";
+import { isUserPremium } from "@/lib/supabase";
 import { augmentRoasts } from "@/utils/augment-roasts";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Database } from "@lib/database.types";
@@ -54,10 +54,10 @@ export default function UrlPage({
 
   useEffect(() => {
     async function getRoasts() {
+      loadingSet(true);
       if (!roasts) {
         return;
       }
-      loadingSet(true);
       finalRoastsSet(await augmentRoasts(supabase, roasts));
     }
 
@@ -71,23 +71,27 @@ export default function UrlPage({
   }, [supabase, roasts]);
 
   function renderRoasts() {
-    return finalRoasts?.map((r, i) => {
-      const profile = r.profile;
-      const author = {
-        id: profile?.id,
-        username: profile?.username || "Unknown",
-        // avatar: profile?.avatar_url || undefined,
-        twitter: profile?.twitter_profile || undefined,
-        lifetime: profile?.lifetime_deal || false,
-      };
+    return finalRoasts?.map((roast, i) => {
+      if (roast.profile) {
+        return (
+          <Roast
+            key={i}
+            id={roast.id}
+            browsingUserId={browsingUserId}
+            author={roast.profile}
+            postedAt={new Date(roast.created_at)}
+            content={roast.content}
+          />
+        );
+      }
+
       return (
         <Roast
           key={i}
-          id={r.id}
+          id={roast.id}
           browsingUserId={browsingUserId}
-          author={author}
-          postedAt={new Date(r.created_at)}
-          content={r.content}
+          postedAt={new Date(roast.created_at)}
+          content={roast.content}
         />
       );
     });
@@ -332,7 +336,7 @@ export async function getServerSideProps(
     };
   }
 
-  const userPremium = await isUserPremiumSSR(supabase, session.user.id);
+  const userPremium = await isUserPremium(supabase, session.user.id);
 
   if (!userPremium) {
     console.log(`User ${session.user.id} is not premium`);

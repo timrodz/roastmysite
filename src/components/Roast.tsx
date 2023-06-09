@@ -2,6 +2,7 @@
  * NOT LOADING AVATARS YET
  */
 import { Database } from "@/lib/database.types";
+import { Profile } from "@/lib/supabase";
 import {
   Badge,
   Box,
@@ -65,19 +66,10 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface Author {
-  id?: string;
-  // Defaults to "Unknown" if undefined
-  username: string;
-  twitter?: string;
-  lifetime: boolean;
-  // avatar?: string;
-}
-
 interface Props {
   id: number;
   browsingUserId: string | null;
-  author: Author;
+  author?: Profile;
   postedAt: Date;
   content: string;
 }
@@ -96,7 +88,7 @@ export default function Roast({
 
   const supabase = useSupabaseClient<Database>();
 
-  const isUserAuthor = browsingUserId === author.id;
+  const isUserAuthor = browsingUserId === author?.id;
 
   const formattedDate = dayjs(postedAt).format("YYYY-MM-DD");
 
@@ -182,22 +174,26 @@ export default function Roast({
           {/* {author.avatar && (
           <Avatar src={author.avatar} alt={author.username} radius="xl" />
         )} */}
-          <Text fz="lg">By {author.username}</Text>
-          {author.twitter && (
+          <Text fz="lg">By {author?.username}</Text>
+          {author?.twitter_profile && (
             <Badge
               leftSection={<IconBrandTwitter size="0.8rem" />}
               color="blue"
             >
               <Link
-                href={`https://twitter.com/${author.twitter}`}
+                href={`https://twitter.com/${author.twitter_profile}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {author.twitter}
+                {author.twitter_profile}
               </Link>
             </Badge>
           )}
-          {author.lifetime && <Badge color="orange">Member</Badge>}
+          {author?.membership_status && (
+            <Badge color="orange">
+              {author.membership_status === "lifetime" ? "Lifetime" : "Premium"}
+            </Badge>
+          )}
           <Text fz="xs" c="dimmed">
             Posted on {formattedDate}
           </Text>

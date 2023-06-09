@@ -58,7 +58,7 @@ export async function getServerSideProps(): Promise<{
     .from("websites")
     .select("url, roast_count")
     .order("roast_count", { ascending: false })
-    .limit(3);
+    .limit(6);
 
   const topRoasts: Roast[] | null =
     data?.filter(Boolean).map((site) => ({

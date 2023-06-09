@@ -14,8 +14,6 @@ interface Props {
 export default function WebsiteActionPanel({ site, browsingUserId }: Props) {
   const { classes, theme } = useGlobalStyles();
 
-  console.log({ browsingUserId });
-
   // Hack, for now I own my own website
   const isOwner =
     site.url === "roastmysite.io" &&

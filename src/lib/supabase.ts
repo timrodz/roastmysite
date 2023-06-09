@@ -1,20 +1,39 @@
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import { Database } from "./database.types";
 
+export type Roast = Database["public"]["Tables"]["roasts"]["Row"];
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+export type MembershipStatus = Database["public"]["Enums"]["membership_status"];
+
 export const supabaseClient = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  }
 );
 
-export async function isUserPremiumSSR(
+export async function isUserPremium(
   supabase: SupabaseClient,
   userId: string
-): Promise<{ id: string } | null> {
-  const { data: userPremium } = await supabase
+): Promise<boolean> {
+  const { data } = await supabase
     .from("profiles")
-    .select("id")
-    .match({ id: userId, lifetime_deal: true })
+    .select("id, membership_status")
+    .eq("id", userId)
     .maybeSingle();
 
-  return userPremium;
+  const profile = data as Profile;
+
+  return !!profile?.membership_status;
 }
+
+// export async function getAugmentedRoasts(
+//   supabase: SupabaseClient
+// ): Promise<any> {
+//   const { data } = await supabase.from("");
+// }

@@ -9,6 +9,7 @@ import {
   Box,
   Container,
   Divider,
+  LoadingOverlay,
   SimpleGrid,
   Text,
   ThemeIcon,
@@ -34,10 +35,7 @@ const useStyles = createStyles((theme) => ({
 
   dots: {
     position: "absolute",
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[5]
-        : theme.colors.gray[1],
+    color: theme.colors.gray[1],
 
     [theme.fn.smallerThan("sm")]: {
       display: "none",
@@ -90,7 +88,7 @@ export default function Home() {
   const supabase = useSupabaseClient<Database>();
 
   const [roasts, roastsSet] = useState<Roast[]>([]);
-  // const [loading, loadingSet] = useState(false);
+  const [loading, loadingSet] = useState(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -98,30 +96,25 @@ export default function Home() {
     }
 
     async function getTopRoasts() {
-      try {
-        // loadingSet(true);
-        const { data } = await supabase
-          .from("websites")
-          .select("url, roast_count")
-          .order("roast_count", { ascending: false })
-          .limit(3);
+      loadingSet(true);
+      const { data } = await supabase
+        .from("websites")
+        .select("url, roast_count")
+        .order("roast_count", { ascending: false })
+        .limit(6);
 
-        const topRoasts: Roast[] =
-          data?.filter(Boolean).map((site) => ({
-            url: site.url,
-            count: site.roast_count as number,
-          })) || [];
+      const topRoasts: Roast[] =
+        data?.filter(Boolean).map((site) => ({
+          url: site.url,
+          count: site.roast_count as number,
+        })) || [];
 
-        roastsSet(topRoasts);
-      } catch (error) {
-        console.log(error);
-      }
-      //  finally {
-      //   loadingSet(false);
-      // }
+      roastsSet(topRoasts);
     }
 
-    getTopRoasts().catch(console.error);
+    getTopRoasts()
+      .catch(console.error)
+      .finally(() => loadingSet(false));
   }, [supabase]);
 
   return (
@@ -231,11 +224,14 @@ export default function Home() {
             </Text>
             <StartRoastingCTA />
           </section>
-          {roasts && (
-            <section id="roasts" className="mb-60">
-              <TopRoasts title="See the top roasts" roasts={roasts} />
-            </section>
-          )}
+          <section id="roasts" className="mb-60">
+            <Box pos="relative">
+              <LoadingOverlay visible={loading} />
+              {roasts && (
+                <TopRoasts title="See the top roasts" roasts={roasts} />
+              )}
+            </Box>
+          </section>
           <section id="pricing" className="mb-32">
             <Pricing />
           </section>
