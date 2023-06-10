@@ -120,17 +120,84 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      roast_count:
+      get_posts_for_website:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: number
+            Args: {
+              url: string
+              max_items: number
+            }
+            Returns: {
+              site_id: number
+              site_url: string
+              site_owner_id: string
+              roast_id: number
+              roast_created_at: string
+              roast_author_id: string
+              roast_content: string
+              author_username: string
+              author_twitter_profile: string
+              author_membership_status: string
+            }[]
           }
         | {
             Args: {
-              "": unknown
+              url: string
+              max_items: number
             }
-            Returns: number
+            Returns: {
+              site_id: number
+              site_url: string
+              site_owner_id: string
+              roast_id: number
+              roast_created_at: string
+              roast_author_id: string
+              roast_content: string
+              author_username: string
+              author_twitter_profile: string
+              author_membership_status: string
+            }[]
           }
+        | {
+            Args: {
+              url: string
+            }
+            Returns: {
+              site_id: number
+              site_url: string
+              site_owner_id: string
+              roast_id: number
+              roast_created_at: string
+              roast_author_id: string
+              roast_content: string
+              author_username: string
+              author_twitter_profile: string
+              author_membership_status: string
+            }[]
+          }
+      get_posts_for_website_2: {
+        Args: {
+          url: string
+          max_items: number
+        }
+        Returns: {
+          site_id: number
+          site_url: string
+          site_owner_id: string
+          roast_id: number
+          roast_created_at: string
+          roast_author_id: string
+          roast_content: string
+          author_username: string
+          author_twitter_profile: string
+          author_membership_status: string
+        }[]
+      }
+      roast_count: {
+        Args: {
+          "": unknown
+        }
+        Returns: number
+      }
     }
     Enums: {
       membership_status: "subscribed" | "lifetime"

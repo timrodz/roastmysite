@@ -4,12 +4,10 @@ import TopRoasts from "@/components/TopRoasts";
 import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
 import Dots from "@/components/misc/LandingDots";
 import SEO from "@/components/misc/SEO";
-import { Database } from "@/lib/database.types";
 import {
   Box,
   Container,
   Divider,
-  LoadingOverlay,
   SimpleGrid,
   Text,
   ThemeIcon,
@@ -17,9 +15,8 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconNumber1, IconNumber2, IconNumber3 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -85,37 +82,6 @@ const featureArray = [
 
 export default function Home() {
   const { classes } = useStyles();
-  const supabase = useSupabaseClient<Database>();
-
-  const [roasts, roastsSet] = useState<Roast[]>([]);
-  const [loading, loadingSet] = useState(false);
-
-  useEffect(() => {
-    if (!supabase) {
-      return;
-    }
-
-    async function getTopRoasts() {
-      loadingSet(true);
-      const { data } = await supabase
-        .from("websites")
-        .select("url, roast_count")
-        .order("roast_count", { ascending: false })
-        .limit(6);
-
-      const topRoasts: Roast[] =
-        data?.filter(Boolean).map((site) => ({
-          url: site.url,
-          count: site.roast_count as number,
-        })) || [];
-
-      roastsSet(topRoasts);
-    }
-
-    getTopRoasts()
-      .catch(console.error)
-      .finally(() => loadingSet(false));
-  }, [supabase]);
 
   return (
     <>
@@ -224,14 +190,7 @@ export default function Home() {
             </Text>
             <StartRoastingCTA />
           </section>
-          <section id="roasts" className="mb-60">
-            <Box pos="relative">
-              <LoadingOverlay visible={loading} />
-              {roasts && (
-                <TopRoasts title="See the top roasts" roasts={roasts} />
-              )}
-            </Box>
-          </section>
+          <TopRoasts title="See the top roasts" className="mb-60" />
           <section id="pricing" className="mb-32">
             <Pricing />
           </section>

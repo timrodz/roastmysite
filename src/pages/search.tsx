@@ -1,20 +1,10 @@
-import SEO from "@/components/misc/SEO";
-import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
 import TopRoasts from "@/components/TopRoasts";
-import { supabaseClient } from "@/lib/supabase";
+import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
+import SEO from "@/components/misc/SEO";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Container, Text } from "@mantine/core";
 
-interface Roast {
-  url: string;
-  count: number;
-}
-
-interface Props {
-  topRoasts: Roast[] | null;
-}
-
-export default function RoastPage({ topRoasts }: Props) {
+export default function RoastPage() {
   const { classes } = useGlobalStyles();
 
   return (
@@ -40,35 +30,9 @@ export default function RoastPage({ topRoasts }: Props) {
             </Text>
             <StartRoastingCTA />
           </section>
-          {topRoasts && topRoasts.length > 0 && (
-            <section id="roasts">
-              <TopRoasts title="Top roasts" roasts={topRoasts} />
-            </section>
-          )}
+          <TopRoasts title="Top roasts" />
         </Container>
       </main>
     </>
   );
-}
-
-export async function getServerSideProps(): Promise<{
-  props: { topRoasts: Roast[] | null };
-}> {
-  const { data } = await supabaseClient
-    .from("websites")
-    .select("url, roast_count")
-    .order("roast_count", { ascending: false })
-    .limit(6);
-
-  const topRoasts: Roast[] | null =
-    data?.filter(Boolean).map((site) => ({
-      url: site.url,
-      count: site.roast_count as number,
-    })) || null;
-
-  return {
-    props: {
-      topRoasts,
-    },
-  };
 }

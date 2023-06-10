@@ -1,5 +1,7 @@
+import { supabaseClient } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Container, SimpleGrid, Text, Title } from "@mantine/core";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 
 interface Roast {
   url: string;
@@ -8,11 +10,29 @@ interface Roast {
 
 interface Props {
   title: string;
-  roasts: Roast[];
+  className?: string;
 }
 
-export default function TopRoasts({ title, roasts }: Props) {
+export default function TopRoasts({ title, className }: Props) {
   const { classes } = useGlobalStyles();
+
+  const { data, error, isLoading } = useQuery(
+    supabaseClient
+      .from("websites")
+      .select("url, roast_count")
+      .order("roast_count", { ascending: false })
+      .limit(6)
+  );
+
+  if (isLoading || error) {
+    return null;
+  }
+
+  const roasts: Roast[] =
+    data?.filter(Boolean).map((site) => ({
+      url: site.url,
+      count: site.roast_count as number,
+    })) || [];
 
   const sortedRoasts = roasts
     .sort((a, b) => b.count - a.count)
@@ -30,7 +50,7 @@ export default function TopRoasts({ title, roasts }: Props) {
     ));
 
   return (
-    <>
+    <section id="roasts" className={className?.toString() || ""}>
       <Title
         order={3}
         fw={800}
@@ -56,6 +76,6 @@ export default function TopRoasts({ title, roasts }: Props) {
           {sortedRoasts}
         </SimpleGrid>
       </Container>
-    </>
+    </section>
   );
 }

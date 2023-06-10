@@ -1,4 +1,4 @@
-import { Profile, Roast } from "@/lib/supabase";
+import { Profile, Roast, supabaseClient } from "@/lib/supabase";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 interface AugmentedRoast extends Roast {
@@ -6,7 +6,7 @@ interface AugmentedRoast extends Roast {
 }
 
 export async function augmentRoasts(
-  supabase: SupabaseClient,
+  // supabase: SupabaseClient,
   baseRoasts: Roast[]
 ): Promise<AugmentedRoast[]> {
   const typedRoasts = baseRoasts.filter(Boolean) as Roast[];
@@ -18,7 +18,7 @@ export async function augmentRoasts(
   }
 
   // Get user profiles
-  const { data: profiles } = await supabase
+  const { data: profiles } = await supabaseClient
     .from("profiles")
     .select(`id, username, twitter_profile, membership_status`)
     .in("id", roastUserIds);

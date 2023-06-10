@@ -1,17 +1,21 @@
 import CreateRoastForm from "@/components/CreateRoastForm";
-import Roast from "@/components/Roast";
 import WebsiteActionPanel from "@/components/WebsiteActionPanel";
 import SEO from "@/components/misc/SEO";
-import { isUserPremium } from "@/lib/supabase";
-import { augmentRoasts } from "@/utils/augment-roasts";
+import {
+  AugmentedRoast,
+  SessionUser,
+  isUserPremium,
+  supabaseClient,
+} from "@/lib/supabase";
+import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import RoastComponent from "@/components/Roast";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Database } from "@lib/database.types";
 import {
-  Box,
   Button,
   Code,
   Container,
-  LoadingOverlay,
   Space,
   Stack,
   Text,
@@ -22,111 +26,140 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-type Roast = Database["public"]["Tables"]["roasts"]["Row"];
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type Site = { id: number; url: string };
+const maxRoasts = {
+  premium: 6,
+  freeUser: 3,
+};
 
-interface AugmentedRoast extends Roast {
-  profile?: Profile;
+async function getRoasts(
+  url: string,
+  userId?: string
+): Promise<SSRQueryResult> {
+  const sessionUser: SessionUser = userId
+    ? {
+        id: userId,
+        isPremium: await isUserPremium(supabaseClient, userId),
+      }
+    : null;
+
+  const query = await supabaseClient.rpc("get_posts_for_website", {
+    url,
+    // max_items: sessionUser?.isPremium ? maxRoasts.premium : maxRoasts.freeUser,
+  });
+
+  if (!query.data) {
+    return {
+      siteId: null,
+      siteOwnerUserId: null,
+      sessionUser,
+      roasts: null,
+    };
+  }
+
+  const { site_id, site_owner_id } = query.data[0];
+
+  const roasts: AugmentedRoast[] = query.data?.map((d) => ({
+    id: d.roast_id,
+    createdAt: d.roast_created_at,
+    content: d.roast_content,
+    authorId: d.roast_author_id,
+    authorUsername: d.author_username,
+    authorTwitter: d.author_twitter_profile,
+    authorMembershipStatus: d.author_membership_status,
+  }));
+
+  return {
+    siteId: site_id,
+    siteOwnerUserId: site_owner_id,
+    sessionUser,
+    roasts,
+  };
+}
+
+interface SSRQueryResult {
+  siteId: number | null;
+  siteOwnerUserId: string | null;
+  sessionUser: SessionUser | null;
+  roasts: AugmentedRoast[] | null;
 }
 
 interface Props {
-  userId: string | null;
-  site: Site;
-  roasts: Roast[] | null;
-  userPremium: boolean;
+  url: string;
+  browsingUserId?: string;
 }
 
-export default function UrlPage({
-  userId: browsingUserId,
-  site,
-  roasts,
-  userPremium,
-}: Props) {
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ url: string }>
+): Promise<any> {
+  const url = context.params?.url!;
+
+  const supabase = createPagesServerClient(context);
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery([`${url}_roasts`], () =>
+    getRoasts(url, session?.user.id)
+  );
+
+  const dehydratedState = dehydrate(queryClient);
+
+  return {
+    props: {
+      url,
+      browsingUserId: session ? session.user.id : null,
+      dehydratedState,
+    },
+  };
+}
+
+export default function UrlPage({ url, browsingUserId }: Props) {
   const { classes, theme } = useGlobalStyles();
   const [roastContent, roastContentSet] = useState("");
 
-  const [loading, loadingSet] = useState(false);
-  const [finalRoasts, finalRoastsSet] = useState<AugmentedRoast[]>();
-  const supabase = useSupabaseClient<Database>();
+  const { data } = useQuery({
+    queryKey: [`${url}_roasts`],
+    queryFn: () => getRoasts(url, browsingUserId),
+  });
 
-  useEffect(() => {
-    async function getRoasts() {
-      loadingSet(true);
-      if (!roasts) {
-        return;
-      }
-      finalRoastsSet(await augmentRoasts(supabase, roasts));
-    }
-
-    if (!supabase || !roasts?.length) {
-      return;
-    }
-
-    getRoasts()
-      .catch(console.error)
-      .finally(() => loadingSet(false));
-  }, [supabase, roasts]);
+  const finalRoasts = data?.roasts;
+  const sessionUser = data?.sessionUser;
+  const siteId = data?.siteId;
 
   function renderRoasts() {
     return finalRoasts?.map((roast, i) => {
-      if (roast.profile) {
-        return (
-          <Roast
-            key={i}
-            id={roast.id}
-            browsingUserId={browsingUserId}
-            author={roast.profile}
-            postedAt={new Date(roast.created_at)}
-            content={roast.content}
-          />
-        );
-      }
-
       return (
-        <Roast
-          key={i}
-          id={roast.id}
-          browsingUserId={browsingUserId}
-          postedAt={new Date(roast.created_at)}
-          content={roast.content}
-        />
+        <RoastComponent key={i} browsingUserId={browsingUserId} {...roast} />
       );
     });
   }
 
-  /**
-   * 1. Find site entry in DB
-   * 2. Find roasts assigned to site
-   * 3. If no roasts, custom messaging to show user they're the first roast
-   */
   return (
     <>
       <SEO
-        title={`Roasts for ${site.url}`}
-        description={`Roast ${site.url} by giving it honest feedback.`}
+        title={`Roasts for ${url}`}
+        description={`Roast ${url} by giving it honest feedback.`}
       />
       <main>
         <Container className={classes.pageWrapper}>
           <section id="title" className="mb-8">
             <Container p={0} size="xs">
-              {finalRoasts && finalRoasts.length > 0 ? (
+              {finalRoasts?.length ?? 0 > 0 ? (
                 <>
-                  <Title
-                    fz={{ base: 32, sm: 40 }}
-                    mb="xs"
-                    // className={classes.textAlign}
-                  >
+                  <Title fz={{ base: 32, sm: 40 }} mb="xs">
                     The roast of{" "}
                     <Link
                       target="_blank"
                       rel="noopener noreferrer"
                       className={classes.linkSecondary}
-                      href={`https://${site.url}`}
+                      href={`https://${url}`}
                     >
-                      {site.url}
+                      {url}
                     </Link>
                   </Title>
                 </>
@@ -137,9 +170,9 @@ export default function UrlPage({
                     <Link
                       target="_blank"
                       className={classes.linkSecondary}
-                      href={`https://${site.url}`}
+                      href={`https://${url}`}
                     >
-                      {site.url}
+                      {url}
                     </Link>{" "}
                     yet
                   </Title>
@@ -150,9 +183,15 @@ export default function UrlPage({
               )}
             </Container>
           </section>
-          <section id="actions" className="mb-6">
-            <WebsiteActionPanel site={site} browsingUserId={browsingUserId} />
-          </section>
+          {siteId && (
+            <section id="actions" className="mb-6">
+              <WebsiteActionPanel
+                siteId={siteId}
+                siteUrl={url}
+                browsingUserId={browsingUserId}
+              />
+            </section>
+          )}
           <section id="add-roast" className="mb-12">
             <Container p={0} size="xs">
               {/* User logged in */}
@@ -176,16 +215,19 @@ export default function UrlPage({
                     . They can&apos;t be uploaded to this site so it must
                     already exist elsewhere :)
                   </Text>
-                  <SubmitRoast
-                    site={site}
-                    content={roastContent}
-                    userId={browsingUserId}
-                  />
+                  {siteId && (
+                    <SubmitRoastButton
+                      siteId={siteId}
+                      siteUrl={url}
+                      content={roastContent}
+                      authorId={browsingUserId}
+                    />
+                  )}
                 </>
               ) : (
                 <>
                   {/* User not logged in */}
-                  <Text size="xl" className={classes.textAlign}>
+                  <Text size="lg">
                     Please{" "}
                     <Link className={classes.linkPrimary} href="/login">
                       Login
@@ -196,32 +238,32 @@ export default function UrlPage({
               )}
             </Container>
           </section>
-          {finalRoasts && finalRoasts.length > 0 && (
+          {(finalRoasts?.length ?? 0 > 0) && (
             <section id="view-roasts" className="mb-12">
               <Container p={0} size="xs" mt={30}>
                 <Title fz={{ base: 24, sm: 30 }} order={3} mb="xs">
                   Roasts
                 </Title>
-                <Box pos="relative">
-                  <LoadingOverlay visible={loading} />
-                  <Stack spacing={15}>
-                    {renderRoasts()}
-                    {!userPremium && (
-                      <>
-                        <Text
-                          component="a"
-                          target="_blank"
-                          href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
-                          color="indigo"
-                          variant="light"
-                        >
-                          You&apos;re seeing a limited number of roasts.
-                          Purchase a license to unlock them all!
-                        </Text>
-                      </>
-                    )}
-                  </Stack>
-                </Box>
+                {/* <Box pos="relative"> */}
+                {/* <LoadingOverlay visible={loading} /> */}
+                <Stack spacing={15}>
+                  {renderRoasts()}
+                  {!sessionUser?.isPremium && (
+                    <>
+                      <Text
+                        component="a"
+                        target="_blank"
+                        href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+                        color="indigo"
+                        variant="light"
+                      >
+                        You&apos;re seeing a limited number of roasts. Purchase
+                        a license to unlock them all!
+                      </Text>
+                    </>
+                  )}
+                </Stack>
+                {/* </Box> */}
               </Container>
             </section>
           )}
@@ -231,14 +273,16 @@ export default function UrlPage({
   );
 }
 
-function SubmitRoast({
+function SubmitRoastButton({
+  siteId,
+  siteUrl,
+  authorId,
   content,
-  site,
-  userId,
 }: {
-  site: Site;
+  siteId: number;
+  siteUrl: string;
+  authorId: string;
   content: string;
-  userId: string;
 }) {
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
@@ -246,7 +290,7 @@ function SubmitRoast({
   const onClick = async (e: any) => {
     e.preventDefault();
 
-    if (!userId) {
+    if (!authorId) {
       console.warn("Not logged in");
       return;
     }
@@ -257,14 +301,12 @@ function SubmitRoast({
       return;
     }
 
-    let siteId = site.id;
-
     // Website doesn't exist yet
     if (siteId === -1) {
       const { data: createdWebsiteData, error: websiteCreateError } =
         await supabase
           .from("websites")
-          .insert({ url: site.url })
+          .insert({ url: siteUrl })
           .select("id")
           .single();
 
@@ -282,7 +324,7 @@ function SubmitRoast({
 
     const { error } = await supabase
       .from("roasts")
-      .insert({ content: cleanContent, site_id: siteId, user_id: userId });
+      .insert({ content: cleanContent, site_id: siteId, user_id: authorId });
 
     if (error) {
       console.error(error);
@@ -294,64 +336,4 @@ function SubmitRoast({
   };
 
   return <Button onClick={onClick}>Submit roast</Button>;
-}
-
-export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ url: string }>
-): Promise<{
-  props: Props;
-}> {
-  const siteUrl = context.params?.url!;
-
-  const supabase = createPagesServerClient(context);
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const { data: website } = await supabase
-    .from("websites")
-    .select("id, roasts(*)")
-    .eq("url", siteUrl)
-    .maybeSingle();
-
-  let finalRoasts: Roast[] = website?.roasts
-    .filter(Boolean)
-    .sort((a, b) => b.id - a.id) as Roast[];
-
-  // Only show the top 3 roasts for those who aren't logged in and aren't premium members
-  if (!session) {
-    console.log(`Visitor - limiting to 3 roasts`);
-    finalRoasts = finalRoasts.slice(0, 3);
-    return {
-      props: {
-        userId: null,
-        site: {
-          id: website ? website.id : -1,
-          url: siteUrl,
-        },
-        roasts: finalRoasts,
-        userPremium: false,
-      },
-    };
-  }
-
-  const userPremium = await isUserPremium(supabase, session.user.id);
-
-  if (!userPremium) {
-    console.log(`User ${session.user.id} is not premium`);
-    finalRoasts = finalRoasts.slice(0, 3);
-  }
-
-  return {
-    props: {
-      userId: session.user.id,
-      site: {
-        id: website ? website.id : -1,
-        url: siteUrl,
-      },
-      roasts: finalRoasts,
-      userPremium: !!userPremium,
-    },
-  };
 }

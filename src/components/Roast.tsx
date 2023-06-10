@@ -2,7 +2,7 @@
  * NOT LOADING AVATARS YET
  */
 import { Database } from "@/lib/database.types";
-import { Profile } from "@/lib/supabase";
+import { AugmentedRoast, Profile } from "@/lib/supabase";
 import {
   Badge,
   Box,
@@ -66,21 +66,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface Props {
-  id: number;
-  browsingUserId: string | null;
-  author?: Profile;
-  postedAt: Date;
-  content: string;
+interface Props extends AugmentedRoast {
+  browsingUserId?: string;
 }
 
-export default function Roast({
-  id: roastId,
-  browsingUserId,
-  author,
-  postedAt,
-  content,
-}: Props) {
+export default function Roast(props: Props) {
   const { classes, theme } = useStyles();
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
@@ -88,9 +78,9 @@ export default function Roast({
 
   const supabase = useSupabaseClient<Database>();
 
-  const isUserAuthor = browsingUserId === author?.id;
+  const isUserAuthor = props.authorId === props.browsingUserId;
 
-  const formattedDate = dayjs(postedAt).format("YYYY-MM-DD");
+  const formattedDate = dayjs(props.createdAt).format("YYYY-MM-DD");
 
   function renderPost(modal?: boolean) {
     return (
@@ -99,7 +89,9 @@ export default function Roast({
           <div
             className={classes.commentContent}
             dangerouslySetInnerHTML={{
-              __html: modal ? `${content.slice(0, 220)}...` : content,
+              __html: modal
+                ? `${props.content.slice(0, 220)}...`
+                : props.content,
             }}
           />
         </TypographyStylesProvider>
@@ -120,7 +112,7 @@ export default function Roast({
     const { error } = await supabase
       .from("roasts")
       .delete()
-      .match({ id: roastId, user_id: browsingUserId });
+      .match({ id: props.id, user_id: props.browsingUserId });
 
     if (error) {
       console.error(error);
@@ -174,24 +166,26 @@ export default function Roast({
           {/* {author.avatar && (
           <Avatar src={author.avatar} alt={author.username} radius="xl" />
         )} */}
-          <Text fz="lg">By {author?.username}</Text>
-          {author?.twitter_profile && (
+          <Text fz="lg">By {props.authorUsername}</Text>
+          {props.authorTwitter && (
             <Badge
               leftSection={<IconBrandTwitter size="0.8rem" />}
               color="blue"
             >
               <Link
-                href={`https://twitter.com/${author.twitter_profile}`}
+                href={`https://twitter.com/${props.authorTwitter}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {author.twitter_profile}
+                {props.authorTwitter}
               </Link>
             </Badge>
           )}
-          {author?.membership_status && (
+          {props.authorMembershipStatus && (
             <Badge color="orange">
-              {author.membership_status === "lifetime" ? "Lifetime" : "Premium"}
+              {props.authorMembershipStatus === "lifetime"
+                ? "Lifetime"
+                : "Premium"}
             </Badge>
           )}
           <Text fz="xs" c="dimmed">

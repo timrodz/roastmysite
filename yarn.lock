@@ -40,6 +40,14 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@babel/runtime-corejs3@^7.16.5":
+  version "7.22.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.22.5.tgz#bbc769b48edb2bdfd404b65ad1fc3952bf33e3c2"
+  integrity sha512-TNPDN6aBFaUox2Lu+H/Y1dKKQgr4ucz/FGyCz67RVYLsBpVpUFf1dDngzg+Od8aqbrqwyztkaZjtWCZEUOT8zA==
+  dependencies:
+    core-js-pure "^3.30.2"
+    regenerator-runtime "^0.13.11"
+
 "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.7":
   version "7.22.3"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.22.3.tgz"
@@ -506,6 +514,57 @@
   resolved "https://registry.npmjs.org/@stitches/core/-/core-1.2.8.tgz"
   integrity sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==
 
+"@supabase-cache-helpers/postgrest-fetcher@1.0.10":
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/@supabase-cache-helpers/postgrest-fetcher/-/postgrest-fetcher-1.0.10.tgz#5e325c69a05dddc4a7fbcd3dfb44e167a2e217b9"
+  integrity sha512-GFF7C//TPZ6SXBHjBckS6rrbMBIhTpPnyvPMkCVNz5UG38GX9I1Z4e5eX8TEDm75+qunmxcPYwAjNv32ctjAbw==
+  dependencies:
+    "@supabase-cache-helpers/postgrest-filter" "1.0.8"
+    "@supabase-cache-helpers/postgrest-shared" "1.0.4"
+
+"@supabase-cache-helpers/postgrest-filter@1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@supabase-cache-helpers/postgrest-filter/-/postgrest-filter-1.0.8.tgz#bbda5fdd87a5597f9fdc6a16ee20c08f40e90f44"
+  integrity sha512-H+lpKfb1jvpE52ZKtFr97NEZ1KhPUuDh3EhIa+88yJV1Udt1Xs01KFlChN8A3QFk4QMT80Z1MiPf+HlksYTJmw==
+  dependencies:
+    fast-equals "^5.0.1"
+    xregexp "^5.1.1"
+
+"@supabase-cache-helpers/postgrest-mutate@1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@supabase-cache-helpers/postgrest-mutate/-/postgrest-mutate-1.0.12.tgz#029c70b4cbe6cf11d962389da9905fca1c22ed0b"
+  integrity sha512-VenO41TLrA1GuQQbf0wpsx8DGqnPhFR7EDiZtgm4jN/cwXaQ7R/nwGQmop5LvjH9Mi1uECYmiZJSAvRSPIivMQ==
+  dependencies:
+    "@supabase-cache-helpers/postgrest-filter" "1.0.8"
+    "@supabase-cache-helpers/postgrest-shared" "1.0.4"
+    merge-anything "^5.1.7"
+
+"@supabase-cache-helpers/postgrest-react-query@^1.0.14":
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/@supabase-cache-helpers/postgrest-react-query/-/postgrest-react-query-1.0.14.tgz#6d16dc6a4d66246eea6fbb999c2233fbb901e70b"
+  integrity sha512-IVxU0R1EG3oJiDQKyrfoybXhYlEGeihmzWVL/481DbMXpqKLxH858BkbZT6u0Wtjjj7PybbY/GVNuWsYlf/Mlw==
+  dependencies:
+    "@supabase-cache-helpers/postgrest-fetcher" "1.0.10"
+    "@supabase-cache-helpers/postgrest-filter" "1.0.8"
+    "@supabase-cache-helpers/postgrest-mutate" "1.0.12"
+    "@supabase-cache-helpers/postgrest-shared" "1.0.4"
+
+"@supabase-cache-helpers/postgrest-shared@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@supabase-cache-helpers/postgrest-shared/-/postgrest-shared-1.0.4.tgz#347dd5bf0d2fa75afc0a32b3a03ac93ef3fb83e1"
+  integrity sha512-w+mKOZB6jeQeY1woDAQZnh4MX8EerVXvEiOm1Cms5HstskbWpbeDV8Xnj4DAnKYjhl/3C19wvlzNaYZSX+4uKw==
+
+"@supabase-cache-helpers/postgrest-swr@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@supabase-cache-helpers/postgrest-swr/-/postgrest-swr-1.0.15.tgz#b1ffc7a9c199e11133cfa9e79f2f59ee505e32df"
+  integrity sha512-l06vFU0/cDrP0cCTAEC1i93Aj+UDG1u7D56JGZFfDoC/Ak1mY7VZ3ryKXTzQonsVyKv+lQTyVo7/zIB+mhUa0Q==
+  dependencies:
+    "@supabase-cache-helpers/postgrest-fetcher" "1.0.10"
+    "@supabase-cache-helpers/postgrest-filter" "1.0.8"
+    "@supabase-cache-helpers/postgrest-mutate" "1.0.12"
+    "@supabase-cache-helpers/postgrest-shared" "1.0.4"
+    xregexp "^5.1.1"
+
 "@supabase/auth-helpers-nextjs@^0.7.1":
   version "0.7.2"
   resolved "https://registry.npmjs.org/@supabase/auth-helpers-nextjs/-/auth-helpers-nextjs-0.7.2.tgz"
@@ -610,6 +669,19 @@
   version "2.21.0"
   resolved "https://registry.npmjs.org/@tabler/icons/-/icons-2.21.0.tgz"
   integrity sha512-XKrTEHMX6XzCOwcOU8ZNA+Xqm51sI+0abn2jk1fyQUpWeFnGsOEiC+fpQ4EISc+v+U9jqgTSbh8bZ6JBuKU5sw==
+
+"@tanstack/query-core@4.29.11":
+  version "4.29.11"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.29.11.tgz#fa338f7d6897c6be5de6d8dabd603d9b78ee48c7"
+  integrity sha512-8C+hF6SFAb/TlFZyS9FItgNwrw4PMa7YeX+KQYe2ZAiEz6uzg6yIr+QBzPkUwZ/L0bXvGd1sufTm3wotoz+GwQ==
+
+"@tanstack/react-query@^4.29.12":
+  version "4.29.12"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.29.12.tgz#de111cf1d6c389b86acacfaf972302914cfa1208"
+  integrity sha512-zhcN6+zF6cxprxhTHQajHGlvxgK8npnp9uLe9yaWhGc6sYcPWXzyO4raL4HomUzQOPzu3jLvkriJQ7BOrDM8vA==
+  dependencies:
+    "@tanstack/query-core" "4.29.11"
+    use-sync-external-store "^1.2.0"
 
 "@types/json5@^0.0.29":
   version "0.0.29"
@@ -1079,6 +1151,11 @@ convert-source-map@^1.5.0:
   version "1.9.0"
   resolved "https://registry.npmjs.org/convert-source-map/-/convert-source-map-1.9.0.tgz"
   integrity sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==
+
+core-js-pure@^3.30.2:
+  version "3.30.2"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.30.2.tgz#005a82551f4af3250dcfb46ed360fad32ced114e"
+  integrity sha512-p/npFUJXXBkCCTIlEGBdghofn00jWG6ZOtdoIXSJmAu2QBvN0IqpZXWweOytcwE6cfx8ZvVUy1vw8zxhe4Y2vg==
 
 core-util-is@~1.0.0:
   version "1.0.3"
@@ -1734,6 +1811,11 @@ fast-diff@1.1.2:
   resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.1.2.tgz#4b62c42b8e03de3f848460b639079920695d0154"
   integrity sha512-KaJUt+M9t1qaIteSvjc6P3RbMdXsNhK61GRftR6SNxqmhthcd9MGIi4T+o0jD8LUSpSnSKXE20nLtJ3fOHxQig==
 
+fast-equals@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/fast-equals/-/fast-equals-5.0.1.tgz#a4eefe3c5d1c0d021aeed0bc10ba5e0c12ee405d"
+  integrity sha512-WF1Wi8PwwSY7/6Kx0vKXtw8RwuSGoM1bvDaJbu7MxDlR1vovZjIAKrnzyrThgAjm6JDTu0fVgWXDlMGspodfoQ==
+
 fast-glob@^3.2.11, fast-glob@^3.2.12, fast-glob@^3.2.9:
   version "3.2.12"
   resolved "https://registry.npmjs.org/fast-glob/-/fast-glob-3.2.12.tgz"
@@ -2336,6 +2418,11 @@ is-weakset@^2.0.1:
     call-bind "^1.0.2"
     get-intrinsic "^1.1.1"
 
+is-what@^4.1.8:
+  version "4.1.15"
+  resolved "https://registry.yarnpkg.com/is-what/-/is-what-4.1.15.tgz#de43a81090417a425942d67b1ae86e7fae2eee0e"
+  integrity sha512-uKua1wfy3Yt+YqsD6mTUEa2zSi3G1oPlqTflgaPJ7z63vUGN5pxFpnQfeSLMFnJDEsdvOtkp1rUWkYjB4YfhgA==
+
 is-wsl@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/is-wsl/-/is-wsl-2.2.0.tgz"
@@ -2475,6 +2562,13 @@ lru-cache@^6.0.0:
   integrity sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==
   dependencies:
     yallist "^4.0.0"
+
+merge-anything@^5.1.7:
+  version "5.1.7"
+  resolved "https://registry.yarnpkg.com/merge-anything/-/merge-anything-5.1.7.tgz#94f364d2b0cf21ac76067b5120e429353b3525d7"
+  integrity sha512-eRtbOb1N5iyH0tkQDAoQ4Ipsp/5qSR79Dzrz8hEPxRX10RWWR/iQXdoKmBSRCThY1Fh5EhISDtpSc93fpxUniQ==
+  dependencies:
+    is-what "^4.1.8"
 
 merge-stream@^2.0.0:
   version "2.0.0"
@@ -3594,6 +3688,11 @@ use-sidecar@^1.1.2:
     detect-node-es "^1.1.0"
     tslib "^2.0.0"
 
+use-sync-external-store@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
+  integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
+
 utf-8-validate@^5.0.2:
   version "5.0.10"
   resolved "https://registry.npmjs.org/utf-8-validate/-/utf-8-validate-5.0.10.tgz"
@@ -3680,6 +3779,13 @@ wrappy@1:
   version "1.0.2"
   resolved "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
+
+xregexp@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-5.1.1.tgz#6d3fe18819e3143aaf52f9284d34f49a59583ebb"
+  integrity sha512-fKXeVorD+CzWvFs7VBuKTYIW63YD1e1osxwQ8caZ6o1jg6pDAbABDG54LCIq0j5cy7PjRvGIq6sef9DYPXpncg==
+  dependencies:
+    "@babel/runtime-corejs3" "^7.16.5"
 
 xtend@~2.1.1:
   version "2.1.2"

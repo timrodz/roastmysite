@@ -1,22 +1,27 @@
 /**
  * NOT LOADING AVATARS YET
  */
+import { Site } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Container, Group, Text, Title } from "@mantine/core";
 import Link from "next/link";
 
-type Site = { id: number; url: string };
 interface Props {
-  site: Site;
-  browsingUserId: string | null;
+  siteId?: number;
+  siteUrl: string;
+  browsingUserId?: string;
 }
 
-export default function WebsiteActionPanel({ site, browsingUserId }: Props) {
+export default function WebsiteActionPanel({
+  siteId,
+  siteUrl,
+  browsingUserId,
+}: Props) {
   const { classes, theme } = useGlobalStyles();
 
   // Hack, for now I own my own website
   const isOwner =
-    site.url === "roastmysite.io" &&
+    siteUrl === "roastmysite.io" &&
     browsingUserId === "a4f63dd4-ce57-4038-83ae-b7f436928117";
 
   return (
@@ -37,7 +42,7 @@ export default function WebsiteActionPanel({ site, browsingUserId }: Props) {
         </Text>
       )}
       <Group spacing={10}>
-        <Button color="green" component="a" href={`/${site.url}/seo`}>
+        <Button color="green" component="a" href={`/${siteUrl}/seo`}>
           Scan website SEO improvements
         </Button>
         {!isOwner && (

@@ -4,6 +4,18 @@ import { Database } from "./database.types";
 export type Roast = Database["public"]["Tables"]["roasts"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type MembershipStatus = Database["public"]["Enums"]["membership_status"];
+export type Site = { id: number | null; url: string };
+export type SessionUser = { id: string; isPremium: boolean } | null;
+
+export interface AugmentedRoast {
+  id: number;
+  content: string;
+  createdAt: string;
+  authorId: string;
+  authorUsername: string;
+  authorTwitter: string;
+  authorMembershipStatus: string;
+}
 
 export const supabaseClient = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
