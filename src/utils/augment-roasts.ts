@@ -1,11 +1,4 @@
-import {
-  Profile,
-  Roast,
-  getMultipleUserProfilesById,
-  getUserProfileById,
-  supabaseClient,
-} from "@/lib/supabase";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { Profile, Roast, getMultipleUserProfilesById } from "@/lib/supabase";
 
 interface AugmentedRoast extends Roast {
   profile?: Profile;
