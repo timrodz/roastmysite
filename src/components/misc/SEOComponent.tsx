@@ -1,12 +1,5 @@
 import Head from "next/head";
 
-interface Image {
-  url: string;
-  alt: string;
-  width: string;
-  height: string;
-}
-
 interface Props {
   title: string;
   description: string;

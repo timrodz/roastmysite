@@ -16,7 +16,6 @@ import {
   rem,
 } from "@mantine/core";
 import { IconNumber1, IconNumber2, IconNumber3 } from "@tabler/icons-react";
-import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {

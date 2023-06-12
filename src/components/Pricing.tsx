@@ -1,23 +1,16 @@
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
   Badge,
-  Box,
   Button,
   Card,
   Container,
-  Divider,
-  Flex,
   Group,
   List,
-  Paper,
-  SimpleGrid,
-  Stack,
   Text,
   Title,
   createStyles,
   rem,
 } from "@mantine/core";
-import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   pricingWrapper: {
