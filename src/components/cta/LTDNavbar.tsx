@@ -32,7 +32,6 @@ export default function LTDNavbar() {
               className="-m-3 p-3 focus-visible:outline-offset-[-4px] z-10 flex flex-1 justify-end"
               onClick={(e) => {
                 e.preventDefault();
-                console.log("close");
                 hiddenSet(true);
               }}
             >

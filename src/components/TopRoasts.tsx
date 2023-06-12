@@ -1,4 +1,4 @@
-import { supabaseClient } from "@/lib/supabase";
+import { getTopRoasts, supabaseClient } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Container, SimpleGrid, Text, Title } from "@mantine/core";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
@@ -21,7 +21,10 @@ export default function TopRoasts({ title, className }: Props) {
       .from("websites")
       .select("url, roast_count")
       .order("roast_count", { ascending: false })
-      .limit(6)
+      .limit(6),
+    {
+      enabled: false,
+    }
   );
 
   if (isLoading || error) {

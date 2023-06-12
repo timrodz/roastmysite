@@ -1,7 +1,7 @@
 /**
  * NOT LOADING AVATARS YET
  */
-import { Site } from "@/lib/supabase";
+import { SessionUser } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import { Button, Container, Group, Text, Title } from "@mantine/core";
 import Link from "next/link";
@@ -9,20 +9,20 @@ import Link from "next/link";
 interface Props {
   siteId?: number;
   siteUrl: string;
-  browsingUserId?: string;
+  sessionUser: SessionUser;
 }
 
 export default function WebsiteActionPanel({
   siteId,
   siteUrl,
-  browsingUserId,
+  sessionUser,
 }: Props) {
   const { classes, theme } = useGlobalStyles();
 
   // Hack, for now I own my own website
   const isOwner =
     siteUrl === "roastmysite.io" &&
-    browsingUserId === "a4f63dd4-ce57-4038-83ae-b7f436928117";
+    sessionUser?.id === "a4f63dd4-ce57-4038-83ae-b7f436928117";
 
   return (
     <Container p={0} size="xs">

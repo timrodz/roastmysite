@@ -1,26 +1,22 @@
-import SEO from "@/components/misc/SEO";
-import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
-import TopRoasts from "@/components/TopRoasts";
-import { isUserPremium, supabaseClient } from "@/lib/supabase";
+import SEO from "@/components/misc/SEOComponent";
+import {
+  SessionUser,
+  getServerSideSessionUser,
+  getSiteForOwner,
+} from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
-import { Button, Center, Container, Text, Title } from "@mantine/core";
-import { GetServerSidePropsContext } from "next";
+import { Button, Center, Container, Title } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
-type Site = { id: number | null; url: string };
-
 interface Props {
-  userId: string | null;
-  site: Site;
-  isBrowsingUserOwner: boolean;
+  sessionUser: SessionUser;
+  siteId: number | null;
+  siteUrl: string;
 }
 
-export default function WebsiteSEO({
-  userId,
-  site,
-  isBrowsingUserOwner,
-}: Props) {
+export default function WebsiteSEO({ sessionUser, siteId, siteUrl }: Props) {
   const { classes } = useGlobalStyles();
 
   const SiteUrl = (
@@ -28,18 +24,18 @@ export default function WebsiteSEO({
       target="_blank"
       rel="noopener noreferrer"
       className={classes.linkSecondary}
-      href={`https://${site.url}`}
+      href={`https://${siteUrl}`}
     >
-      {site.url}
+      {siteUrl}
     </Link>
   );
 
-  if (!userId) {
+  if (!sessionUser) {
     return (
       <>
         <SEO
-          title={`SEO suggestions for ${site.url}`}
-          description={`See what improvements can be made to ${site.url} with Roast My Site's SEO assistant`}
+          title={`SEO suggestions for ${siteUrl}`}
+          description={`See what improvements can be made to ${siteUrl} with Roast My Site's SEO assistant`}
         />
         <main>
           <Container size="md" className={classes.pageWrapper}>
@@ -59,12 +55,12 @@ export default function WebsiteSEO({
     );
   }
 
-  if (!isBrowsingUserOwner) {
+  if (!siteId) {
     return (
       <>
         <SEO
-          title={`SEO suggestions for ${site.url}`}
-          description={`See what improvements can be made to ${site.url} with Roast My Site's SEO assistant`}
+          title={`SEO suggestions for ${siteUrl}`}
+          description={`See what improvements can be made to ${siteUrl} with Roast My Site's SEO assistant`}
         />
         <main>
           <Container size="md" className={classes.pageWrapper}>
@@ -82,8 +78,8 @@ export default function WebsiteSEO({
   return (
     <>
       <SEO
-        title={`SEO suggestions for ${site.url}`}
-        description={`See what improvements can be made to ${site.url} with Roast My Site's SEO assistant`}
+        title={`SEO suggestions for ${siteUrl}`}
+        description={`See what improvements can be made to ${siteUrl} with Roast My Site's SEO assistant`}
       />
       <main>
         <Container size="md" className={classes.pageWrapper}>
@@ -104,56 +100,25 @@ export async function getServerSideProps(
   const url = context.params?.url!;
 
   const supabase = createPagesServerClient(context);
+  const sessionUser = await getServerSideSessionUser(supabase);
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
+  if (!sessionUser) {
     return {
       props: {
-        userId: null,
-        site: {
-          id: null,
-          url,
-        },
-        isBrowsingUserOwner: false,
+        sessionUser: null,
+        siteId: null,
+        siteUrl: url,
       },
     };
   }
 
-  const userId = session.user.id;
-
-  const { data: siteData } = await supabaseClient
-    .from("websites")
-    .select("id")
-    .match({ url, owned_by_user_id: userId })
-    .maybeSingle();
-
-  if (!siteData) {
-    console.log(`User ${userId} is not owner of website ${url}`);
-    return {
-      props: {
-        userId,
-        site: {
-          id: null,
-          url,
-        },
-        isBrowsingUserOwner: false,
-      },
-    };
-  }
-
-  const userPremium = await isUserPremium(supabase, userId);
+  const siteId = await getSiteForOwner(url, sessionUser.id);
 
   return {
     props: {
-      userId,
-      site: {
-        id: siteData.id,
-        url,
-      },
-      isBrowsingUserOwner: !!userPremium?.id,
+      sessionUser,
+      siteId,
+      siteUrl: url,
     },
   };
 }

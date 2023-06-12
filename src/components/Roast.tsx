@@ -2,7 +2,7 @@
  * NOT LOADING AVATARS YET
  */
 import { Database } from "@/lib/database.types";
-import { AugmentedRoast, Profile } from "@/lib/supabase";
+import { AugmentedRoast, SessionUser } from "@/lib/supabase";
 import {
   Badge,
   Box,
@@ -67,7 +67,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface Props extends AugmentedRoast {
-  browsingUserId?: string;
+  sessionUser: SessionUser;
 }
 
 export default function Roast(props: Props) {
@@ -78,7 +78,7 @@ export default function Roast(props: Props) {
 
   const supabase = useSupabaseClient<Database>();
 
-  const isUserAuthor = props.authorId === props.browsingUserId;
+  const isUserAuthor = props.sessionUser?.id === props.authorId;
 
   const formattedDate = dayjs(props.createdAt).format("YYYY-MM-DD");
 
@@ -100,10 +100,9 @@ export default function Roast(props: Props) {
   }
 
   async function onDeleteClick(e: any) {
-    console.log("on delete");
     e.preventDefault();
 
-    if (!isUserAuthor) {
+    if (!isUserAuthor || !props.sessionUser) {
       return;
     }
 
@@ -112,15 +111,15 @@ export default function Roast(props: Props) {
     const { error } = await supabase
       .from("roasts")
       .delete()
-      .match({ id: props.id, user_id: props.browsingUserId });
+      .match({ id: props.id, user_id: props.sessionUser.id });
 
     if (error) {
       console.error(error);
+      alert("An error occurred while deleting your roast. Sorry!");
       performingActionSet(false);
       return;
     }
 
-    console.log("success");
     router.reload();
   }
 
@@ -129,9 +128,7 @@ export default function Roast(props: Props) {
       <Modal
         opened={opened}
         onClose={() => {
-          console.log("close?");
           if (performingAction) {
-            console.log("no");
             return;
           }
           close();

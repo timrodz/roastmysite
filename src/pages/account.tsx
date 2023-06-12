@@ -1,13 +1,11 @@
-import Avatar from "@/components/account/Avatar";
-import SEO from "@/components/misc/SEO";
+import SEO from "@/components/misc/SEOComponent";
 import { Database } from "@/lib/database.types";
-import { MembershipStatus, Profile } from "@/lib/supabase";
+import { Profile, getUserProfileById as getProfileById } from "@/lib/supabase";
 import { useGlobalStyles } from "@/utils/use-global-styles";
 import {
   Badge,
   Box,
   Button,
-  Card,
   Container,
   Group,
   List,
@@ -16,25 +14,85 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { User, createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconAt, IconFlame, IconKey } from "@tabler/icons-react";
+import { IconAt, IconFlame } from "@tabler/icons-react";
+import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function Account({ user, email }: Props) {
+interface Props {
+  userId: string;
+  email: string;
+}
+
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext
+): Promise<any> {
+  const supabase = createPagesServerClient(ctx);
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    console.log("!session, redirecting to /login");
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  const { id, email } = session.user;
+
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery([`${id}_account`], () => getProfileById(id));
+
+  return {
+    props: {
+      userId: id,
+      email,
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
+
+export default function Account({ userId, email }: Props) {
   const { classes } = useGlobalStyles();
   const router = useRouter();
-
   const supabase = useSupabaseClient<Database>();
-  const [username, usernameSet] = useState<Profile["username"]>(user.username);
-  const [twitter, twitterSet] = useState<Profile["twitter_profile"]>(
-    user.twitter_profile
-  );
 
   const [loading, loadingSet] = useState(false);
   const [usernameError, usernameErrorSet] = useState("");
+  const [username, usernameSet] = useState<Profile["username"]>("");
+  const [twitter, twitterSet] = useState<Profile["twitter_profile"]>("");
+
+  const { data, isLoading } = useQuery({
+    queryKey: [`${userId}_account`],
+    queryFn: () => getProfileById(userId),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    usernameSet(data.username);
+    twitterSet(data.twitter_profile);
+  }, [data]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!data) {
+    return <p>No data</p>;
+  }
 
   async function updateProfile({
     // avatarUrl,
@@ -45,25 +103,24 @@ export default function Account({ user, email }: Props) {
     username: Profile["username"];
     twitterProfile: Profile["twitter_profile"];
   }) {
-    if (!user.id) {
+    if (!userId) {
       return;
     }
-    console.log("update", { user });
     try {
       loadingSet(true);
-      if (!user) throw new Error("No user");
+      if (!userId) throw new Error("No user");
       if (!username) throw new Error("No username provided");
 
       const { error } = await supabase
         .from("profiles")
         .upsert({
-          id: user.id,
+          id: userId,
           username,
           twitter_profile: twitterProfile,
           // avatar_url: avatarUrl,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", user.id);
+        .eq("id", userId);
 
       if (error) {
         throw error;
@@ -86,7 +143,10 @@ export default function Account({ user, email }: Props) {
   }
 
   function renderMembershipStatus() {
-    switch (user.membership_status) {
+    if (!data) {
+      return null;
+    }
+    switch (data.membership_status) {
       case "lifetime":
         return (
           <Badge
@@ -162,7 +222,6 @@ export default function Account({ user, email }: Props) {
                     // avatarUrl: null,
                   })
                 }
-                disabled={!user}
               >
                 Update profile
               </Button>
@@ -233,52 +292,4 @@ function LifetimeDeal() {
       </Text>
     </>
   );
-}
-
-interface Props {
-  user: Profile;
-  email: string;
-}
-
-export async function getServerSideProps(
-  ctx: GetServerSidePropsContext
-): Promise<{ props: Props } | { redirect: any }> {
-  // TODO: cookies
-  // Create authenticated Supabase Client
-  const supabase = createPagesServerClient(ctx);
-  // Check if we have a session
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session)
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id, username, twitter_profile, membership_status")
-    .eq("id", session.user.id)
-    .single();
-
-  if (error || !data) {
-    console.error(error);
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      user: data as Profile,
-      email: session.user.email || "unknown",
-    },
-  };
 }

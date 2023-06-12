@@ -1,4 +1,10 @@
-import { Profile, Roast, supabaseClient } from "@/lib/supabase";
+import {
+  Profile,
+  Roast,
+  getMultipleUserProfilesById,
+  getUserProfileById,
+  supabaseClient,
+} from "@/lib/supabase";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 interface AugmentedRoast extends Roast {
@@ -18,10 +24,7 @@ export async function augmentRoasts(
   }
 
   // Get user profiles
-  const { data: profiles } = await supabaseClient
-    .from("profiles")
-    .select(`id, username, twitter_profile, membership_status`)
-    .in("id", roastUserIds);
+  const { data: profiles } = await getMultipleUserProfilesById(roastUserIds);
 
   // Again shouldn't really happen, but just in case
   if (!profiles) {

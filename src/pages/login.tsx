@@ -1,5 +1,5 @@
 /** TODO: eventually create own login UI */
-import SEO from "@/components/misc/SEO";
+import SEO from "@/components/misc/SEOComponent";
 import { Database } from "@/lib/database.types";
 import { getSiteURL } from "@/utils/helpers";
 import { useGlobalStyles } from "@/utils/use-global-styles";
