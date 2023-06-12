@@ -24,7 +24,7 @@ export async function augmentRoasts(
   }
 
   // Get user profiles
-  const { data: profiles } = await getMultipleUserProfilesById(roastUserIds);
+  const profiles = await getMultipleUserProfilesById(roastUserIds);
 
   // Again shouldn't really happen, but just in case
   if (!profiles) {
