@@ -43,6 +43,11 @@
   padding: 1rem !important;
 }
 
-img {
+.ql-editor ul {
+  margin-top: 0.3125rem !important;
+  padding-left: 0 !important;
+}
+
+.ql-editor img {
   border-radius: 0.3125rem;
 }

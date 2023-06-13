@@ -36,7 +36,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   commentContent: {
-    fontSize: rem(16),
+    fontSize: `${theme.fontSizes.md} !important`,
 
     [theme.fn.smallerThan("sm")]: {
       fontSize: rem(14),
@@ -51,11 +51,31 @@ const useStyles = createStyles((theme) => ({
     },
 
     p: {
-      marginBottom: theme.spacing.xs,
+      marginBottom: `${theme.spacing.sm} !important`,
 
       img: {
         borderRadius: rem(5),
         marginBottom: "0 !important",
+      },
+    },
+
+    ul: {
+      paddingLeft: `${theme.spacing.md} !important`,
+
+      li: {
+        marginTop: 0,
+        marginBottom: theme.spacing.sm,
+        paddingLeft: rem(6),
+
+        "::marker": {
+          content: `'• '`,
+          fontSize: rem(14),
+          fontWeight: 800,
+        },
+
+        ":last-child": {
+          marginBottom: 0,
+        },
       },
     },
 
