@@ -16,17 +16,10 @@ export default function RoastPage() {
             <Text
               fw={600}
               fz={{ base: 26, sm: 38 }}
+              mb="md"
               className={classes.textAlign}
             >
               Search for a website to roast ↓
-            </Text>
-            <Text
-              mb="md"
-              fz={{ base: 17, sm: 18 }}
-              color="dimmed"
-              className={classes.textAlign}
-            >
-              ...or roast any website you want
             </Text>
             <StartRoastingCTA />
           </section>

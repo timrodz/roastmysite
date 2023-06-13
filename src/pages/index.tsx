@@ -20,12 +20,12 @@ import { IconNumber1, IconNumber2, IconNumber3 } from "@tabler/icons-react";
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
-    zIndex: 1,
+    zIndex: 0,
     paddingBottom: rem(60),
-    paddingTop: rem(150),
+    paddingTop: rem(120),
 
     [theme.fn.smallerThan("sm")]: {
-      paddingTop: rem(120),
+      paddingTop: rem(70),
     },
   },
 
@@ -147,7 +147,7 @@ export default function Home() {
                   italic
                   mt={40}
                   mb={30}
-                  size="sm"
+                  // size="sm"
                   color="dimmed"
                   className={classes.textAlign}
                 >

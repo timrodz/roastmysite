@@ -3,7 +3,7 @@ import { createStyles, rem } from "@mantine/core";
 export const useGlobalStyles = createStyles((theme) => ({
   pageWrapper: {
     position: "relative",
-    zIndex: 1,
+    zIndex: 0,
     paddingBottom: rem(60),
     paddingTop: rem(90),
 
