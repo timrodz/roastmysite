@@ -1,5 +1,5 @@
-import { sanitizeRoastUrl } from "@/utils/url-sanity";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import { sanitizeRoastUrl } from "@/pages/utils/url-sanity";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import {
   Box,
   Button,

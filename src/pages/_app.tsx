@@ -1,6 +1,6 @@
-import LTDNavbar from "@/components/cta/LTDNavbar";
-import Footer from "@/layout/Footer";
-import Navbar from "@/layout/Navbar";
+import LTDNavbar from "@components/cta/LTDNavbar";
+import Footer from "@layout/Footer";
+import Navbar from "@layout/Navbar";
 import { Flex, MantineProvider } from "@mantine/core";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";

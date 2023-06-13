@@ -1,9 +1,9 @@
-import Pricing from "@/components/Pricing";
-import Roast from "@/components/Roast";
-import TopRoasts from "@/components/TopRoasts";
-import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
-import Dots from "@/components/misc/LandingDots";
-import SEO from "@/components/misc/SEOComponent";
+import Pricing from "@components/Pricing";
+import Roast from "@components/Roast";
+import TopRoasts from "@components/TopRoasts";
+import StartRoastingCTA from "@components/cta/StartRoastingCTA";
+import Dots from "@components/misc/LandingDots";
+import SEO from "@components/misc/SEOComponent";
 import {
   Box,
   Container,

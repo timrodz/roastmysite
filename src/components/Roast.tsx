@@ -1,8 +1,8 @@
 /**
  * NOT LOADING AVATARS YET
  */
-import { Database } from "@/lib/database.types";
-import { AugmentedRoast, SessionUser } from "@/lib/supabase";
+import { Database } from "@lib/database.types";
+import { AugmentedRoast, SessionUser } from "@lib/supabase";
 import {
   Badge,
   Box,

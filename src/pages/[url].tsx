@@ -1,14 +1,14 @@
-import CreateRoastForm from "@/components/CreateRoastForm";
-import RoastComponent from "@/components/Roast";
-import WebsiteActionPanel from "@/components/WebsiteActionPanel";
-import SEO from "@/components/misc/SEOComponent";
+import CreateRoastForm from "@components/CreateRoastForm";
+import RoastComponent from "@components/Roast";
+import WebsiteActionPanel from "@components/WebsiteActionPanel";
+import SEO from "@components/misc/SEOComponent";
 import {
   SessionUser,
   getRoastsForSite,
   getServerSideSessionUser,
-} from "@/lib/supabase";
-import { sanitizeRoastUrl } from "@/utils/url-sanity";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+} from "@lib/supabase";
+import { sanitizeRoastUrl } from "@/pages/utils/url-sanity";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import { Database } from "@lib/database.types";
 import {
   Box,
@@ -28,6 +28,7 @@ import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import metadata from "@/lib/metadata";
 
 interface Props {
   url: string;
@@ -51,7 +52,7 @@ export async function getServerSideProps(
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery([`${url}_roasts`], () =>
-    getRoastsForSite(url)
+    getRoastsForSite(sessionUser, url)
   );
 
   return {
@@ -70,7 +71,7 @@ export default function UrlPage({ url, sessionUser }: Props) {
 
   const { data, isLoading } = useQuery({
     queryKey: [`${url}_roasts`],
-    queryFn: () => getRoastsForSite(url),
+    queryFn: () => getRoastsForSite(sessionUser, url),
     enabled: false,
   });
 
@@ -200,7 +201,7 @@ export default function UrlPage({ url, sessionUser }: Props) {
                           <Text
                             component="a"
                             target="_blank"
-                            href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+                            href={metadata.lifetimeDeal.checkoutLink}
                             color="indigo"
                             variant="light"
                           >

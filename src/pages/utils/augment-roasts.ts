@@ -1,4 +1,4 @@
-import { Profile, Roast, getMultipleUserProfilesById } from "@/lib/supabase";
+import { Profile, Roast, getMultipleUserProfilesById } from "@lib/supabase";
 
 interface AugmentedRoast extends Roast {
   profile?: Profile;

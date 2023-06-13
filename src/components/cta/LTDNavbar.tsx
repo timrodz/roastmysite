@@ -1,3 +1,4 @@
+import metadata from "@/lib/metadata";
 import { Box, Text, createStyles } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import Link from "next/link";
@@ -18,14 +19,15 @@ export default function LTDNavbar() {
       <Box hidden={hidden}>
         <Link
           target="_blank"
-          href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+          href={metadata.lifetimeDeal.checkoutLink}
           className="hover:no-underline"
         >
           <Box
             className={`${classes.root} z-10 flex relative isolate items-center gap-x-6 bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1`}
           >
             <Text fw={600} color="white">
-              Lifetime Deal - Become a veteran roaster for $17 USD
+              Lifetime Deal - Become a veteran roaster for{" "}
+              {metadata.lifetimeDeal.priceLabel} USD
             </Text>
             <button
               type="button"

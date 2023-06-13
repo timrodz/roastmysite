@@ -1,8 +1,8 @@
 /**
  * NOT LOADING AVATARS YET
  */
-import { SessionUser } from "@/lib/supabase";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import { SessionUser } from "@lib/supabase";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import { Button, Container, Group, Text, Title } from "@mantine/core";
 import Link from "next/link";
 

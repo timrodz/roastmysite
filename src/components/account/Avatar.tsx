@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Database } from "@/lib/database.types";
+import { Database } from "@lib/database.types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];

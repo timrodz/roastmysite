@@ -1,7 +1,7 @@
-import TopRoasts from "@/components/TopRoasts";
-import StartRoastingCTA from "@/components/cta/StartRoastingCTA";
-import SEO from "@/components/misc/SEOComponent";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import TopRoasts from "@components/TopRoasts";
+import StartRoastingCTA from "@components/cta/StartRoastingCTA";
+import SEO from "@components/misc/SEOComponent";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import { Container, Text } from "@mantine/core";
 
 export default function RoastPage() {

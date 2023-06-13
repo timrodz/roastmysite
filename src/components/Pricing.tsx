@@ -1,4 +1,5 @@
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import metadata from "@/lib/metadata";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import {
   Badge,
   Button,
@@ -119,7 +120,8 @@ export default function Pricing() {
             </Text>
             <Text fw={800} fz={30} mb="lg">
               <Group spacing={8}>
-                <span className="line-through">$39</span> $17 USD{" "}
+                <span className="line-through">$39</span>{" "}
+                {metadata.lifetimeDeal.priceLabel} USD{" "}
                 <Badge color="orange" variant="filled" size="lg" my="auto">
                   Lifetime deal
                 </Badge>
@@ -157,7 +159,7 @@ export default function Pricing() {
             <Button
               component="a"
               target="_blank"
-              href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+              href={metadata.lifetimeDeal.checkoutLink}
               size="lg"
               mb="xs"
             >

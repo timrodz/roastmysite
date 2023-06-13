@@ -1,7 +1,7 @@
-import SEO from "@/components/misc/SEOComponent";
-import { Database } from "@/lib/database.types";
-import { Profile, getUserProfileById as getProfileById } from "@/lib/supabase";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import SEO from "@components/misc/SEOComponent";
+import { Database } from "@lib/database.types";
+import { Profile, getUserProfileById as getProfileById } from "@lib/supabase";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import {
   Badge,
   Box,
@@ -21,6 +21,7 @@ import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import metadata from "@/lib/metadata";
 
 interface Props {
   userId: string;
@@ -115,8 +116,8 @@ export default function Account({ userId, email }: Props) {
         .from("profiles")
         .upsert({
           id: userId,
-          username,
-          twitter_profile: twitterProfile,
+          username: username.slice(0, 20),
+          twitter_profile: twitterProfile?.slice(0, 20),
           // avatar_url: avatarUrl,
           updated_at: new Date().toISOString(),
         })
@@ -189,6 +190,8 @@ export default function Account({ userId, email }: Props) {
               <TextInput size="lg" label="E-mail" value={email} disabled />
               <TextInput
                 required
+                minLength={3}
+                maxLength={20}
                 size="lg"
                 label="Username"
                 value={username || ""}
@@ -251,7 +254,8 @@ function LifetimeDeal() {
     <>
       <Text fw={800} fz={25} mt={60} mb="lg">
         <Group spacing={8}>
-          Upgrade for <span className="line-through">$39</span> $17 USD{" "}
+          Upgrade for <span className="line-through">$39</span>{" "}
+          {metadata.lifetimeDeal.priceLabel} USD{" "}
           <Badge color="orange" variant="filled">
             Lifetime deal
           </Badge>
@@ -281,7 +285,7 @@ function LifetimeDeal() {
       <Button
         component="a"
         target="_blank"
-        href="https://roastmysite.lemonsqueezy.com/checkout/buy/0c26096a-1be4-41ac-a05f-0dbb8addd747?discount=0"
+        href={metadata.lifetimeDeal.checkoutLink}
         size="lg"
         mb="xs"
       >

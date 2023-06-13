@@ -120,64 +120,9 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      get_posts_for_website:
-        | {
-            Args: {
-              url: string
-              max_items: number
-            }
-            Returns: {
-              site_id: number
-              site_url: string
-              site_owner_id: string
-              roast_id: number
-              roast_created_at: string
-              roast_author_id: string
-              roast_content: string
-              author_username: string
-              author_twitter_profile: string
-              author_membership_status: string
-            }[]
-          }
-        | {
-            Args: {
-              url: string
-              max_items: number
-            }
-            Returns: {
-              site_id: number
-              site_url: string
-              site_owner_id: string
-              roast_id: number
-              roast_created_at: string
-              roast_author_id: string
-              roast_content: string
-              author_username: string
-              author_twitter_profile: string
-              author_membership_status: string
-            }[]
-          }
-        | {
-            Args: {
-              url: string
-            }
-            Returns: {
-              site_id: number
-              site_url: string
-              site_owner_id: string
-              roast_id: number
-              roast_created_at: string
-              roast_author_id: string
-              roast_content: string
-              author_username: string
-              author_twitter_profile: string
-              author_membership_status: string
-            }[]
-          }
-      get_posts_for_website_2: {
+      get_roasts_for_website: {
         Args: {
           url: string
-          max_items: number
         }
         Returns: {
           site_id: number

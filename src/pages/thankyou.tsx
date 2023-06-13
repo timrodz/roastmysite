@@ -1,5 +1,5 @@
-import SEO from "@/components/misc/SEOComponent";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import SEO from "@components/misc/SEOComponent";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import { Button, Container, Flex, Text, Title } from "@mantine/core";
 import Link from "next/link";
 

@@ -1,4 +1,4 @@
-import { parseAllMarkdownImages } from "@/utils/url-sanity";
+import { parseAllMarkdownImages } from "@/pages/utils/url-sanity";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import "react-quill/dist/quill.snow.css";

@@ -1,7 +1,8 @@
-import { supabaseClient } from "@/lib/supabase";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import { supabaseClient } from "@lib/supabase";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import { Button, Container, SimpleGrid, Text, Title } from "@mantine/core";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { useEffect, useState } from "react";
 
 interface Roast {
   url: string;
@@ -15,27 +16,32 @@ interface Props {
 
 export default function TopRoasts({ title, className }: Props) {
   const { classes } = useGlobalStyles();
+  const [roasts, roastsSet] = useState<Roast[]>([]);
 
   const { data, error, isLoading } = useQuery(
     supabaseClient
       .from("websites")
       .select("url, roast_count")
       .order("roast_count", { ascending: false })
-      .limit(6),
-    {
-      enabled: false,
-    }
+      .limit(6)
   );
 
-  if (isLoading || error) {
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    roastsSet(
+      data?.filter(Boolean).map((site) => ({
+        url: site.url,
+        count: site.roast_count as number,
+      })) || []
+    );
+  }, [data]);
+
+  if (isLoading || error || !data) {
     return null;
   }
-
-  const roasts: Roast[] =
-    data?.filter(Boolean).map((site) => ({
-      url: site.url,
-      count: site.roast_count as number,
-    })) || [];
 
   const sortedRoasts = roasts
     .sort((a, b) => b.count - a.count)

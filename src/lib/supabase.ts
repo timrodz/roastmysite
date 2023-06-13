@@ -1,15 +1,13 @@
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import { Database } from "./database.types";
 
+export type Supabase = SupabaseClient<Database>;
+
 export type Website = Database["public"]["Tables"]["websites"]["Row"];
 export type Roast = Database["public"]["Tables"]["roasts"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type MembershipStatus = Database["public"]["Enums"]["membership_status"];
-
-// export type Site = { id: number | null; url: string };
 export type SessionUser = { id: string; isPremium: boolean } | null;
-
-export type Supabase = SupabaseClient<Database>;
 
 export interface AugmentedRoast {
   id: number;
@@ -20,6 +18,8 @@ export interface AugmentedRoast {
   authorTwitter: string;
   authorMembershipStatus: string;
 }
+
+const MAX_ROASTS_FREE_USER = 2;
 
 export const supabaseClient: Supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -118,17 +118,23 @@ export async function getServerSideSessionUser(
   };
 }
 
-export async function getRoastsForSite(url: string): Promise<{
+export async function getRoastsForSite(
+  sessionUser: SessionUser,
+  url: string
+): Promise<{
   siteId: number | null;
   siteOwnerUserId: string | null;
   roasts: AugmentedRoast[] | null;
 }> {
-  const query = await supabaseClient.rpc("get_posts_for_website", { url });
-
-  console.log("query", query.data);
+  console.log({ sessionUser });
+  const { data: roastsForWebsite } = sessionUser?.isPremium
+    ? await supabaseClient.rpc("get_roasts_for_website", { url })
+    : await supabaseClient
+        .rpc("get_roasts_for_website", { url })
+        .limit(MAX_ROASTS_FREE_USER);
 
   // No roasts, but the website can have an entry, i.e. if it had roasts in the past but they were all deleted
-  if (!query.data?.length) {
+  if (!roastsForWebsite?.length) {
     const data = await getSiteData(url);
 
     console.log("no roasts but heres", { data, url });
@@ -140,9 +146,9 @@ export async function getRoastsForSite(url: string): Promise<{
     };
   }
 
-  const { site_id, site_owner_id } = query.data[0];
+  const { site_id, site_owner_id } = roastsForWebsite[0];
 
-  const roasts: AugmentedRoast[] = query.data?.map((d) => ({
+  const roasts: AugmentedRoast[] = roastsForWebsite?.map((d) => ({
     id: d.roast_id,
     createdAt: d.roast_created_at,
     content: d.roast_content,

@@ -1,8 +1,8 @@
 /** TODO: eventually create own login UI */
-import SEO from "@/components/misc/SEOComponent";
-import { Database } from "@/lib/database.types";
-import { getSiteURL } from "@/utils/helpers";
-import { useGlobalStyles } from "@/utils/use-global-styles";
+import SEO from "@components/misc/SEOComponent";
+import { Database } from "@lib/database.types";
+import { getSiteURL } from "@/pages/utils/helpers";
+import { useGlobalStyles } from "@/pages/utils/use-global-styles";
 import { Container } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
