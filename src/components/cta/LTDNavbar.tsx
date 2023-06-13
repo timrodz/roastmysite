@@ -1,5 +1,5 @@
 import metadata from "@/lib/metadata";
-import { Box, Text, createStyles } from "@mantine/core";
+import { Badge, Box, Text, createStyles } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -26,8 +26,11 @@ export default function LTDNavbar() {
             className={`${classes.root} z-10 flex relative isolate items-center gap-x-6 bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1`}
           >
             <Text fw={600} color="white">
-              Lifetime Deal - Become a veteran roaster for{" "}
-              {metadata.lifetimeDeal.priceLabel} USD
+              One-time deal: Become a lifelong roaster for{" "}
+              {metadata.lifetimeDeal.priceLabel} USD using code{" "}
+              <Badge component="span" color="gray" className="align-middle">
+                EARLYBIRD
+              </Badge>
             </Text>
             <button
               type="button"
