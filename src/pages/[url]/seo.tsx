@@ -4,7 +4,7 @@ import {
   getServerSideSessionUser,
   getSiteForOwner,
 } from "@lib/supabase";
-import { useGlobalStyles } from "@/pages/utils/use-global-styles";
+import { useGlobalStyles } from "@utils/use-global-styles";
 import { Button, Center, Container, Title } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";

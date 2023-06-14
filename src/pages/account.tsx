@@ -1,7 +1,7 @@
 import SEO from "@components/misc/SEOComponent";
 import { Database } from "@lib/database.types";
 import { Profile, getUserProfileById as getProfileById } from "@lib/supabase";
-import { useGlobalStyles } from "@/pages/utils/use-global-styles";
+import { useGlobalStyles } from "@utils/use-global-styles";
 import {
   Badge,
   Box,

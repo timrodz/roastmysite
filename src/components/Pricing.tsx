@@ -1,5 +1,5 @@
 import metadata from "@/lib/metadata";
-import { useGlobalStyles } from "@/pages/utils/use-global-styles";
+import { useGlobalStyles } from "@utils/use-global-styles";
 import {
   Badge,
   Button,
