@@ -59,10 +59,12 @@ export default function SignIn() {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  // Create authenticated Supabase Client
+  ctx.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
   const supabase = createPagesServerClient(ctx);
 
-  // Check if we have a session
   const {
     data: { session },
   } = await supabase.auth.getSession();

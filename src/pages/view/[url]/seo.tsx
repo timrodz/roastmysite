@@ -110,11 +110,15 @@ export default function WebsiteSEO({ sessionUser, siteId, siteUrl }: Props) {
 }
 
 export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ url: string }>
+  ctx: GetServerSidePropsContext<{ url: string }>
 ): Promise<{ props: Props }> {
-  const url = context.params?.url!;
+  ctx.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
+  const url = ctx.params?.url!;
 
-  const supabase = createPagesServerClient(context);
+  const supabase = createPagesServerClient(ctx);
   const sessionUser = await getServerSideSessionUser(supabase);
 
   if (!sessionUser) {

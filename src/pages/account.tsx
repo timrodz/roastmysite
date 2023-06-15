@@ -31,6 +31,10 @@ interface Props {
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext
 ): Promise<any> {
+  ctx.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
   const supabase = createPagesServerClient(ctx);
 
   const {

@@ -36,9 +36,13 @@ interface Props {
 }
 
 export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ url: string }>
+  ctx: GetServerSidePropsContext<{ url: string }>
 ): Promise<any> {
-  let url = context.params?.url!;
+  ctx.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
+  let url = ctx.params?.url!;
 
   // Sanitize URL if possible
   const { sanitizedUrl, error } = sanitizeRoastUrl(url);
@@ -46,7 +50,7 @@ export async function getServerSideProps(
     url = sanitizedUrl;
   }
 
-  const supabase = createPagesServerClient(context);
+  const supabase = createPagesServerClient(ctx);
   const sessionUser = await getServerSideSessionUser(supabase);
 
   const queryClient = new QueryClient();
