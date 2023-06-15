@@ -30,6 +30,10 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import metadata from "@/lib/metadata";
 
+export const config = {
+  runtime: "edge",
+};
+
 interface Props {
   url: string;
   sessionUser: SessionUser;

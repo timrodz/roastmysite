@@ -10,6 +10,10 @@ import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
+export const config = {
+  runtime: "edge",
+};
+
 interface Props {
   sessionUser: SessionUser;
   siteId: number | null;

@@ -23,6 +23,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import metadata from "@/lib/metadata";
 
+export const config = {
+  runtime: "edge",
+};
 interface Props {
   userId: string;
   email: string;
