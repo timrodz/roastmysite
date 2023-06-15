@@ -12,6 +12,7 @@ import {
   Divider,
   Flex,
   SimpleGrid,
+  Space,
   Text,
   ThemeIcon,
   Title,
@@ -157,13 +158,13 @@ export default function Home() {
             <Features />
             <GetStartedCTA />
           </section>
-          <section id="roasts">
+          <section id="roasts" className="mb-32">
             <TopRoasts title="See the top roasts" />
             <GetStartedCTA />
           </section>
-          <section id="frequently-asked-questions">
+          {/* <section id="frequently-asked-questions" className="mb-32">
             <FAQ />
-          </section>
+          </section> */}
           <section id="pricing" className="mt-48 mb-32">
             <Pricing />
           </section>
@@ -176,6 +177,7 @@ export default function Home() {
 function GetStartedCTA() {
   return (
     <Flex
+      mt={80}
       align={{ base: "stretch", xs: "center" }}
       justify={{ base: "start", xs: "center" }}
       direction="column"
