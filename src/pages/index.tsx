@@ -1,13 +1,15 @@
+import metadata from "@/lib/metadata";
 import Pricing from "@components/Pricing";
-import Roast from "@components/Roast";
 import TopRoasts from "@components/TopRoasts";
 import StartRoastingCTA from "@components/cta/StartRoastingCTA";
 import Dots from "@components/misc/LandingDots";
 import SEO from "@components/misc/SEOComponent";
 import {
   Box,
+  Button,
   Container,
   Divider,
+  Flex,
   SimpleGrid,
   Text,
   ThemeIcon,
@@ -15,7 +17,7 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconNumber1, IconNumber2, IconNumber3 } from "@tabler/icons-react";
+import { IconFlame } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -52,32 +54,6 @@ const useStyles = createStyles((theme) => ({
     padding: `${rem(1)} ${rem(12)} ${rem(6)} ${rem(12)}`,
   },
 }));
-
-interface Roast {
-  url: string;
-  count: number;
-}
-
-const featureArray = [
-  {
-    title: "Visit the website you want to roast",
-    icon: IconNumber1,
-    description:
-      "This will help you prepare your roast. Try act as a field expert, but also a newbie. Everyone is a potential customer.",
-  },
-  {
-    title: "Room for improvement",
-    icon: IconNumber2,
-    description:
-      "Have you noticed what works well and what doesn't? Chances are, the founder needs to know this!",
-  },
-  {
-    title: "Roast the website!",
-    icon: IconNumber3,
-    description:
-      "Share the love by letting the founder publicly know how they can improve their website and land those customers.",
-  },
-];
 
 export default function Home() {
   const { classes } = useStyles();
@@ -159,7 +135,7 @@ export default function Home() {
               {/* </Box> */}
             </Container>
           </section>
-          <section id="features" className="mb-28 lg:mb-60">
+          <section id="features" className="mb-28 lg:mb-48">
             <Title
               order={2}
               fw={800}
@@ -178,19 +154,11 @@ export default function Home() {
               Receive feedback that helps you grow, in a matter of minutes.
             </Text>
             <Features />
-            <Text
-              mt={70}
-              mb="md"
-              fw={600}
-              fz={{ base: 22, sm: 32 }}
-              className={classes.textAlign}
-            >
-              Start roasting ↓
-            </Text>
-            <StartRoastingCTA />
+            <GetStartedCTA />
           </section>
-          <TopRoasts title="See the top roasts" className="mb-60" />
-          <section id="pricing" className="mb-32">
+          <TopRoasts title="See the top roasts" className="mb-24" />
+          <GetStartedCTA />
+          <section id="pricing" className="mt-48 mb-32">
             <Pricing />
           </section>
         </Container>
@@ -199,8 +167,29 @@ export default function Home() {
   );
 }
 
+function GetStartedCTA() {
+  return (
+    <Flex
+      align={{ base: "stretch", xs: "center" }}
+      justify={{ base: "start", xs: "center" }}
+      direction="column"
+      gap={10}
+    >
+      <Button
+        size="xl"
+        miw={300}
+        component="a"
+        href="/login"
+        leftIcon={<IconFlame />}
+      >
+        Start roasting now
+      </Button>
+    </Flex>
+  );
+}
+
 function Features() {
-  const items = featureArray.map((feature) => (
+  const items = metadata.features.map((feature) => (
     <div key={feature.title}>
       <ThemeIcon size={44} radius="md" variant="light" color="green">
         <feature.icon size={rem(26)} stroke={1.5} />

@@ -1,4 +1,4 @@
-import metadata from "@/lib/metadata";
+import metadata, { CONSTANTS } from "@/lib/metadata";
 import { useGlobalStyles } from "@utils/use-global-styles";
 import {
   Badge,
@@ -12,6 +12,8 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { IconFlame } from "@tabler/icons-react";
+import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   pricingWrapper: {
@@ -27,9 +29,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   cardSmall: {
-    border: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]
-    }`,
+    border: `${rem(1)} solid ${theme.colors.gray[3]}`,
 
     width: rem(300),
 
@@ -39,9 +39,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   cardLimited: {
-    border: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]
-    }`,
+    border: `${rem(1)} solid ${theme.colors.gray[3]}`,
 
     width: rem(450),
 
@@ -66,7 +64,7 @@ export default function Pricing() {
       >
         You can roast for free
       </Title>
-      <Container size={600} p={0} mb="xl">
+      <Container size={600} p={0} mb={50}>
         <Text
           fz={{ base: 18, sm: 20 }}
           color="dimmed"
@@ -79,12 +77,7 @@ export default function Pricing() {
       <Container p={0} mx="auto">
         <div className={classes.pricingWrapper}>
           {/* Free */}
-          <Card
-            shadow="md"
-            radius="md"
-            className={classes.cardSmall}
-            padding="xl"
-          >
+          <Card radius="md" className={classes.cardSmall} padding="xl">
             <Text fw={600} fz={20} mb="md">
               Beginner Roaster
             </Text>
@@ -102,19 +95,14 @@ export default function Pricing() {
                 <Text component="span" c="yellow">
                   ✦
                 </Text>{" "}
-                See up to 3 roasts per page
+                See up to {CONSTANTS.MAX_ROASTS_FREE_USER} roasts per page
               </List.Item>
             </List>
             <Button component="a" href="/login" variant="outline">
               Get started for free
             </Button>
           </Card>
-          <Card
-            shadow="md"
-            radius="md"
-            className={classes.cardLimited}
-            padding="xl"
-          >
+          <Card radius="md" className={classes.cardLimited} padding="xl">
             <Text fw={600} fz={24} mb="md">
               Veteran Roaster
             </Text>
@@ -162,11 +150,19 @@ export default function Pricing() {
               href={metadata.lifetimeDeal.checkoutLink}
               size="lg"
               mb="xs"
+              leftIcon={<IconFlame />}
             >
-              Get started
+              Start roasting now
             </Button>
             <Text size="sm" color="dimmed">
-              One-time payment — Powered by Lemonsqueezy
+              One-time payment — Powered by{" "}
+              <Link
+                target="blank"
+                rel="noopener noreferrer"
+                href="https://www.lemonsqueezy.com/"
+              >
+                Lemonsqueezy
+              </Link>
             </Text>
           </Card>
         </div>

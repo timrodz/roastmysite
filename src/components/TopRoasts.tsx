@@ -70,7 +70,7 @@ export default function TopRoasts({ title, className }: Props) {
         {title}
       </Title>
       <Text
-        mb="xl"
+        mb={50}
         fz={{ base: 18, sm: 22 }}
         color="dimmed"
         className={classes.textAlign}

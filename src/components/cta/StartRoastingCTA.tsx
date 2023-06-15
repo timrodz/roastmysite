@@ -83,7 +83,7 @@ export default function StartRoastingCTA() {
             className={classes.typeYourSiteButton}
             onClick={onClickCTA}
           >
-            Go
+            Get Started
           </Button>
         </Flex>
         {formError && (

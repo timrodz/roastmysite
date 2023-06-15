@@ -1,5 +1,6 @@
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import { Database } from "./database.types";
+import { CONSTANTS } from "./metadata";
 
 export type Supabase = SupabaseClient<Database>;
 
@@ -18,8 +19,6 @@ export interface AugmentedRoast {
   authorTwitter: string;
   authorMembershipStatus: string;
 }
-
-const MAX_ROASTS_FREE_USER = 2;
 
 export const supabaseClient: Supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -131,7 +130,7 @@ export async function getRoastsForSite(
     ? await supabaseClient.rpc("get_roasts_for_website", { url })
     : await supabaseClient
         .rpc("get_roasts_for_website", { url })
-        .limit(MAX_ROASTS_FREE_USER);
+        .limit(CONSTANTS.MAX_ROASTS_FREE_USER);
 
   // No roasts, but the website can have an entry, i.e. if it had roasts in the past but they were all deleted
   if (!roastsForWebsite?.length) {
