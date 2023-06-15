@@ -186,6 +186,7 @@ function GetStartedCTA() {
         miw={300}
         component="a"
         href="/login"
+        rel="canonical"
         leftIcon={<IconFlame />}
         aria-label="Start roasting now"
       >

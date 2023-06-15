@@ -46,6 +46,7 @@ export default function WebsiteActionPanel({
           color="green"
           component="a"
           href={`/view/${siteUrl}/seo`}
+          rel="canonical"
           aria-label="Scan website for SEO improvements"
         >
           Scan website SEO improvements (WIP)

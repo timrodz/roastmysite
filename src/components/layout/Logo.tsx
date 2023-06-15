@@ -9,7 +9,7 @@ interface Props {
 export default function Logo({ size = "lg" }: Props) {
   return (
     <Text fz={{ base: 18, sm: 22 }} fw={600}>
-      <Link href="/">
+      <Link href="/" rel="canonical">
         <Group noWrap spacing={2}>
           <IconFlame
             size={size === "lg" ? "1.5rem" : "1.25rem"}

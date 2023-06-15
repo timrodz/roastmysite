@@ -55,6 +55,7 @@ export default function WebsiteSEO({ sessionUser, siteId, siteUrl }: Props) {
                 <Button
                   component="a"
                   href="/login"
+                  rel="canonical"
                   size="lg"
                   aria-label="Login"
                 >

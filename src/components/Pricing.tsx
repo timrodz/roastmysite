@@ -101,6 +101,7 @@ export default function Pricing() {
             <Button
               component="a"
               href="/login"
+              rel="canonical"
               variant="outline"
               aria-label="Get started for free"
             >

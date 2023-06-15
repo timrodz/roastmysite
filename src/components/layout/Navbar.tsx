@@ -70,13 +70,19 @@ export default function Navbar() {
   function renderLinks() {
     return (
       <>
-        <Link className={classes.link} href="/search" onClick={close}>
+        <Link
+          className={classes.link}
+          href="/search"
+          rel="canonical"
+          onClick={close}
+        >
           Roast search
         </Link>
         <Button
           className={classes.link}
           component="a"
           href="/login"
+          rel="canonical"
           variant="light"
           onClick={close}
           aria-label={session ? "Account" : "Get started"}
@@ -99,6 +105,7 @@ export default function Navbar() {
             onClick={toggle}
             className={classes.burger}
             size="sm"
+            aria-label="Expand menu"
           />
         )}
       </Container>

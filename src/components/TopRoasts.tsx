@@ -48,6 +48,7 @@ export default function TopRoasts({ title }: Props) {
       <Button
         component="a"
         href={`/view/${roast.url}`}
+        rel="canonical"
         mih={"8vw"}
         key={roast.url}
         variant="light"

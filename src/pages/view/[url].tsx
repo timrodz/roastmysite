@@ -186,7 +186,11 @@ export default function UrlPage({ url, sessionUser }: Props) {
                       {/* User not logged in */}
                       <Text size="lg">
                         Please{" "}
-                        <Link className={classes.linkPrimary} href="/login">
+                        <Link
+                          className={classes.linkPrimary}
+                          href="/login"
+                          rel="canonical"
+                        >
                           Login
                         </Link>{" "}
                         to submit your roast

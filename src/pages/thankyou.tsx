@@ -51,6 +51,7 @@ export default function ThankYou() {
               size="xl"
               component="a"
               href="/login"
+              rel="canonical"
               variant="outline"
               aria-label="Create an account if you haven't yet"
             >
@@ -60,6 +61,7 @@ export default function ThankYou() {
               size="xl"
               component="a"
               href="/search"
+              rel="canonical"
               aria-label="Check out the top roasts and start roasting"
             >
               Check out the top roasts and start roasting
