@@ -12,10 +12,6 @@ import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export const config = {
-  runtime: "edge",
-};
-
 export default function SignIn() {
   const { classes } = useGlobalStyles();
   const session = useSession();

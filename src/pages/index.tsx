@@ -12,7 +12,6 @@ import {
   Divider,
   Flex,
   SimpleGrid,
-  Space,
   Text,
   ThemeIcon,
   Title,
@@ -165,7 +164,7 @@ export default function Home() {
           {/* <section id="frequently-asked-questions" className="mb-32">
             <FAQ />
           </section> */}
-          <section id="pricing" className="mt-48 mb-32">
+          <section id="pricing" className="mb-32">
             <Pricing />
           </section>
         </Container>
@@ -177,7 +176,7 @@ export default function Home() {
 function GetStartedCTA() {
   return (
     <Flex
-      mt={80}
+      mt={60}
       align={{ base: "stretch", xs: "center" }}
       justify={{ base: "start", xs: "center" }}
       direction="column"

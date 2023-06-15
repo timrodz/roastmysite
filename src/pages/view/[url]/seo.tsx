@@ -10,14 +10,45 @@ import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
-export const config = {
-  runtime: "edge",
-};
-
 interface Props {
   sessionUser: SessionUser;
   siteId: number | null;
   siteUrl: string;
+}
+
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext<{ url: string }>
+): Promise<any> {
+  ctx.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
+  const url = ctx.params?.url!;
+
+  const supabase = createPagesServerClient(ctx);
+  const sessionUser = await getServerSideSessionUser(supabase);
+
+  if (!sessionUser) {
+    return {
+      props: {
+        sessionUser: null,
+        siteId: null,
+        siteUrl: url,
+      },
+    };
+  }
+
+  const siteId = await getSiteForOwner(url, sessionUser.id);
+
+  console.log({ siteId, sessionUser });
+
+  return {
+    props: {
+      sessionUser,
+      siteId,
+      siteUrl: url,
+    },
+  };
 }
 
 export default function WebsiteSEO({ sessionUser, siteId, siteUrl }: Props) {
@@ -112,39 +143,4 @@ export default function WebsiteSEO({ sessionUser, siteId, siteUrl }: Props) {
       </main>
     </>
   );
-}
-
-export async function getServerSideProps(
-  ctx: GetServerSidePropsContext<{ url: string }>
-): Promise<{ props: Props }> {
-  ctx.res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
-  );
-  const url = ctx.params?.url!;
-
-  const supabase = createPagesServerClient(ctx);
-  const sessionUser = await getServerSideSessionUser(supabase);
-
-  if (!sessionUser) {
-    return {
-      props: {
-        sessionUser: null,
-        siteId: null,
-        siteUrl: url,
-      },
-    };
-  }
-
-  const siteId = await getSiteForOwner(url, sessionUser.id);
-
-  console.log({ siteId, sessionUser });
-
-  return {
-    props: {
-      sessionUser,
-      siteId,
-      siteUrl: url,
-    },
-  };
 }

@@ -27,6 +27,14 @@ export default {
         "Share the love by letting the founder publicly know how they can improve their website and land those customers.",
     },
   ],
+  faq: [
+    {
+      q: "How does Roast My Site work?",
+      a: "",
+    },
+    { q: "What does the lifetime license give me?", a: "" },
+    { q: "What does the lifetime license give me?", a: "" },
+  ],
 };
 
 export const CONSTANTS = {

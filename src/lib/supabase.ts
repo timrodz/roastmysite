@@ -8,6 +8,8 @@ export type Website = Database["public"]["Tables"]["websites"]["Row"];
 export type Roast = Database["public"]["Tables"]["roasts"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type MembershipStatus = Database["public"]["Enums"]["membership_status"];
+export type FunctionRoastsForWebsite =
+  Database["public"]["Functions"]["get_roasts_for_website"]["Returns"];
 export type SessionUser = { id: string; isPremium: boolean } | null;
 
 export interface AugmentedRoast {
@@ -117,37 +119,27 @@ export async function getServerSideSessionUser(
   };
 }
 
-export async function getRoastsForSite(
-  sessionUser: SessionUser,
-  url: string
+export async function augmentRoastsForWebsite(
+  url: string,
+  roasts: FunctionRoastsForWebsite
 ): Promise<{
-  siteId: number | null;
-  siteOwnerUserId: string | null;
-  roasts: AugmentedRoast[] | null;
+  siteId: number | undefined;
+  siteOwnerUserId: string | undefined;
+  roasts: AugmentedRoast[];
 }> {
-  console.log({ sessionUser });
-  const { data: roastsForWebsite } = sessionUser?.isPremium
-    ? await supabaseClient.rpc("get_roasts_for_website", { url })
-    : await supabaseClient
-        .rpc("get_roasts_for_website", { url })
-        .limit(CONSTANTS.MAX_ROASTS_FREE_USER);
-
-  // No roasts, but the website can have an entry, i.e. if it had roasts in the past but they were all deleted
-  if (!roastsForWebsite?.length) {
+  if (!roasts?.length) {
     const data = await getSiteData(url);
 
-    console.log("no roasts but heres", { data, url });
-
     return {
-      siteId: data?.id ?? null,
-      siteOwnerUserId: null,
-      roasts: null,
+      siteId: data?.id ?? undefined,
+      siteOwnerUserId: undefined,
+      roasts: [],
     };
   }
 
-  const { site_id, site_owner_id } = roastsForWebsite[0];
+  const { site_id, site_owner_id } = roasts[0];
 
-  const roasts: AugmentedRoast[] = roastsForWebsite?.map((d) => ({
+  const augmentedRoasts: AugmentedRoast[] = roasts?.map((d) => ({
     id: d.roast_id,
     createdAt: d.roast_created_at,
     content: d.roast_content,
@@ -160,9 +152,30 @@ export async function getRoastsForSite(
   return {
     siteId: site_id,
     siteOwnerUserId: site_owner_id,
-    roasts,
+    roasts: augmentedRoasts,
   };
 }
+
+// export async function getRoastsForSite(
+//   sessionUser: SessionUser,
+//   url: string
+// ): Promise<{
+//   siteId: number | null;
+//   siteOwnerUserId: string | null;
+//   roasts: AugmentedRoast[] | null;
+// }> {
+//   console.log({ sessionUser });
+//   const { data: roastsForWebsite } = sessionUser?.isPremium
+//     ? await supabaseClient.rpc("get_roasts_for_website", { url })
+//     : await supabaseClient
+//         .rpc("get_roasts_for_website", { url })
+//         .limit(CONSTANTS.MAX_ROASTS_FREE_USER);
+
+//   return augmentRoastsForWebsite(
+//     url,
+//     roastsForWebsite as FunctionRoastsForWebsite
+//   );
+// }
 
 export async function getSiteForOwner(
   url: string,

@@ -1,6 +1,7 @@
 import metadata from "@/lib/metadata";
 import { useGlobalStyles } from "@utils/use-global-styles";
 import {
+  Accordion,
   Badge,
   Button,
   Card,
@@ -49,6 +50,14 @@ const useStyles = createStyles((theme) => ({
       width: "100%",
     },
   },
+
+  item: {
+    borderRadius: theme.radius.md,
+    marginBottom: theme.spacing.lg,
+    border: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`,
+  },
 }));
 
 export default function FAQ() {
@@ -67,7 +76,14 @@ export default function FAQ() {
         Frequently Asked Questions
       </Title>
       <Container size={600} p={0} mb="xl">
-        <Text>oiajsodiajsd</Text>
+        <Accordion variant="separated">
+          {metadata.faq.map((entry, i) => (
+            <Accordion.Item key={i} className={classes.item} value={entry.q}>
+              <Accordion.Control>{entry.q}</Accordion.Control>
+              <Accordion.Panel>{entry.a}</Accordion.Panel>
+            </Accordion.Item>
+          ))}
+        </Accordion>
       </Container>
     </>
   );

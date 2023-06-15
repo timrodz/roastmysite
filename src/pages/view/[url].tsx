@@ -2,14 +2,13 @@ import CreateRoastForm from "@components/CreateRoastForm";
 import RoastComponent from "@components/Roast";
 import WebsiteActionPanel from "@components/WebsiteActionPanel";
 import SEO from "@components/misc/SEOComponent";
+import { Database } from "@lib/database.types";
 import {
+  AugmentedRoast,
   SessionUser,
-  getRoastsForSite,
+  augmentRoastsForWebsite,
   getServerSideSessionUser,
 } from "@lib/supabase";
-import { sanitizeRoastUrl } from "@utils/url-sanity";
-import { useGlobalStyles } from "@utils/use-global-styles";
-import { Database } from "@lib/database.types";
 import {
   Box,
   Button,
@@ -23,16 +22,14 @@ import {
 } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
+import { sanitizeRoastUrl } from "@utils/url-sanity";
+import { useGlobalStyles } from "@utils/use-global-styles";
+import metadata, { CONSTANTS } from "@/lib/metadata";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import metadata from "@/lib/metadata";
-
-export const config = {
-  runtime: "edge",
-};
+import { useEffect, useState } from "react";
 
 interface Props {
   url: string;
@@ -46,6 +43,7 @@ export async function getServerSideProps(
     "Cache-Control",
     "public, s-maxage=10, stale-while-revalidate=59"
   );
+
   let url = ctx.params?.url!;
 
   // Sanitize URL if possible
@@ -57,17 +55,10 @@ export async function getServerSideProps(
   const supabase = createPagesServerClient(ctx);
   const sessionUser = await getServerSideSessionUser(supabase);
 
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery([`${url}_roasts`], () =>
-    getRoastsForSite(sessionUser, url)
-  );
-
   return {
     props: {
       url,
       sessionUser,
-      dehydratedState: dehydrate(queryClient),
     },
   };
 }
@@ -77,14 +68,37 @@ export default function UrlPage({ url, sessionUser }: Props) {
   const [roastContent, roastContentSet] = useState("");
   const [performingAction, performingActionSet] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryKey: [`${url}_roasts`],
-    queryFn: () => getRoastsForSite(sessionUser, url),
-    enabled: false,
-  });
+  const supabase = useSupabaseClient();
 
-  const finalRoasts = data?.roasts;
-  const siteId = data?.siteId;
+  const [finalRoasts, finalRoastsSet] = useState<AugmentedRoast[]>([]);
+  const [siteId, siteIdSet] = useState<number | undefined>(-1);
+
+  const { data, error, isLoading } = useQuery(
+    sessionUser?.isPremium
+      ? supabase.rpc("get_roasts_for_website", { url })
+      : supabase
+          .rpc("get_roasts_for_website", { url })
+          .limit(CONSTANTS.MAX_ROASTS_FREE_USER)
+  );
+
+  useEffect(() => {
+    if (error) {
+      alert(
+        "There was an error when getting all roasts for this website. Sorry!"
+      );
+    }
+    if (!url || !supabase || !data) {
+      return;
+    }
+
+    async function augmentRoasts() {
+      const augmented = await augmentRoastsForWebsite(url, data);
+      finalRoastsSet(augmented.roasts);
+      siteIdSet(augmented.siteId || undefined);
+    }
+
+    augmentRoasts();
+  }, [url, supabase, data, error]);
 
   function renderRoasts() {
     return finalRoasts?.map((roast, i) => {

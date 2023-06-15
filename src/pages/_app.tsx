@@ -5,9 +5,9 @@ import { Flex, MantineProvider } from "@mantine/core";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import {
+  Hydrate,
   QueryClient,
   QueryClientProvider,
-  Hydrate,
 } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
@@ -37,13 +37,15 @@ export default function App({ Component, pageProps }: AppProps) {
             withGlobalStyles
             withNormalizeCSS
             theme={{
+              fontFamily: "Inter, sans-serif",
               /** Put your mantine theme override here */
               primaryColor: "indigo",
               primaryShade: 9,
               colorScheme: "light",
               globalStyles: (theme) => ({
                 "*": {
-                  fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+                  fontFamily: "Inter, sans-serif",
+                  // fontFamily: `Greycliff CF, ${theme.fontFamily}`,
                   // Add underline to span + a on hover
                   "button, a": {
                     ":hover": {
@@ -63,7 +65,6 @@ export default function App({ Component, pageProps }: AppProps) {
               {router.route === "/" && <LTDNavbar />}
               <Navbar />
               <ChildrenComponent {...pageProps} />
-              {/* <Component {...pageProps} /> */}
               <Footer />
             </Flex>
           </MantineProvider>

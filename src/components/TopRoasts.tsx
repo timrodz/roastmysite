@@ -1,7 +1,7 @@
 import { supabaseClient } from "@lib/supabase";
-import { useGlobalStyles } from "@utils/use-global-styles";
 import { Button, Container, SimpleGrid, Text, Title } from "@mantine/core";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { useGlobalStyles } from "@utils/use-global-styles";
 import { useEffect, useState } from "react";
 
 interface Roast {
