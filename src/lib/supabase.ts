@@ -171,7 +171,7 @@ export async function getSiteForOwner(
   const { data } = await supabaseClient
     .from("websites")
     .select("id")
-    .match({ url, owned_by_user_id: userId })
+    .match({ url, owner_id: userId })
     .limit(1)
     .maybeSingle();
 

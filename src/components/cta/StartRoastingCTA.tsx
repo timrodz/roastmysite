@@ -82,6 +82,7 @@ export default function StartRoastingCTA() {
             size="lg"
             className={classes.typeYourSiteButton}
             onClick={onClickCTA}
+            aria-label="Get started"
           >
             Get Started
           </Button>

@@ -1,3 +1,4 @@
+import FAQ from "@/components/FAQ";
 import metadata from "@/lib/metadata";
 import Pricing from "@components/Pricing";
 import TopRoasts from "@components/TopRoasts";
@@ -156,8 +157,13 @@ export default function Home() {
             <Features />
             <GetStartedCTA />
           </section>
-          <TopRoasts title="See the top roasts" className="mb-24" />
-          <GetStartedCTA />
+          <section id="roasts">
+            <TopRoasts title="See the top roasts" />
+            <GetStartedCTA />
+          </section>
+          <section id="frequently-asked-questions">
+            <FAQ />
+          </section>
           <section id="pricing" className="mt-48 mb-32">
             <Pricing />
           </section>
@@ -181,6 +187,7 @@ function GetStartedCTA() {
         component="a"
         href="/login"
         leftIcon={<IconFlame />}
+        aria-label="Start roasting now"
       >
         Start roasting now
       </Button>

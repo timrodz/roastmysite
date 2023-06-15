@@ -71,7 +71,7 @@ export default function Navbar() {
     return (
       <>
         <Link className={classes.link} href="/search" onClick={close}>
-          Top roasts
+          Roast search
         </Link>
         <Button
           className={classes.link}
@@ -79,6 +79,7 @@ export default function Navbar() {
           href="/login"
           variant="light"
           onClick={close}
+          aria-label={session ? "Account" : "Get started"}
         >
           {session ? "Account" : "Get started"}
         </Button>

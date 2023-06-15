@@ -42,11 +42,20 @@ export default function WebsiteActionPanel({
         </Text>
       )}
       <Group spacing={10}>
-        <Button color="green" component="a" href={`/view/${siteUrl}/seo`}>
-          Scan website SEO improvements
+        <Button
+          color="green"
+          component="a"
+          href={`/view/${siteUrl}/seo`}
+          aria-label="Scan website for SEO improvements"
+        >
+          Scan website SEO improvements (WIP)
         </Button>
         {!isOwner && (
-          <Button color="green" disabled>
+          <Button
+            color="green"
+            disabled
+            aria-label="Claim website ownerhsip (coming soon)"
+          >
             Claim website ownerhsip (coming soon)
           </Button>
         )}

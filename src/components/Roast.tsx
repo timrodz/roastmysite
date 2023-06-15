@@ -173,6 +173,7 @@ export default function Roast(props: Props) {
             variant="outline"
             leftIcon={<IconTrash />}
             onClick={onDeleteClick}
+            aria-label="Confirm roast deletion"
           >
             Yes, I want to delete this roast
           </Button>

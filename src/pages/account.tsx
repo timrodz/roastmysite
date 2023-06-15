@@ -225,6 +225,7 @@ export default function Account({ userId, email }: Props) {
                     // avatarUrl: null,
                   })
                 }
+                aria-label="Update profile"
               >
                 Update profile
               </Button>
@@ -237,6 +238,7 @@ export default function Account({ userId, email }: Props) {
                   await supabase.auth.signOut();
                   router.push("/login");
                 }}
+                aria-label="Sign out"
               >
                 Sign Out
               </Button>
@@ -288,6 +290,7 @@ function LifetimeDeal() {
         href={metadata.lifetimeDeal.checkoutLink}
         size="lg"
         mb="xs"
+        aria-label="Upgrade"
       >
         Upgrade
       </Button>

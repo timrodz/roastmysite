@@ -98,7 +98,12 @@ export default function Pricing() {
                 See up to {CONSTANTS.MAX_ROASTS_FREE_USER} roasts per page
               </List.Item>
             </List>
-            <Button component="a" href="/login" variant="outline">
+            <Button
+              component="a"
+              href="/login"
+              variant="outline"
+              aria-label="Get started for free"
+            >
               Get started for free
             </Button>
           </Card>
@@ -151,6 +156,7 @@ export default function Pricing() {
               size="lg"
               mb="xs"
               leftIcon={<IconFlame />}
+              aria-label="Start roasting now"
             >
               Start roasting now
             </Button>

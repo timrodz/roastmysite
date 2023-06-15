@@ -1,0 +1,6 @@
+# Allow all crawlers
+
+Sitemap: https://roastmysite.io/sitemap.xml
+
+User-agent: *
+Allow: /

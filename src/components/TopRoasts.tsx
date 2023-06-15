@@ -11,10 +11,9 @@ interface Roast {
 
 interface Props {
   title: string;
-  className?: string;
 }
 
-export default function TopRoasts({ title, className }: Props) {
+export default function TopRoasts({ title }: Props) {
   const { classes } = useGlobalStyles();
   const [roasts, roastsSet] = useState<Roast[]>([]);
 
@@ -53,13 +52,14 @@ export default function TopRoasts({ title, className }: Props) {
         key={roast.url}
         variant="light"
         color="orange"
+        aria-label={`Navigate to ${roast.url}`}
       >
         {roast.url}
       </Button>
     ));
 
   return (
-    <section id="roasts" className={className?.toString() || ""}>
+    <>
       <Title
         order={3}
         fw={800}
@@ -85,6 +85,6 @@ export default function TopRoasts({ title, className }: Props) {
           {sortedRoasts}
         </SimpleGrid>
       </Container>
-    </section>
+    </>
   );
 }

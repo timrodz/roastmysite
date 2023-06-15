@@ -47,10 +47,21 @@ export default function ThankYou() {
             gap={10}
             mb="xl"
           >
-            <Button size="xl" component="a" href="/login" variant="outline">
+            <Button
+              size="xl"
+              component="a"
+              href="/login"
+              variant="outline"
+              aria-label="Create an account if you haven't yet"
+            >
               Create an account if you haven&apos;t yet
             </Button>
-            <Button size="xl" component="a" href="/search">
+            <Button
+              size="xl"
+              component="a"
+              href="/search"
+              aria-label="Check out the top roasts and start roasting"
+            >
               Check out the top roasts and start roasting
             </Button>
           </Flex>

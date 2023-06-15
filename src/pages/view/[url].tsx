@@ -297,5 +297,9 @@ function SubmitRoastButton({
     router.reload();
   };
 
-  return <Button onClick={onClick}>Submit roast</Button>;
+  return (
+    <Button onClick={onClick} aria-label="Submit roast">
+      Submit roast
+    </Button>
+  );
 }

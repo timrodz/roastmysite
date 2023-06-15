@@ -23,7 +23,9 @@ export default function RoastPage() {
             </Text>
             <StartRoastingCTA />
           </section>
-          <TopRoasts title="Top roasts" />
+          <section id="top-roasts" className="mb-32">
+            <TopRoasts title="Top roasts" />
+          </section>
         </Container>
       </main>
     </>
