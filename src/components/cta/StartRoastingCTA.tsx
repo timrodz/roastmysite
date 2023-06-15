@@ -47,7 +47,7 @@ export default function StartRoastingCTA() {
       return;
     }
 
-    router.push(`/${sanitizedUrl}`);
+    router.push(`/view/${sanitizedUrl}`);
   };
 
   return (

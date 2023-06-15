@@ -48,7 +48,7 @@ export default function TopRoasts({ title, className }: Props) {
     .map((roast) => (
       <Button
         component="a"
-        href={`/${roast.url}`}
+        href={`/view/${roast.url}`}
         mih={"8vw"}
         key={roast.url}
         variant="light"

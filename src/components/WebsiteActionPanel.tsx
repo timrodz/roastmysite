@@ -25,7 +25,7 @@ export default function WebsiteActionPanel({
     sessionUser?.id === "a4f63dd4-ce57-4038-83ae-b7f436928117";
 
   return (
-    <Container p={0} size="xs">
+    <>
       <Title fz={{ base: 20, sm: 24 }} mb="xs">
         Actions
       </Title>
@@ -42,7 +42,7 @@ export default function WebsiteActionPanel({
         </Text>
       )}
       <Group spacing={10}>
-        <Button color="green" component="a" href={`/${siteUrl}/seo`}>
+        <Button color="green" component="a" href={`/view/${siteUrl}/seo`}>
           Scan website SEO improvements
         </Button>
         {!isOwner && (
@@ -51,6 +51,6 @@ export default function WebsiteActionPanel({
           </Button>
         )}
       </Group>
-    </Container>
+    </>
   );
 }

@@ -4,6 +4,7 @@ interface Props {
   title: string;
   description: string;
   isLandingPage?: boolean;
+  forceViewportSizeConstant?: boolean;
 }
 
 export default function SEO(props: Props) {
@@ -54,6 +55,10 @@ export default function SEO(props: Props) {
 
       {/* Misc */}
       <link rel="icon" href="/favicon.ico" />
+
+      {props.forceViewportSizeConstant && (
+        <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
+      )}
     </Head>
   );
 }
