@@ -119,7 +119,7 @@ export default function UrlPage({ url, sessionUser }: Props) {
             {finalRoasts?.length ?? 0 > 0 ? (
               <>
                 <Title fz={{ base: 32, sm: 40 }} mb="xs">
-                  You're viewing the roasts for{" "}
+                  You&apos;re viewing the roasts for{" "}
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
