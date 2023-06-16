@@ -43,7 +43,7 @@ const useStyles = createStyles((theme) => ({
     },
 
     "& > p:last-child": {
-      marginBottom: 0,
+      marginBottom: "0 !important",
     },
 
     h1: {
@@ -51,7 +51,7 @@ const useStyles = createStyles((theme) => ({
     },
 
     p: {
-      marginBottom: `${theme.spacing.sm} !important`,
+      marginBottom: `${theme.spacing.md} !important`,
 
       img: {
         borderRadius: rem(5),
@@ -201,8 +201,10 @@ export default function Roast(props: Props) {
           )}
           {props.authorMembershipStatus && (
             <Badge color="orange">
-              {props.authorMembershipStatus === "lifetime"
-                ? "Lifetime"
+              {props.authorUsername === "timrodz"
+                ? "Founder"
+                : props.authorMembershipStatus === "lifetime"
+                ? "Lifetime Roaster"
                 : "Premium"}
             </Badge>
           )}

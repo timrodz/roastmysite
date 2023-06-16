@@ -110,7 +110,7 @@ export default function Pricing() {
           </Card>
           <Card radius="md" className={classes.cardLimited} padding="xl">
             <Text fw={600} fz={24} mb="md">
-              Veteran Roaster
+              Lifetime Roaster
             </Text>
             <Text fw={800} fz={30} mb="lg">
               <Group spacing={8}>

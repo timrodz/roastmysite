@@ -114,139 +114,133 @@ export default function UrlPage({ url, sessionUser }: Props) {
         forceViewportSizeConstant
       />
       <main>
-        <Container
-          px={{ base: "xl", sm: "md" }}
-          className={classes.pageWrapper}
-        >
-          <section id="title" className="mb-8">
-            <Container p={0} size="xs">
-              {finalRoasts?.length ?? 0 > 0 ? (
-                <>
-                  <Title fz={{ base: 32, sm: 40 }} mb="xs">
-                    The roast of{" "}
-                    <Link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={classes.linkSecondary}
-                      href={`https://${url}`}
-                    >
-                      {url}
-                    </Link>
-                  </Title>
-                </>
-              ) : (
-                <>
-                  <Title mb="xs" fz={{ base: 32, sm: 40 }}>
-                    There are no roasts for{" "}
-                    <Link
-                      target="_blank"
-                      className={classes.linkSecondary}
-                      href={`https://${url}`}
-                    >
-                      {url}
-                    </Link>{" "}
-                    yet
-                  </Title>
-                  <Text size="lg" mb="sm" color="dimmed">
-                    But you can be the first to roast them!
-                  </Text>
-                </>
-              )}
-            </Container>
+        <Container size="xs" className={classes.pageWrapper}>
+          <section id="title" className="mb-12">
+            {finalRoasts?.length ?? 0 > 0 ? (
+              <>
+                <Title fz={{ base: 32, sm: 40 }} mb="xs">
+                  You're viewing the roasts for{" "}
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={classes.linkSecondary}
+                    href={`https://${url}`}
+                  >
+                    {url}
+                  </Link>
+                </Title>
+              </>
+            ) : (
+              <>
+                <Title mb="xs" fz={{ base: 32, sm: 40 }}>
+                  There are no roasts for{" "}
+                  <Link
+                    target="_blank"
+                    className={classes.linkSecondary}
+                    href={`https://${url}`}
+                  >
+                    {url}
+                  </Link>{" "}
+                  yet
+                </Title>
+                <Text size="lg" mb="sm" color="dimmed">
+                  But you can be the first to roast them!
+                </Text>
+              </>
+            )}
           </section>
-          <section style={{ position: "relative" }} id="actions">
-            <Container p={0} size="xs">
-              <LoadingOverlay visible={performingAction} />
+          <section id="content" style={{ position: "relative" }}>
+            {/* <Container p={0} size="xs"> */}
+            <LoadingOverlay visible={performingAction} />
 
-              {siteId && (
-                <section id="actions" className="mb-6">
-                  <WebsiteActionPanel
-                    siteId={siteId}
-                    siteUrl={url}
-                    sessionUser={sessionUser}
-                  />
-                </section>
-              )}
-              <section id="add-roast" className="mb-12">
+            {siteId && (
+              <section id="actions" className="mb-6">
+                <WebsiteActionPanel
+                  siteId={siteId}
+                  siteUrl={url}
+                  sessionUser={sessionUser}
+                />
+              </section>
+            )}
+            <section id="add-roast" className="mb-12">
+              <>
+                {/* User logged in */}
+                {sessionUser ? (
+                  <>
+                    <Title fz={{ base: 24, sm: 30 }} order={2} mb="xs">
+                      Roast this site
+                    </Title>
+                    <CreateRoastForm
+                      onUpdate={(roast: string) => {
+                        roastContentSet(roast);
+                      }}
+                    />
+                    <Space h="sm" />
+                    <Text mb="md" size="xs" color="dimmed">
+                      Note: images are an experimental feature. Add them with
+                      markdown:{" "}
+                      <Code fz="xs">
+                        ![description](https://link-to-image.jpg)
+                      </Code>
+                      . They can&apos;t be uploaded to this site so they must
+                      already exist elsewhere.
+                    </Text>
+                    <SubmitRoastButton
+                      siteId={siteId || -1}
+                      siteUrl={url}
+                      content={roastContent}
+                      authorId={sessionUser.id}
+                      onPerformActionStart={() => performingActionSet(true)}
+                      onPerformActionEnd={() => performingActionSet(false)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    {/* User not logged in */}
+                    <Text size="lg">
+                      Please{" "}
+                      <Link
+                        className={classes.linkPrimary}
+                        href="/login"
+                        rel="canonical"
+                      >
+                        Login
+                      </Link>{" "}
+                      to submit your roast
+                    </Text>
+                  </>
+                )}
+              </>
+            </section>
+            {finalRoasts?.length > 0 && (
+              <section id="view-roasts" className="mb-12">
                 <>
-                  {/* User logged in */}
-                  {sessionUser ? (
-                    <>
-                      <Title fz={{ base: 24, sm: 30 }} order={2} mb="xs">
-                        Roast this site
-                      </Title>
-                      <CreateRoastForm
-                        onUpdate={(roast: string) => {
-                          roastContentSet(roast);
-                        }}
-                      />
-                      <Space h="sm" />
-                      <Text mb="md" size="xs" color="dimmed">
-                        Note: images are an experimental feature. Add them with
-                        markdown:{" "}
-                        <Code fz="xs">
-                          ![description](https://link-to-image.jpg)
-                        </Code>
-                        . They can&apos;t be uploaded to this site so they must
-                        already exist elsewhere.
-                      </Text>
-                      <SubmitRoastButton
-                        siteId={siteId || -1}
-                        siteUrl={url}
-                        content={roastContent}
-                        authorId={sessionUser.id}
-                        onPerformActionStart={() => performingActionSet(true)}
-                        onPerformActionEnd={() => performingActionSet(false)}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      {/* User not logged in */}
-                      <Text size="lg">
-                        Please{" "}
-                        <Link
-                          className={classes.linkPrimary}
-                          href="/login"
-                          rel="canonical"
-                        >
-                          Login
-                        </Link>{" "}
-                        to submit your roast
-                      </Text>
-                    </>
-                  )}
+                  <Title fz={{ base: 24, sm: 30 }} order={3} mb="xs">
+                    Roasts
+                  </Title>
+                  <Box pos="relative">
+                    <LoadingOverlay visible={isLoading} />
+                    <Stack spacing={15}>
+                      {renderRoasts()}
+                      {!sessionUser?.isPremium && (
+                        <>
+                          <Text
+                            component="a"
+                            target="_blank"
+                            href={metadata.lifetimeDeal.checkoutLink}
+                            color="indigo"
+                            variant="light"
+                          >
+                            You&apos;re seeing a limited number of roasts.
+                            Purchase a license to unlock them all!
+                          </Text>
+                        </>
+                      )}
+                    </Stack>
+                  </Box>
                 </>
               </section>
-              {finalRoasts?.length > 0 && (
-                <section id="view-roasts" className="mb-12">
-                  <>
-                    <Title fz={{ base: 24, sm: 30 }} order={3} mb="xs">
-                      Roasts
-                    </Title>
-                    <Box pos="relative">
-                      <LoadingOverlay visible={isLoading} />
-                      <Stack spacing={15}>
-                        {renderRoasts()}
-                        {!sessionUser?.isPremium && (
-                          <>
-                            <Text
-                              component="a"
-                              target="_blank"
-                              href={metadata.lifetimeDeal.checkoutLink}
-                              color="indigo"
-                              variant="light"
-                            >
-                              You&apos;re seeing a limited number of roasts.
-                              Purchase a license to unlock them all!
-                            </Text>
-                          </>
-                        )}
-                      </Stack>
-                    </Box>
-                  </>
-                </section>
-              )}
-            </Container>
+            )}
           </section>
         </Container>
       </main>
