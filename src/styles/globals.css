@@ -58,4 +58,9 @@
 */
 .ql-editor p {
   font-size: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.ql-editor p:last-child {
+  margin-bottom: 0 !important;
 }

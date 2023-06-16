@@ -20,7 +20,8 @@ export default function TopRoasts({ title }: Props) {
   const { data, error, isLoading } = useQuery(
     supabaseClient
       .from("websites")
-      .select("url, roast_count")
+      .select("url, created_at, roast_count")
+      .order("created_at", { ascending: false })
       .order("roast_count", { ascending: false })
       .limit(6)
   );
