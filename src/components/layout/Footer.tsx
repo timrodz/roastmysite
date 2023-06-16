@@ -5,8 +5,10 @@ import Logo from "./Logo";
 const useStyles = createStyles((theme) => ({
   footer: {
     // Test: Set to 'auto' so it's pushed to the bottom of the page
+    zIndex: 1000,
     marginTop: "auto",
     borderTop: `${rem(1)} solid ${theme.colors.gray[2]}`,
+    background: "white",
   },
 
   inner: {

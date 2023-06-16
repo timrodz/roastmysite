@@ -76,7 +76,7 @@ export default function Navbar() {
           rel="canonical"
           onClick={close}
         >
-          Roast search
+          Top Roasts
         </Link>
         <Button
           className={classes.link}

@@ -10,6 +10,7 @@ import {
   getServerSideSessionUser,
 } from "@lib/supabase";
 import {
+  Anchor,
   Box,
   Button,
   Code,
@@ -18,7 +19,9 @@ import {
   Space,
   Stack,
   Text,
+  ThemeIcon,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -30,6 +33,8 @@ import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { IconClipboard, IconLink } from "@tabler/icons-react";
+import { getSiteURL } from "@/lib/utils/helpers";
 
 interface Props {
   url: string;
@@ -118,7 +123,7 @@ export default function UrlPage({ url, sessionUser }: Props) {
           <section id="title" className="mb-12">
             {finalRoasts?.length ?? 0 > 0 ? (
               <>
-                <Title fz={{ base: 32, sm: 40 }} mb="xs">
+                <Title fz={{ base: 28, sm: 40 }} mb="xs">
                   You&apos;re viewing the roasts for{" "}
                   <Link
                     target="_blank"
@@ -243,6 +248,34 @@ export default function UrlPage({ url, sessionUser }: Props) {
             )}
           </section>
         </Container>
+        <div
+          className="hidden sm:block"
+          style={{
+            bottom: 10,
+            // top: 125,
+            right: 10,
+            position: "fixed",
+          }}
+        >
+          <Anchor
+            onClick={() => {
+              const link = `${getSiteURL()}view/${url}`;
+              navigator.clipboard.writeText(link);
+              alert(`Link copied to clipboard! 👇\n${link}`);
+            }}
+          >
+            <Tooltip label="Copy link to clipboard">
+              <ThemeIcon
+                size="xl"
+                color="gray"
+                variant="light"
+                className="hover:cursor-pointer"
+              >
+                <IconLink />
+              </ThemeIcon>
+            </Tooltip>
+          </Anchor>
+        </div>
       </main>
     </>
   );
