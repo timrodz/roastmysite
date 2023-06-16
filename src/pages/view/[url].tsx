@@ -217,7 +217,7 @@ export default function UrlPage({ url, sessionUser }: Props) {
                   )}
                 </>
               </section>
-              {(finalRoasts?.length ?? 0 > 0) && (
+              {finalRoasts?.length > 0 && (
                 <section id="view-roasts" className="mb-12">
                   <>
                     <Title fz={{ base: 24, sm: 30 }} order={3} mb="xs">
