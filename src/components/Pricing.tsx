@@ -127,26 +127,27 @@ export default function Pricing() {
                 <Text component="span" c="yellow">
                   ✦
                 </Text>{" "}
-                Unlimited roasting
+                Access to all website roasts
               </List.Item>
               <List.Item>
                 <Text component="span" c="yellow">
                   ✦
                 </Text>{" "}
-                SEO improvements powered by AI
-              </List.Item>
-              <List.Item>
-                <Text component="span" c="yellow">
-                  ✦
-                </Text>{" "}
-                Claim website ownership{" "}
+                Claim website ownership and post updates{" "}
                 <Badge color="yellow">coming soon</Badge>
               </List.Item>
               <List.Item>
                 <Text component="span" c="yellow">
                   ✦
                 </Text>{" "}
-                Google Chrome Extension{" "}
+                SEO starter checklist
+                <Badge color="yellow">coming soon</Badge>
+              </List.Item>
+              <List.Item>
+                <Text component="span" c="yellow">
+                  ✦
+                </Text>{" "}
+                Roast any website with the Google Chrome Extension{" "}
                 <Badge color="yellow">coming soon</Badge>
               </List.Item>
             </List>
