@@ -102,6 +102,9 @@ export default function Roast(props: Props) {
 
   const formattedDate = dayjs(props.createdAt).format("YYYY-MM-DD");
 
+  const authorIdentity =
+    props.authorUsername || props.authorTwitter || "unknown";
+
   function renderPost(modal?: boolean) {
     return (
       <Box p={modal ? 20 : 0} maw={600}>
@@ -184,7 +187,7 @@ export default function Roast(props: Props) {
           {/* {author.avatar && (
           <Avatar src={author.avatar} alt={author.username} radius="xl" />
         )} */}
-          <Text fz="lg">By {props.authorUsername}</Text>
+          <Text fz="lg">By {authorIdentity}</Text>
           {props.authorTwitter && (
             <Badge
               leftSection={<IconBrandTwitter size="0.8rem" />}
